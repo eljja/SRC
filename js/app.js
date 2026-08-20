@@ -9,6 +9,7 @@ class App {
     this.mapView = null;
     this.networkView = null;
     this.currentView = 'map'; // 'map' | 'network' | 'table' | 'analytics'
+    this.tableCurrentPage = 1;
   }
 
   async init() {
@@ -92,28 +93,34 @@ class App {
     // Search input
     const searchInput = document.getElementById('global-search-input');
     searchInput.addEventListener('input', (e) => {
+      this.tableCurrentPage = 1;
       this.dataManager.setFilter('searchQuery', e.target.value);
       this.updateAllViews();
     });
 
     // Filters
     document.getElementById('filter-company').addEventListener('change', (e) => {
+      this.tableCurrentPage = 1;
       this.dataManager.setFilter('company', e.target.value);
       this.updateAllViews();
     });
     document.getElementById('filter-university').addEventListener('change', (e) => {
+      this.tableCurrentPage = 1;
       this.dataManager.setFilter('university', e.target.value);
       this.updateAllViews();
     });
     document.getElementById('filter-professor').addEventListener('change', (e) => {
+      this.tableCurrentPage = 1;
       this.dataManager.setFilter('professor', e.target.value);
       this.updateAllViews();
     });
     document.getElementById('filter-institute').addEventListener('change', (e) => {
+      this.tableCurrentPage = 1;
       this.dataManager.setFilter('institute', e.target.value);
       this.updateAllViews();
     });
     document.getElementById('filter-category').addEventListener('change', (e) => {
+      this.tableCurrentPage = 1;
       this.dataManager.setFilter('category', e.target.value);
       this.updateAllViews();
     });
@@ -124,6 +131,7 @@ class App {
       pill.addEventListener('click', () => {
         statusPills.forEach(p => p.classList.remove('active'));
         pill.classList.add('active');
+        this.tableCurrentPage = 1;
         this.dataManager.setFilter('status', pill.getAttribute('data-status'));
         this.updateAllViews();
       });
@@ -135,6 +143,7 @@ class App {
       btn.addEventListener('click', () => {
         sortBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+        this.tableCurrentPage = 1;
         this.dataManager.setFilter('sortBy', btn.getAttribute('data-sort'));
         this.updateAllViews();
       });
@@ -142,6 +151,7 @@ class App {
 
     // Reset button
     document.getElementById('btn-reset-filters').addEventListener('click', () => {
+      this.tableCurrentPage = 1;
       this.dataManager.resetFilters();
       searchInput.value = '';
       document.getElementById('filter-company').value = 'all';
@@ -375,14 +385,14 @@ class App {
     const project = this.dataManager.rawProjects.find(p => p.id === projectId);
     if (!project) return;
 
-    document.getElementById('modal-title').textContent = project.title;
-    document.getElementById('modal-topic').textContent = project.topic;
-    document.getElementById('modal-company').textContent = project.company;
-    document.getElementById('modal-university').textContent = `${project.university} (${project.university_city || ''}, ${project.university_country || ''})`;
+    document.getElementById('modal-title').textContent = project.title || '과제 상세';
+    document.getElementById('modal-topic').textContent = project.topic || '-';
+    document.getElementById('modal-company').textContent = project.company || '-';
+    document.getElementById('modal-university').textContent = `${project.university || '-'} (${project.university_city || ''}, ${project.university_country || ''})`;
     document.getElementById('modal-professor').textContent = project.professor || '미지정';
     document.getElementById('modal-institute').textContent = project.institute_or_consortium || '해당 없음';
-    document.getElementById('modal-funding').textContent = `${project.funding_display} (지원처: ${project.funding_source || '-'})`;
-    document.getElementById('modal-period').textContent = `${project.start_year}년 ~ ${project.end_year}년 (${project.duration_years || 3}개년)`;
+    document.getElementById('modal-funding').textContent = `${project.funding_display || '-'} (지원처: ${project.funding_source || '-'})`;
+    document.getElementById('modal-period').textContent = `${project.start_year || '-'}년 ~ ${project.end_year || '-'}년 (${project.duration_years || 3}개년)`;
     document.getElementById('modal-status').innerHTML = `
       <span class="badge-status ${project.status === 'active' ? 'badge-active' : (project.status === 'completed' ? 'badge-completed' : 'badge-uncertain')}">
         ${project.status === 'active' ? '진행중 (Active)' : (project.status === 'completed' ? '완료 (Completed)' : '불확실/추정 (Uncertain)')}
@@ -390,7 +400,7 @@ class App {
       <span style="font-size: 12px; color: #9ca3af; margin-left: 6px;">${project.status_detail || ''}</span>
     `;
     document.getElementById('modal-evidence').innerHTML = `
-      <strong style="color: #60a5fa;">[${project.evidence_type}]</strong> ${project.evidence_ref}
+      <strong style="color: #60a5fa;">[${project.evidence_type || '참고문헌'}]</strong> ${project.evidence_ref || '-'}
     `;
     document.getElementById('modal-summary').textContent = project.summary || '프로젝트 상세 정보가 없습니다.';
 
@@ -417,16 +427,25 @@ class App {
   }
 
   exportDataJson() {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({
-      metadata: this.dataManager.metadata,
-      projects: this.dataManager.rawProjects
-    }, null, 2));
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `semiconductor_rd_network_${this.tracker.formatDate(new Date())}.json`);
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
+    try {
+      const exportPayload = {
+        metadata: this.dataManager.metadata,
+        projects: this.dataManager.rawProjects
+      };
+      const jsonStr = JSON.stringify(exportPayload, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const dateStr = this.tracker ? this.tracker.formatDate(new Date()) : new Date().toISOString().split('T')[0];
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", url);
+      downloadAnchor.setAttribute("download", `semiconductor_rd_network_${dateStr}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Failed to export JSON:', err);
+    }
   }
 }
 

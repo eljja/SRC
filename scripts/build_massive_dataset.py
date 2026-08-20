@@ -800,8 +800,8 @@ def build_massive_authentic_dataset():
         (2022, 2026, "active"),
         (2023, 2026, "active"),
         (2024, 2027, "active"),
-        (2022, 2025, "active"),
-        (2021, 2025, "active"),
+        (2022, 2025, "completed"),
+        (2021, 2025, "completed"),
         (2020, 2024, "completed"),
         (2019, 2023, "completed"),
         (2018, 2022, "completed"),
@@ -822,7 +822,8 @@ def build_massive_authentic_dataset():
             fdisplay = f"${funding/1000000:.1f}M" if funding >= 1000000 else f"${funding/1000:.0f}K"
             sdetail = f"{sy}~{ey}년 연구 프로그램 ({'현재 활발히 연구 진행 중' if st == 'active' else '과제 성공적 완료'})"
 
-            title = f"{topic_title} - {uni} Advanced Research"
+            title = f"{topic_title} - {uni} ({prof} / {comp})"
+            funding_src = comp if comp == inst else f"{comp} / {inst}"
             
             dataset.append({
                 "id": f"SEMI-PROG-{counter:04d}",
@@ -842,7 +843,7 @@ def build_massive_authentic_dataset():
                 "professor": prof,
                 "co_pis": [],
                 "institute_or_consortium": inst,
-                "funding_source": f"{comp} / {inst}",
+                "funding_source": funding_src,
                 "funding_amount_usd": funding,
                 "funding_display": fdisplay,
                 "start_year": sy,

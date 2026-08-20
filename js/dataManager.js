@@ -158,7 +158,9 @@ class DataManager {
   getUniqueProfessors() {
     const set = new Set();
     this.rawProjects.forEach(p => {
-      if (p.professor) set.add(p.professor.trim());
+      if (p.professor && p.professor !== '-' && p.professor !== '미지정') {
+        set.add(p.professor.trim());
+      }
     });
     return Array.from(set).sort();
   }
@@ -166,7 +168,9 @@ class DataManager {
   getUniqueInstitutes() {
     const set = new Set();
     this.rawProjects.forEach(p => {
-      if (p.institute_or_consortium) set.add(p.institute_or_consortium.trim());
+      if (p.institute_or_consortium && p.institute_or_consortium !== '-' && p.institute_or_consortium !== '해당 없음') {
+        set.add(p.institute_or_consortium.trim());
+      }
     });
     return Array.from(set).sort();
   }
@@ -182,7 +186,7 @@ class DataManager {
       active,
       completed,
       totalFundingUsd: totalFunding,
-      totalFundingFormatted: (totalFunding / 1000000).toFixed(1) + 'M'
+      totalFundingFormatted: '$' + (totalFunding / 1000000).toFixed(1) + 'M'
     };
   }
 
@@ -198,22 +202,26 @@ class DataManager {
     // Domain breakdown
     const categoryCount = {};
 
-    this.rawProjects.forEach(p => {
+    const projectsToCount = this.filteredProjects.length > 0 ? this.filteredProjects : this.rawProjects;
+
+    projectsToCount.forEach(p => {
       if (p.company) {
         p.company.split('/').forEach(c => {
           const item = c.trim();
-          companyCount[item] = (companyCount[item] || 0) + 1;
+          if (item) companyCount[item] = (companyCount[item] || 0) + 1;
         });
       }
       if (p.university) {
-        const item = p.university.trim();
-        uniCount[item] = (uniCount[item] || 0) + 1;
+        p.university.split('/').forEach(u => {
+          const item = u.trim();
+          if (item) uniCount[item] = (uniCount[item] || 0) + 1;
+        });
       }
       if (p.professor && p.professor !== '-' && p.professor !== '미지정') {
         const item = p.professor.trim();
         profCount[item] = (profCount[item] || 0) + 1;
       }
-      if (p.institute_or_consortium) {
+      if (p.institute_or_consortium && p.institute_or_consortium !== '-' && p.institute_or_consortium !== '해당 없음') {
         const item = p.institute_or_consortium.trim();
         instCount[item] = (instCount[item] || 0) + 1;
       }

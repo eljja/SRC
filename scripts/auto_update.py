@@ -41,17 +41,22 @@ def update_statuses(data):
             end_year = start_year + 3
             project['end_year'] = end_year
             
+        project['duration_years'] = max(1, end_year - start_year)
+            
         # Determine status
         old_status = project.get('status')
         if current_year <= end_year:
             new_status = 'active'
-            project['status_detail'] = f"{start_year}~{end_year}년 산학과제로 현재 활성 연구 진행 중"
         else:
             new_status = 'completed'
-            project['status_detail'] = f"{start_year}~{end_year}년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)"
             
         if old_status != new_status:
             project['status'] = new_status
+            if not project.get('status_detail') or '산학과제' in project.get('status_detail', ''):
+                if new_status == 'active':
+                    project['status_detail'] = f"{start_year}~{end_year}년 산학과제로 현재 활성 연구 진행 중"
+                else:
+                    project['status_detail'] = f"{start_year}~{end_year}년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)"
             updated_count += 1
             
     print(f"Updated status for {updated_count} projects based on current year ({current_year}).")

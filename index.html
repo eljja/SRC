@@ -35,27 +35,27 @@
     </div>
 
     <!-- View Switch Tabs -->
-    <div class="view-tabs">
-      <button class="view-tab-btn active" data-view="map">
+    <div class="view-tabs" role="tablist" aria-label="뷰 선택">
+      <button class="view-tab-btn active" role="tab" aria-selected="true" data-view="map">
         <span>🗺️ 세계 지도</span>
       </button>
-      <button class="view-tab-btn" data-view="network">
+      <button class="view-tab-btn" role="tab" aria-selected="false" data-view="network">
         <span>🕸️ 관계망 그래프</span>
       </button>
-      <button class="view-tab-btn" data-view="table">
+      <button class="view-tab-btn" role="tab" aria-selected="false" data-view="table">
         <span>📋 전체 목록</span>
       </button>
-      <button class="view-tab-btn" data-view="analytics">
+      <button class="view-tab-btn" role="tab" aria-selected="false" data-view="analytics">
         <span>📊 통계·랭킹</span>
       </button>
     </div>
 
     <!-- Actions -->
     <div style="display: flex; gap: 0.5rem; align-items: center;">
-      <button class="header-action-btn" id="btn-export-json" title="현재 데이터셋 JSON 다운로드">
+      <button class="header-action-btn" id="btn-export-json" title="현재 데이터셋 JSON 다운로드" aria-label="데이터셋 JSON 다운로드">
         <span>📥 JSON 내보내기</span>
       </button>
-      <a href="https://github.com/eljja/SRC" target="_blank" class="header-action-btn" style="text-decoration: none;" title="GitHub 저장소 바로가기">
+      <a href="https://github.com/eljja/SRC" target="_blank" rel="noopener noreferrer" class="header-action-btn" style="text-decoration: none;" title="GitHub 저장소 바로가기" aria-label="GitHub 저장소 바로가기">
         <span>📂 GitHub</span>
       </a>
     </div>
@@ -69,10 +69,10 @@
       <div class="sidebar-header">
         <!-- Global Search Box -->
         <div class="search-box">
-          <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
           </svg>
-          <input type="text" id="global-search-input" placeholder="기업, 대학, 교수, 연구주제 검색...">
+          <input type="text" id="global-search-input" placeholder="기업, 대학, 교수, 연구주제 검색..." aria-label="글로벌 연구 과제 및 기관 검색">
         </div>
 
         <!-- Real-time Summary Stat Chips -->
@@ -274,15 +274,13 @@
   </div>
 
   <!-- Detailed Project Modal Overlay -->
-  <div class="detail-modal-overlay" id="project-detail-modal-overlay">
+  <div class="detail-modal-overlay" id="project-detail-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="detail-modal">
-      <button class="modal-close-btn" id="modal-close-btn">&times;</button>
+      <button class="modal-close-btn" id="modal-close-btn" aria-label="닫기">&times;</button>
       
       <div class="modal-header">
         <div class="modal-title" id="modal-title">프로젝트 명칭</div>
-        <div class="modal-badge-row">
-          <span class="badge-status badge-active" id="modal-status">진행중</span>
-        </div>
+        <div class="modal-badge-row" id="modal-status"></div>
       </div>
 
       <div class="modal-body">

@@ -35,8 +35,7 @@ class MapView {
       touchZoom: true,
       doubleClickZoom: true,
       boxZoom: true,
-      keyboard: true,
-      tapHold: true
+      keyboard: true
     });
 
     // Add Zoom Control to top right
@@ -81,6 +80,7 @@ class MapView {
     if (!projects || projects.length === 0) return;
 
     const uniqueNodes = new Map();
+    const connectionPairs = new Map();
 
     projects.forEach(p => {
       // 1. University Node
@@ -117,14 +117,25 @@ class MapView {
         uniqueNodes.get(compKey).projects.push(p);
       }
 
-      // 3. Draw curved bezier connection line between University and Company
+      // 3. Aggregate Connection Pairs between Company and University
       if (p.university_lat && p.university_lng && p.company_lat && p.company_lng) {
-        this.drawCurvedConnection(
-          [p.company_lat, p.company_lng],
-          [p.university_lat, p.university_lng],
-          p
-        );
+        const pairKey = `${p.company}__${p.university}`;
+        if (!connectionPairs.has(pairKey)) {
+          connectionPairs.set(pairKey, {
+            company: p.company,
+            university: p.university,
+            companyCoord: [p.company_lat, p.company_lng],
+            universityCoord: [p.university_lat, p.university_lng],
+            projects: []
+          });
+        }
+        connectionPairs.get(pairKey).projects.push(p);
       }
+    });
+
+    // Render bundled curved connection lines
+    connectionPairs.forEach(pair => {
+      this.drawBundledConnection(pair);
     });
 
     // Render Markers for all unique nodes
@@ -135,7 +146,7 @@ class MapView {
 
   drawNodeMarker(node) {
     const isUni = node.type === 'university';
-    const size = Math.min(34, 18 + node.projects.length * 1.5);
+    const size = Math.min(36, 18 + Math.sqrt(node.projects.length) * 3);
     const className = isUni ? 'custom-map-node node-university' : 'custom-map-node node-company';
 
     const customIcon = L.divIcon({
@@ -147,7 +158,8 @@ class MapView {
     const marker = L.marker([node.lat, node.lng], { icon: customIcon });
 
     // Popup Content
-    const projectListHtml = node.projects.slice(0, 4).map(p => `
+    const topProjects = node.projects.slice(0, 4);
+    const projectListHtml = topProjects.map(p => `
       <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 11px;">
         <strong style="color: #60a5fa;">${p.topic}</strong><br/>
         <span style="color: #9ca3af;">${p.professor ? '👨‍🏫 ' + p.professor : ''} (${p.start_year}~${p.end_year})</span><br/>
@@ -156,15 +168,20 @@ class MapView {
       </div>
     `).join('');
 
+    const moreHtml = node.projects.length > 4 
+      ? `<div style="margin-top: 6px; font-size: 10px; color: #9ca3af; text-align: center;">+ 외 ${node.projects.length - 4}개 산학 과제</div>` 
+      : '';
+
     const popupHtml = `
       <div style="min-width: 240px; font-family: inherit;">
         <div style="font-size: 13px; font-weight: 700; color: ${isUni ? '#38bdf8' : '#a78bfa'};">
           ${isUni ? '🏛️ ' : '🏢 '} ${node.name}
         </div>
         <div style="font-size: 11px; color: #9ca3af; margin-bottom: 4px;">
-          📍 ${node.city || ''}, ${node.country || ''} (${node.projects.length}건 산학연 R&D 과제)
+          📍 ${node.city || ''}, ${node.country || ''} (총 ${node.projects.length}건 산학연 R&D 과제)
         </div>
         ${projectListHtml}
+        ${moreHtml}
       </div>
     `;
 
@@ -172,11 +189,11 @@ class MapView {
     this.markersLayer.addLayer(marker);
   }
 
-  drawCurvedConnection(startLatLng, endLatLng, project) {
-    const lat1 = startLatLng[0];
-    const lng1 = startLatLng[1];
-    const lat2 = endLatLng[0];
-    const lng2 = endLatLng[1];
+  drawBundledConnection(pair) {
+    const lat1 = pair.companyCoord[0];
+    const lng1 = pair.companyCoord[1];
+    const lat2 = pair.universityCoord[0];
+    const lng2 = pair.universityCoord[1];
 
     // Compute midpoint and arc curvature offset
     const midLat = (lat1 + lat2) / 2;
@@ -199,30 +216,36 @@ class MapView {
       curvePoints.push([curLat, curLng]);
     }
 
-    const isActive = project.status === 'active';
-    const color = isActive ? '#06b6d4' : '#6b7280';
-    const opacity = isActive ? 0.75 : 0.35;
-    const weight = Math.min(4, Math.max(1.8, (project.funding_amount_usd || 1000000) / 10000000));
+    const hasActive = pair.projects.some(p => p.status === 'active');
+    const color = hasActive ? '#06b6d4' : '#6b7280';
+    const opacity = hasActive ? 0.75 : 0.4;
+    const weight = Math.min(5, Math.max(1.8, 1.5 + Math.sqrt(pair.projects.length) * 0.8));
 
     const polyline = L.polyline(curvePoints, {
       color: color,
       weight: weight,
       opacity: opacity,
-      dashArray: isActive ? '6, 6' : null,
+      dashArray: hasActive ? '6, 6' : null,
       lineCap: 'round'
     });
 
+    const projectSamples = pair.projects.slice(0, 3).map(p => `• ${p.topic} (${p.professor || '미지정'})`).join('<br/>');
+    const extraCount = pair.projects.length > 3 ? `<br/><em>+ 외 ${pair.projects.length - 3}건</em>` : '';
+
     polyline.bindTooltip(`
-      <div style="font-size: 11px;">
-        <strong>${project.company} ↔ ${project.university}</strong><br/>
-        <span>주제: ${project.topic}</span><br/>
-        <span>교수: ${project.professor || '미지정'} (${project.start_year}~${project.end_year})</span>
+      <div style="font-size: 11px; max-width: 260px;">
+        <strong style="color: #60a5fa;">${pair.company} ↔ ${pair.university}</strong>
+        <span style="color: #cbd5e1;">(${pair.projects.length}개 산학 과제)</span><br/>
+        <div style="margin-top: 4px; color: #9ca3af; font-size: 10px;">
+          ${projectSamples}
+          ${extraCount}
+        </div>
       </div>
     `, { sticky: true });
 
     polyline.on('click', () => {
-      if (this.onProjectSelect) {
-        this.onProjectSelect(project.id);
+      if (this.onProjectSelect && pair.projects.length > 0) {
+        this.onProjectSelect(pair.projects[0].id);
       }
     });
 

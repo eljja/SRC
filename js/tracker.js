@@ -10,12 +10,14 @@ class Tracker {
   }
 
   calculateFreshness() {
-    const lastUpdatedStr = this.metadata.last_updated;
+    const lastUpdatedStr = this.metadata && this.metadata.last_updated ? this.metadata.last_updated : this.formatDate(new Date());
     const lastUpdateDate = new Date(lastUpdatedStr);
     
-    // Calculate difference in days
-    const diffTime = Math.abs(this.clientDate - lastUpdateDate);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    let diffDays = 0;
+    if (!isNaN(lastUpdateDate.getTime())) {
+      const diffTime = this.clientDate.getTime() - lastUpdateDate.getTime();
+      diffDays = diffTime > 0 ? Math.floor(diffTime / (1000 * 60 * 60 * 24)) : 0;
+    }
 
     let status = 'fresh';
     let statusText = '최신 상태 (Fresh)';

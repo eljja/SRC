@@ -101,7 +101,7 @@ class NetworkView {
 
     // Build Graph Nodes and Links from projects
     const nodeMap = new Map();
-    const rawLinks = [];
+    const linkMap = new Map(); // "source__target" -> link object
     this.adjacency = new Map();
 
     const addNeighbor = (id1, id2) => {
@@ -113,58 +113,85 @@ class NetworkView {
 
     const getNode = (id, label, type, extra = {}) => {
       if (!nodeMap.has(id)) {
-        nodeMap.set(id, { id, label, type, ...extra, val: 1 });
-      } else {
-        nodeMap.get(id).val += 1;
+        nodeMap.set(id, { id, label, type, projects: [], professors: new Set(), ...extra, val: 0 });
       }
       return nodeMap.get(id);
+    };
+
+    const addLink = (sourceId, targetId, project, linkType = 'collab') => {
+      if (!sourceId || !targetId || sourceId === targetId) return;
+      const key1 = `${sourceId}__${targetId}`;
+      const key2 = `${targetId}__${sourceId}`;
+      const existingKey = linkMap.has(key1) ? key1 : (linkMap.has(key2) ? key2 : null);
+
+      if (existingKey) {
+        const l = linkMap.get(existingKey);
+        l.weight += 1;
+        l.projects.push(project);
+        if (project.status === 'active') l.hasActive = true;
+      } else {
+        linkMap.set(key1, {
+          source: sourceId,
+          target: targetId,
+          weight: 1,
+          hasActive: project.status === 'active',
+          linkType: linkType,
+          projects: [project]
+        });
+      }
+      addNeighbor(sourceId, targetId);
     };
 
     projects.forEach(p => {
       // 1. Company Node
       const compId = `comp_${p.company}`;
-      getNode(compId, p.company, 'company', { rawName: p.company });
+      const compNode = getNode(compId, p.company, 'company', { rawName: p.company });
+      compNode.val += 1;
+      compNode.projects.push(p);
 
-      // 2. University/Professor Node
+      // 2. University Node
       const uniId = `uni_${p.university}`;
-      const uniLabel = p.professor ? `${p.university} (${p.professor})` : p.university;
-      getNode(uniId, uniLabel, 'university', { professor: p.professor, university: p.university, rawName: p.university });
-
-      // 3. Institute / Consortium Node (optional)
-      let instId = null;
-      if (p.institute_or_consortium) {
-        instId = `inst_${p.institute_or_consortium}`;
-        getNode(instId, p.institute_or_consortium, 'institute', { rawName: p.institute_or_consortium });
+      const uniNode = getNode(uniId, p.university, 'university', { rawName: p.university, city: p.university_city, country: p.university_country });
+      uniNode.val += 1;
+      uniNode.projects.push(p);
+      if (p.professor && p.professor !== '-' && p.professor !== '미지정') {
+        uniNode.professors.add(p.professor);
       }
 
-      // 4. Topic Node
-      const topicId = `topic_${p.id}`;
-      getNode(topicId, p.topic, 'topic', { projectId: p.id, category: p.category, projectObj: p, rawName: p.topic });
+      // 3. Category / Domain Node
+      const catId = `cat_${p.category || '기타'}`;
+      const catNode = getNode(catId, p.category || '기타', 'category', { rawName: p.category });
+      catNode.val += 1;
+      catNode.projects.push(p);
 
-      // Links
-      rawLinks.push({ source: compId, target: uniId, status: p.status, projectId: p.id });
-      addNeighbor(compId, uniId);
+      // 4. Institute / Consortium Node (optional)
+      let instId = null;
+      if (p.institute_or_consortium && p.institute_or_consortium !== '-' && p.institute_or_consortium !== '해당 없음') {
+        instId = `inst_${p.institute_or_consortium}`;
+        const instNode = getNode(instId, p.institute_or_consortium, 'institute', { rawName: p.institute_or_consortium });
+        instNode.val += 1;
+        instNode.projects.push(p);
+      }
 
-      rawLinks.push({ source: uniId, target: topicId, status: p.status, projectId: p.id });
-      addNeighbor(uniId, topicId);
+      // Add Links
+      addLink(compId, uniId, p, 'industry-acad');
+      addLink(uniId, catId, p, 'research-domain');
 
       if (instId) {
-        rawLinks.push({ source: compId, target: instId, status: p.status });
-        rawLinks.push({ source: instId, target: uniId, status: p.status });
-        addNeighbor(compId, instId);
-        addNeighbor(instId, uniId);
+        addLink(compId, instId, p, 'consortium');
+        addLink(instId, uniId, p, 'consortium');
       }
     });
 
     this.nodes = Array.from(nodeMap.values());
-    this.links = rawLinks;
+    this.links = Array.from(linkMap.values());
 
     // Color definitions
     const colorScale = {
       company: '#a78bfa',     // Purple
       university: '#38bdf8',  // Cyan/Blue
       institute: '#34d399',   // Emerald
-      topic: '#f59e0b'        // Amber
+      category: '#f59e0b'     // Amber
     };
 
     // Zoom container
@@ -187,12 +214,12 @@ class NetworkView {
       }
     });
 
-    // D3 Force Simulation
+    // D3 Force Simulation (Smooth & performant for ~100 nodes)
     this.simulation = d3.forceSimulation(this.nodes)
-      .force('link', d3.forceLink(this.links).id(d => d.id).distance(65))
-      .force('charge', d3.forceManyBody().strength(-140))
+      .force('link', d3.forceLink(this.links).id(d => d.id).distance(d => 50 + Math.max(10, 80 - d.weight * 2)))
+      .force('charge', d3.forceManyBody().strength(-200))
       .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide().radius(d => 10 + Math.min(d.val * 2, 16)));
+      .force('collision', d3.forceCollide().radius(d => 12 + Math.min(d.val * 0.8, 22)));
 
     // Render Links
     const link = g.append('g')
@@ -201,10 +228,10 @@ class NetworkView {
       .data(this.links)
       .join('line')
       .attr('class', 'network-link')
-      .attr('stroke', d => d.status === 'active' ? '#06b6d4' : '#4b5563')
-      .attr('stroke-opacity', 0.6)
-      .attr('stroke-width', d => d.status === 'active' ? 2 : 1)
-      .attr('stroke-dasharray', d => d.status === 'active' ? '4,4' : null);
+      .attr('stroke', d => d.hasActive ? '#06b6d4' : '#4b5563')
+      .attr('stroke-opacity', 0.65)
+      .attr('stroke-width', d => Math.min(5, Math.max(1.2, 1 + Math.sqrt(d.weight) * 0.8)))
+      .attr('stroke-dasharray', d => d.hasActive ? '4,4' : null);
 
     // Render Nodes Group
     const node = g.append('g')
@@ -232,19 +259,19 @@ class NetworkView {
 
     // Node Circles
     node.append('circle')
-      .attr('r', d => Math.min(22, 7 + d.val * 1.8))
+      .attr('r', d => Math.min(26, 8 + Math.sqrt(d.val) * 2.2))
       .attr('fill', d => colorScale[d.type] || '#9ca3af')
-      .attr('stroke', '#1e293b')
-      .attr('stroke-width', 1.8);
+      .attr('stroke', '#0f172a')
+      .attr('stroke-width', 2);
 
     // Node Labels
     node.append('text')
-      .text(d => d.label.length > 22 ? d.label.slice(0, 20) + '...' : d.label)
-      .attr('x', 12)
+      .text(d => d.label.length > 20 ? d.label.slice(0, 18) + '...' : d.label)
+      .attr('x', d => Math.min(26, 8 + Math.sqrt(d.val) * 2.2) + 4)
       .attr('y', 4)
       .attr('fill', '#f1f5f9')
       .attr('font-size', '10px')
-      .attr('font-weight', '500')
+      .attr('font-weight', '600')
       .attr('font-family', 'sans-serif')
       .style('paint-order', 'stroke fill')
       .style('stroke', '#060910')
@@ -335,18 +362,24 @@ class NetworkView {
       company: '🏢 기업',
       university: '🏛️ 대학교',
       institute: '🌐 연구소/컨소시엄',
-      topic: '🔬 연구주제'
+      category: '🔬 핵심 연구분야'
     };
 
     document.getElementById('hud-name').textContent = node.label;
-    document.getElementById('hud-type-desc').textContent = `${typeIcons[node.type] || '노드'} | 총 ${node.val || 1}건 연계 과제`;
+    
+    let extraDesc = `${typeIcons[node.type] || '노드'} | 총 ${node.val || 1}건 연계 과제`;
+    if (node.professors && node.professors.size > 0) {
+      const profArr = Array.from(node.professors);
+      extraDesc += `<br/><span style="color: #fbbf24; font-size: 11px;">👨‍🏫 참여 교수: ${profArr.slice(0, 3).join(', ')}${profArr.length > 3 ? ` 외 ${profArr.length - 3}명` : ''}</span>`;
+    }
+    document.getElementById('hud-type-desc').innerHTML = extraDesc;
     document.getElementById('hud-conn-count').textContent = neighbors.size;
 
     const colList = document.getElementById('hud-collaborators');
     colList.innerHTML = '';
 
     const neighborNodes = this.nodes.filter(n => neighbors.has(n.id));
-    neighborNodes.slice(0, 15).forEach(n => {
+    neighborNodes.slice(0, 12).forEach(n => {
       const tag = document.createElement('span');
       tag.className = 'hud-tag';
       tag.textContent = n.label;
@@ -359,17 +392,43 @@ class NetworkView {
       colList.appendChild(tag);
     });
 
-    if (node.projectId) {
-      const modalBtn = document.createElement('button');
-      modalBtn.className = 'network-btn';
-      modalBtn.style.marginTop = '6px';
-      modalBtn.style.background = '#3b82f6';
-      modalBtn.style.color = '#fff';
-      modalBtn.textContent = '📄 과제 상세정보 보기';
-      modalBtn.onclick = () => {
-        if (this.onProjectSelect) this.onProjectSelect(node.projectId);
-      };
-      colList.appendChild(modalBtn);
+    if (neighborNodes.length > 12) {
+      const moreTag = document.createElement('span');
+      moreTag.className = 'hud-tag';
+      moreTag.style.opacity = '0.6';
+      moreTag.textContent = `+ 외 ${neighborNodes.length - 12}개 파트너`;
+      colList.appendChild(moreTag);
+    }
+
+    if (node.projects && node.projects.length > 0) {
+      const projContainer = document.createElement('div');
+      projContainer.style.marginTop = '8px';
+      projContainer.style.borderTop = '1px solid rgba(255,255,255,0.1)';
+      projContainer.style.paddingTop = '6px';
+      projContainer.innerHTML = `
+        <div style="font-size: 11px; font-weight: 700; color: #93c5fd; margin-bottom: 4px;">대표 연구과제 (${node.projects.length}건):</div>
+      `;
+
+      node.projects.slice(0, 3).forEach(p => {
+        const item = document.createElement('div');
+        item.style.fontSize = '10px';
+        item.style.color = '#cbd5e1';
+        item.style.marginBottom = '4px';
+        item.style.display = 'flex';
+        item.style.justifyContent = 'space-between';
+        item.style.alignItems = 'center';
+        item.innerHTML = `
+          <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 210px;" title="${p.topic}">• ${p.topic}</span>
+          <button style="background: #3b82f6; border: none; color: #fff; padding: 1px 5px; border-radius: 3px; font-size: 9px; cursor: pointer; flex-shrink: 0;">보기</button>
+        `;
+        item.querySelector('button').onclick = (e) => {
+          e.stopPropagation();
+          if (this.onProjectSelect) this.onProjectSelect(p.id);
+        };
+        projContainer.appendChild(item);
+      });
+
+      colList.appendChild(projContainer);
     }
 
     hud.classList.add('active');
