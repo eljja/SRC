@@ -219,22 +219,41 @@ class App {
 
   renderTableDirectory() {
     const tbody = document.getElementById('table-directory-body');
+    const paginationBar = document.getElementById('table-pagination-bar');
+    const countSummary = document.getElementById('table-count-summary');
     if (!tbody) return;
 
     const list = this.dataManager.filteredProjects;
+    if (countSummary) {
+      countSummary.textContent = `총 ${list.length}개 과제`;
+    }
+
     if (list.length === 0) {
       tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #9ca3af; padding: 2rem;">검색 결과가 없습니다.</td></tr>`;
+      if (paginationBar) paginationBar.innerHTML = '';
       return;
     }
 
-    tbody.innerHTML = list.map(p => `
+    const pageSize = 40;
+    const totalPages = Math.ceil(list.length / pageSize);
+    if (!this.tableCurrentPage || this.tableCurrentPage < 1) this.tableCurrentPage = 1;
+    if (this.tableCurrentPage > totalPages) this.tableCurrentPage = totalPages;
+
+    const startIndex = (this.tableCurrentPage - 1) * pageSize;
+    const pageItems = list.slice(startIndex, startIndex + pageSize);
+
+    tbody.innerHTML = pageItems.map(p => `
       <tr style="cursor: pointer;" onclick="window.app.showProjectModal('${p.id}')">
-        <td><strong style="color: #60a5fa;">${p.topic}</strong><br/><span style="font-size: 11px; color: #9ca3af;">${p.title}</span></td>
+        <td>
+          <strong style="color: #60a5fa;">${p.topic}</strong><br/>
+          <span style="font-size: 11px; color: #9ca3af;">${p.title}</span>
+          ${p.phases && p.phases.length > 1 ? `<span class="hud-tag" style="margin-left: 4px; font-size: 10px; background: rgba(59,130,246,0.3);">${p.phases.length}단계 연계</span>` : ''}
+        </td>
         <td><span style="color: #a78bfa; font-weight: 600;">${p.company}</span></td>
         <td><strong style="color: #38bdf8;">${p.university}</strong></td>
         <td><span style="color: #fbbf24;">${p.professor || '-'}</span></td>
         <td><span style="font-size: 11px; color: #34d399;">${p.institute_or_consortium || '-'}</span></td>
-        <td><span>${p.funding_display || '-'}</span></td>
+        <td><span style="font-weight: 600;">${p.funding_display || '-'}</span></td>
         <td>
           <span class="badge-status ${p.status === 'active' ? 'badge-active' : (p.status === 'completed' ? 'badge-completed' : 'badge-uncertain')}">
             ${p.status === 'active' ? '진행중' : (p.status === 'completed' ? '완료' : '추정')}
@@ -243,6 +262,22 @@ class App {
         </td>
       </tr>
     `).join('');
+
+    // Render Pagination Bar
+    if (paginationBar) {
+      paginationBar.innerHTML = `
+        <button class="page-btn" ${this.tableCurrentPage === 1 ? 'disabled' : ''} onclick="window.app.setTablePage(1)">⏮ 처음</button>
+        <button class="page-btn" ${this.tableCurrentPage === 1 ? 'disabled' : ''} onclick="window.app.setTablePage(${this.tableCurrentPage - 1})">◀ 이전</button>
+        <span class="page-info-label">페이지 ${this.tableCurrentPage} / ${totalPages} (${startIndex + 1}-${Math.min(startIndex + pageSize, list.length)} / 총 ${list.length}건)</span>
+        <button class="page-btn" ${this.tableCurrentPage === totalPages ? 'disabled' : ''} onclick="window.app.setTablePage(${this.tableCurrentPage + 1})">다음 ▶</button>
+        <button class="page-btn" ${this.tableCurrentPage === totalPages ? 'disabled' : ''} onclick="window.app.setTablePage(${totalPages})">⏭ 끝</button>
+      `;
+    }
+  }
+
+  setTablePage(page) {
+    this.tableCurrentPage = page;
+    this.renderTableDirectory();
   }
 
   renderAnalytics() {
@@ -292,6 +327,21 @@ class App {
       <strong style="color: #60a5fa;">[${project.evidence_type}]</strong> ${project.evidence_ref}
     `;
     document.getElementById('modal-summary').textContent = project.summary || '프로젝트 상세 정보가 없습니다.';
+
+    // Render Phases if available
+    const phasesContainer = document.getElementById('modal-phases-container');
+    const phasesList = document.getElementById('modal-phases-list');
+    if (project.phases && project.phases.length > 0) {
+      phasesList.innerHTML = project.phases.map(ph => `
+        <div class="modal-phase-item">
+          <div class="phase-dot"></div>
+          <div class="phase-text">${ph}</div>
+        </div>
+      `).join('');
+      phasesContainer.style.display = 'block';
+    } else {
+      phasesContainer.style.display = 'none';
+    }
 
     document.getElementById('project-detail-modal-overlay').classList.add('active');
   }

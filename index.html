@@ -216,23 +216,30 @@
       <div id="table-view" class="view-container">
         <div class="table-header-row">
           <div class="table-title">글로벌 반도체 산학연 R&D 디렉토리</div>
+          <div id="table-count-summary" style="font-size: 0.82rem; color: var(--text-secondary);">총 0개 과제</div>
         </div>
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>연구 주제 / 프로젝트</th>
-              <th>참여 기업</th>
-              <th>수행 대학교</th>
-              <th>담당 교수 (PI)</th>
-              <th>컨소시엄 / 연구소</th>
-              <th>펀딩 규모</th>
-              <th>진행 상태 / 기간</th>
-            </tr>
-          </thead>
-          <tbody id="table-directory-body">
-            <!-- Rendered by js/app.js -->
-          </tbody>
-        </table>
+        <div class="table-scroll-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>연구 주제 / 프로젝트</th>
+                <th>참여 기업</th>
+                <th>수행 대학교</th>
+                <th>담당 교수 (PI)</th>
+                <th>컨소시엄 / 연구소</th>
+                <th>펀딩 규모</th>
+                <th>진행 상태 / 기간</th>
+              </tr>
+            </thead>
+            <tbody id="table-directory-body">
+              <!-- Rendered by js/app.js -->
+            </tbody>
+          </table>
+        </div>
+        <!-- Table Pagination Bar -->
+        <div class="table-pagination-bar" id="table-pagination-bar">
+          <!-- Rendered dynamically by js/app.js -->
+        </div>
       </div>
 
       <!-- 4. Analytics & Stats View Container -->
@@ -303,6 +310,13 @@
           <div class="field-label">근거 데이터 / 출처</div>
           <div class="field-value" id="modal-evidence" style="font-size: 11px;">-</div>
         </div>
+        
+        <!-- Multi-year Phases Container -->
+        <div class="modal-full-field" id="modal-phases-container" style="display: none;">
+          <div class="field-label">연계 연구 단계 및 타임라인 (Program Phases)</div>
+          <div class="modal-phases-list" id="modal-phases-list"></div>
+        </div>
+
         <div class="modal-full-field">
           <div class="field-label">연구 상세 내용 및 파급 효과</div>
           <div class="field-value" id="modal-summary" style="font-weight: normal; line-height: 1.6; color: #d1d5db;">-</div>
