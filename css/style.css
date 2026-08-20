@@ -390,6 +390,7 @@ header {
   position: relative;
   overflow: hidden;
   background: var(--bg-primary);
+  height: calc(100vh - 64px);
 }
 
 .view-container {
@@ -398,11 +399,39 @@ header {
   position: absolute;
   top: 0;
   left: 0;
-  display: none;
+  display: none !important;
+  pointer-events: none;
 }
 
 .view-container.active {
-  display: block;
+  display: block !important;
+  pointer-events: auto;
+}
+
+#map-view.active {
+  display: block !important;
+  pointer-events: auto;
+}
+
+#network-view.active {
+  display: block !important;
+  pointer-events: auto;
+}
+
+#table-view.active {
+  display: block !important;
+  pointer-events: auto;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+#analytics-view.active {
+  display: grid !important;
+  pointer-events: auto;
+  overflow-y: auto;
+  padding: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
 }
 
 /* Map Container */
@@ -410,6 +439,26 @@ header {
   width: 100%;
   height: 100%;
   background: #060910;
+  z-index: 10;
+}
+
+/* Map Reset View Control */
+.leaflet-control-custom-btn {
+  background: rgba(17, 24, 39, 0.95);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+  padding: 5px 8px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  transition: all 0.2s ease;
+}
+
+.leaflet-control-custom-btn:hover {
+  background: var(--accent-blue);
+  color: white;
 }
 
 /* Custom Leaflet Map Markers & Lines */
@@ -476,6 +525,7 @@ header {
   flex-direction: column;
   gap: 0.4rem;
   font-size: 0.75rem;
+  pointer-events: auto;
 }
 
 .legend-item {
@@ -490,16 +540,23 @@ header {
   border-radius: 50%;
 }
 
-/* Network Graph Container */
+/* Network Graph Container & Controls */
 #network-container {
   width: 100%;
   height: 100%;
   position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #0f172a 0%, #060910 100%);
 }
 
 #network-svg {
   width: 100%;
   height: 100%;
+  cursor: grab;
+}
+
+#network-svg:active {
+  cursor: grabbing;
 }
 
 .network-controls {
@@ -507,8 +564,151 @@ header {
   top: 16px;
   right: 16px;
   display: flex;
-  gap: 0.5rem;
+  gap: 0.4rem;
   z-index: 800;
+  background: rgba(17, 24, 39, 0.85);
+  backdrop-filter: blur(8px);
+  padding: 5px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}
+
+.network-btn {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 0.4rem 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: all 0.2s ease;
+}
+
+.network-btn:hover {
+  background: var(--accent-blue);
+  color: white;
+  border-color: var(--accent-blue);
+}
+
+/* Network Node Focus & Tone-Down (Dimming) Styles */
+.network-node {
+  transition: opacity 0.3s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+
+.network-node circle {
+  transition: r 0.2s ease, stroke 0.2s ease, stroke-width 0.2s ease, filter 0.2s ease;
+}
+
+.network-node text {
+  transition: opacity 0.3s ease, fill 0.2s ease;
+}
+
+.network-link {
+  transition: stroke-opacity 0.3s ease, stroke-width 0.3s ease, stroke 0.3s ease;
+}
+
+/* Dimmed / Tone-Down State */
+.node-dimmed {
+  opacity: 0.12 !important;
+}
+
+.node-dimmed text {
+  opacity: 0 !important;
+}
+
+.link-dimmed {
+  stroke-opacity: 0.03 !important;
+}
+
+/* Highlighted / Focused State */
+.node-selected circle {
+  stroke: #ffffff !important;
+  stroke-width: 3.5px !important;
+  filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.9));
+}
+
+.node-selected text {
+  font-weight: 800 !important;
+  fill: #38bdf8 !important;
+  font-size: 12px !important;
+}
+
+.node-neighbor circle {
+  stroke: #e0f2fe !important;
+  stroke-width: 2.5px !important;
+  filter: drop-shadow(0 0 6px rgba(167, 139, 250, 0.7));
+}
+
+.node-neighbor text {
+  font-weight: 700 !important;
+  fill: #ffffff !important;
+}
+
+.link-highlighted {
+  stroke: #38bdf8 !important;
+  stroke-opacity: 0.95 !important;
+  stroke-width: 2.5px !important;
+}
+
+/* Network Selected Node HUD Info Box */
+.network-hud {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  background: rgba(17, 24, 39, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-glow);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  max-width: 360px;
+  z-index: 800;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+  display: none;
+  flex-direction: column;
+  gap: 0.5rem;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.network-hud.active {
+  display: flex;
+}
+
+.network-hud-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.network-hud-desc {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.network-hud-collaborators {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.3rem;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.hud-tag {
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(30, 41, 59, 0.9);
+  border: 1px solid var(--border-color);
+  color: #cbd5e1;
 }
 
 /* Table Directory View */
@@ -588,9 +788,6 @@ header {
 #analytics-view {
   overflow-y: auto;
   padding: 2rem;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.5rem;
 }
 
 .analytics-card {
