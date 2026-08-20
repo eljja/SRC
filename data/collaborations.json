@@ -1,7 +1,7 @@
 {
   "metadata": {
     "dataset_name": "Global Semiconductor Industry-Academia-Institute R&D Network",
-    "last_updated": "2026-08-21",
+    "last_updated": "2026-08-20",
     "version": "3.1.0",
     "maintainer": "SRC Research Network Observatory",
     "repository": "https://github.com/eljja/SRC",
@@ -44,7 +44,7 @@
       "end_year": 2027,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "JUMP 2.0 5개년 센터 과제로 2D 소자 연구 진행 중",
+      "status_detail": "2023~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "SRC Center Task #3001.001",
       "summary": "2D 소재를 이용한 3D CFET 트랜지스터 구현."
@@ -74,7 +74,7 @@
       "end_year": 2026,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "고전력 질화물 반도체 4개년 산학 연구",
+      "status_detail": "2022~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEEE TED / DARPA Report",
       "summary": "고효율 전력 스위칭용 질화갈륨 헤테로 구조 연구."
@@ -104,7 +104,7 @@
       "end_year": 2026,
       "duration_years": 6,
       "status": "active",
-      "status_detail": "TSMC와 2D FET 및 고밀도 3D SoC 공동 연구 중",
+      "status_detail": "2020~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEDM Paper / TSMC Patent",
       "summary": "2D 소재 기반 초미세 트랜지스터 및 3차원 적층 SoC 원천 기술."
@@ -134,7 +134,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "탄소나노튜브 3개년 연구 성공적 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "Nature Electronics / Patent",
       "summary": "결함 내성을 갖는 탄소나노튜브 기반 고성능 로직 칩셋 개발."
@@ -163,8 +163,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "2D 반도체 접촉저항 혁신 3개년 연구",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEDM 2023 / AMAT Grant",
       "summary": "2D 트랜지스터의 양자 한계 극복 및 초저접촉저항 달성."
@@ -194,7 +194,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "112G 고속 인터페이스 ADC 연구 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "ISSCC / IEEE JSSC",
       "summary": "초고속 칩간 통신용 아날로그-디지털 변환기 설계."
@@ -223,8 +223,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "AI 기반 웨이퍼 결함 검출 알고리즘 연구",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "SPIE Advanced Lithography",
       "summary": "전자빔 및 자외선 간섭계를 통한 2nm 웨이퍼 전면 결함 고속 판별."
@@ -254,7 +254,7 @@
       "end_year": 2023,
       "duration_years": 4,
       "status": "completed",
-      "status_detail": "DARPA ERI 1.0 프로젝트 성공적 완수",
+      "status_detail": "2019~2023년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "DARPA Final Report",
       "summary": "실리콘 기판 위 질화갈륨 파워 소자 모놀리식 집적."
@@ -284,7 +284,7 @@
       "end_year": 2023,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "초고속 양자우물 트랜지스터 3개년 과제",
+      "status_detail": "2020~2023년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEEE TED / IEDM",
       "summary": "초고주파 테라헤르츠 대역 화합물 반도체 트랜지스터 개발."
@@ -313,8 +313,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "엣지 AI 모델 가속 3개년 산학과제",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "ISSCC / ISCA",
       "summary": "저전력 트랜스포머 추론 전용 가속기 반도체 아키텍처."
@@ -344,7 +344,7 @@
       "end_year": 2026,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "양자 포토닉스 인터커넥트 4개년 연구",
+      "status_detail": "2022~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "Nature Photonics",
       "summary": "실리콘 포토닉스 기반 양자 컴퓨터 광학 연결망 구축."
@@ -374,7 +374,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "극저온 큐비트 제어 칩셋 연구 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "ISSCC Paper",
       "summary": "밀리켈빈 환경에서 동작하는 양자 큐비트 제어 CMOS 회로."
@@ -404,7 +404,7 @@
       "end_year": 2027,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "강유전체 음의 정전용량 5개년 연구",
+      "status_detail": "2023~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEDM Paper / Patent",
       "summary": "볼츠만 열역학 한계를 돌파하는 초저전력 강유전체 게이트 소자."
@@ -434,7 +434,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2nm GAA 산포 제어 연구 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEEE EDL / Lam Report",
       "summary": "나노시트 계면 거칠기 및 금속 게이트 일함수 산포 모델링."
@@ -463,8 +463,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "3D 낸드 극저온 원자층 식각 산학 연구",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "JVST B / Patent",
       "summary": "400단 이상 3D 낸드 채널홀 수직 식각 반응 기구 규명."
@@ -494,7 +494,7 @@
       "end_year": 2022,
       "duration_years": 4,
       "status": "completed",
-      "status_detail": "오픈소스 RISC-V 가속기 연구 완료",
+      "status_detail": "2018~2022년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEEE Micro / RISC-V",
       "summary": "임베디드 기기용 저전력 벡터 연산 RISC-V NPU 코어 개발."
@@ -524,7 +524,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "3nm 온칩 전력관리 IC 산학 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "ISSCC / IEEE JSSC",
       "summary": "수직 전력 공급망(BSPDN)과 연동되는 고효율 전압 변환기."
@@ -554,7 +554,7 @@
       "end_year": 2027,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "이종 집적 패키징 및 고밀도 본딩 활성 연구",
+      "status_detail": "2023~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "SRC Center Directory",
       "summary": "서브마이크론 피치 하이브리드 본딩 및 칩렛 아키텍처 열/신호 무결성."
@@ -583,8 +583,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "3차원 DRAM용 옥사이드 반도체 연구",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEDM Paper / Micron",
       "summary": "10nm 이하 평면 DRAM 한계 극복을 위한 3차원 적층 트랜지스터."
@@ -614,7 +614,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "AI 칩렛 내부 미세유로 냉각 연구 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEEE ITherm / Patent",
       "summary": "실리콘 칩렛 뒷면에 미세유로를 직접 가공하는 고발열 수냉 냉각."
@@ -644,7 +644,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "서브미크론 범프 열응력 파괴 해석",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEEE CPMT / SRC Task",
       "summary": "하이브리드 본딩 인터페이스의 열팽창 불일치 응력 해석."
@@ -674,7 +674,7 @@
       "end_year": 2027,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "지능형 센싱 및 뉴로모픽 연산 활성 연구",
+      "status_detail": "2023~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "SRC Project Catalog",
       "summary": "센서 내부에서 직접 초저지연 AI 추론을 수행하는 뉴로모픽 반도체."
@@ -704,7 +704,7 @@
       "end_year": 2026,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "광학 인터포저 및 수냉 집적 패키징 연구",
+      "status_detail": "2022~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEEE ECTC / Nature Comm",
       "summary": "AI 가속기 클러스터용 광학 인터포저와 마이크로 냉각핀 일체형 패키징."
@@ -733,8 +733,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "3D 강유전체 메모리 기반 연산 연구",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEDM Paper",
       "summary": "3차원 적층 FeFET 크로스바 어레이를 통한 아날로그 AI 가속."
@@ -764,7 +764,7 @@
       "end_year": 2027,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "지능형 3D 패키징 및 열/전력 무결성 연구",
+      "status_detail": "2023~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "SRC Center Directory",
       "summary": "AI 고성능 컴퓨팅 모듈을 위한 3D 패키징 및 초소형 전력 분배 아키텍처."
@@ -794,7 +794,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "AI 기반 3D 반도체 EDA 알고리즘 연구",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "ACM/IEEE DAC",
       "summary": "3차원 칩렛의 발열과 배선 지연을 머신러닝으로 자동 최적화하는 EDA 툴."
@@ -824,7 +824,7 @@
       "end_year": 2027,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "클라우드 데이터센터 이종 가속기 5개년 연구",
+      "status_detail": "2023~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "SRC Center Task",
       "summary": "거대언어모델(LLM) 워크로드를 위한 광 스위칭 이종 가속기 엔진."
@@ -853,8 +853,8 @@
       "start_year": 2021,
       "end_year": 2025,
       "duration_years": 4,
-      "status": "active",
-      "status_detail": "GPU 클러스터 광학 인터커넥트 산학 연구",
+      "status": "completed",
+      "status_detail": "2021~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "Nature Photonics",
       "summary": "광 도파로를 칩 내부로 패키징(CPO)하여 구리선 병목을 돌파하는 기술."
@@ -884,7 +884,7 @@
       "end_year": 2027,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "6G 서브테라헤르츠 위상배열 칩셋 연구",
+      "status_detail": "2023~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "SRC Project Catalog",
       "summary": "100Gbps 이상 고속 무선 전송을 지원하는 140GHz 빔포밍 송수신기."
@@ -913,8 +913,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "삼성 파운드리 2nm 이하 후면전력망 연구",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "VLSI Symposium / Patent",
       "summary": "신호선과 전력선을 양면으로 분리하여 전압강하를 40% 줄이는 BSPDN."
@@ -943,8 +943,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "차세대 3D DRAM 루테늄 전극 ALD 연구",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "Nature Materials / Patent",
       "summary": "차세대 3D DRAM 커패시터용 루테늄 박막 증착 메커니즘 규명."
@@ -974,7 +974,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "실리콘 기반 뉴로모픽 소자 연구 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEEE EDL / Patent",
       "summary": "기존 양산 FinFET 라인에서 생산 가능한 인공 시냅스 반도체."
@@ -1003,8 +1003,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "칩렛 인터커넥트 고속 송수신기 연구",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "ISSCC / JSSC",
       "summary": "초저전력으로 112Gbps 신호를 전송하는 칩렛용 다이투다이 PHY 회로."
@@ -1033,8 +1033,8 @@
       "start_year": 2021,
       "end_year": 2025,
       "duration_years": 4,
-      "status": "active",
-      "status_detail": "DRAM 기반 PIM 인공지능 가속 칩셋 개발",
+      "status": "completed",
+      "status_detail": "2021~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "ISSCC DynaPlasia Paper",
       "summary": "메모리 내부에서 직접 거대언어모델 연산을 수행하는 PIM NPU."
@@ -1063,8 +1063,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "3nm GAA 계면 결함 고압 열처리 연구",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEEE EDL / Patent",
       "summary": "고압 중수소 가스로 나노시트 계면 트랩을 치유하는 장비 공정 기술."
@@ -1094,7 +1094,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "HBM 고단 적층 신호/전력 무결성 연구",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEEE ECTC / Patent",
       "summary": "16단 HBM의 TSV 미세 배선 신호 왜곡 및 전력 임피던스 최적화."
@@ -1124,7 +1124,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "스핀 스커미온 소자 연구 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "Nature Nanotech",
       "summary": "스커미온 자기 소용돌이를 이용한 차세대 초고밀도 비휘발성 메모리."
@@ -1154,7 +1154,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "HBM4 하이브리드 본딩 3개년 연구",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEEE ECTC Paper",
       "summary": "마이크로 범프 없이 DRAM을 직접 적층하는 구리 직결 본딩 기술."
@@ -1183,8 +1183,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "고발열 반도체 온칩 열전 냉각 소자 연구",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "Applied Physics Letters",
       "summary": "반도체 핫스팟 부위에 열전 냉각 소자를 일체형으로 집적하는 기술."
@@ -1214,7 +1214,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "HBM TC 본더 장비 틸트 제어 연구 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "KEIT 국책 보고서",
       "summary": "HBM 고단 적층 시 웨이퍼 휨을 억제하는 레이저 보조 초정밀 본딩 기술."
@@ -1244,7 +1244,7 @@
       "end_year": 2024,
       "duration_years": 4,
       "status": "completed",
-      "status_detail": "12인치 2D 소재 합성 4개년 산학 완료",
+      "status_detail": "2020~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "Advanced Materials",
       "summary": "400도 이하 저온에서 12인치 웨이퍼에 2D 박막을 증착하는 BEOL 공정."
@@ -1274,7 +1274,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2D RF 소자 산학 연구 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "Nature Communications",
       "summary": "초고주파 RF 신호 처리를 위한 2D 소재-실리콘 모놀리식 집적."
@@ -1303,8 +1303,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "CXL 광학 인터페이스 클록 복원 회로",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEEE JSSC / ISSCC",
       "summary": "CXL 3.0 광학 메모리 풀링을 위한 초저지터 클록 복원 서브시스템."
@@ -1334,7 +1334,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "무자계 SOT-MRAM 3개년 차세대 메모리 연구",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "Nature Communications",
       "summary": "위상 절연체를 활용하여 쓰기 에너지를 90% 절감한 차세대 SOT-MRAM."
@@ -1364,7 +1364,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "1nm 이하 접촉저항 혁신 3개년 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "Nature Vol. 593 Paper",
       "summary": "반금속 비스무트 전극을 통한 2D 트랜지스터 양자 한계 돌파."
@@ -1393,8 +1393,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "전기차용 질화갈륨 파워 반도체 연구",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEEE TED / TSMC Report",
       "summary": "1200V급 고전압 전기차 인버터용 고효율 GaN 전력 소자."
@@ -1424,7 +1424,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "CoWoS 패키징 신뢰성 산학 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEEE ECTC Best Paper",
       "summary": "AI 가속기와 HBM 집적 시 발생하는 열응력 및 일렉트로마이그레이션 방지."
@@ -1453,8 +1453,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "칩렛 표준 패키징 3개년 과제 활성 진행 중",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEEE ECTC Paper",
       "summary": "스마트폰 AP와 고속 메모리를 칩렛 단위로 연결하는 2.5D Fan-Out 공정."
@@ -1484,7 +1484,7 @@
       "end_year": 2026,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "대만 전역 대학 MPW 셔틀 지원 플랫폼",
+      "status_detail": "2022~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "TSRI Annual Report",
       "summary": "대만 대학 연구진을 위한 TSMC 첨단 공정 칩 시제품 제작 및 검증 서비스."
@@ -1514,7 +1514,7 @@
       "end_year": 2028,
       "duration_years": 5,
       "status": "active",
-      "status_detail": "0.55 High-NA EUV 파일럿 라인 가동 5개년",
+      "status_detail": "2023~2028년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "SPIE Advanced Litho",
       "summary": "2nm 및 1.4nm 로직의 단일 노광 패터닝 수율 및 무기 포토레지스트 검증."
@@ -1544,7 +1544,7 @@
       "end_year": 2026,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "1nm 이하 옹스트롬 노드 로직 검증",
+      "status_detail": "2022~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEDM 2023 Paper",
       "summary": "n형 FET 위에 p형 FET을 수직 적층하여 면적을 50% 줄이는 차세대 CFET."
@@ -1574,7 +1574,7 @@
       "end_year": 2026,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "초저전력 차량용 FD-SOI 공정 활성 진행 중",
+      "status_detail": "2022~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEDM 2023 Platform Paper",
       "summary": "누설전류를 극단적으로 낮추고 백바이어스로 주파수를 동적 제어하는 차량용 칩."
@@ -1604,7 +1604,7 @@
       "end_year": 2034,
       "duration_years": 10,
       "status": "active",
-      "status_detail": "10개년 초장기 차세대 노광/원자단위 계측 협력",
+      "status_detail": "2024~2034년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "ASML Strategic Plan",
       "summary": "0.55 High-NA 장비의 스토캐스틱 결함 측정 알고리즘 및 광학계 고도화."
@@ -1633,8 +1633,8 @@
       "start_year": 2021,
       "end_year": 2025,
       "duration_years": 4,
-      "status": "active",
-      "status_detail": "8인치 SiC 웨이퍼 에피 성장 4개년 과제",
+      "status": "completed",
+      "status_detail": "2021~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEEE ISPSD Paper",
       "summary": "전기차 인버터용 8인치 탄화규소(SiC) 웨이퍼 양산 수율 향상 연구."
@@ -1664,7 +1664,7 @@
       "end_year": 2024,
       "duration_years": 4,
       "status": "completed",
-      "status_detail": "1200V SiC 파워 반도체 단락 신뢰성 완료",
+      "status_detail": "2020~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEEE ISPSD Paper",
       "summary": "전기차 고속 충전기에 탑재되는 SiC 전력 반도체의 고열 내구성 규명."
@@ -1694,7 +1694,7 @@
       "end_year": 2021,
       "duration_years": 4,
       "status": "completed",
-      "status_detail": "압전 박막 MEMS 센서 산학 완료",
+      "status_detail": "2017~2021년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEEE JMEMS Paper",
       "summary": "질화알루미늄스칸듐(AlScN) 박막을 이용한 스마트워치 초음파 센서 칩."
@@ -1724,7 +1724,7 @@
       "end_year": 2022,
       "duration_years": 4,
       "status": "completed",
-      "status_detail": "자율주행용 77GHz 레이더 칩셋 산학 완료",
+      "status_detail": "2018~2022년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEEE RFIC Paper",
       "summary": "22nm FD-SOI 공정의 고속 RF 특성과 임베디드 MRAM을 결합한 레이더 칩."
@@ -1753,8 +1753,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "초저전력 병렬 RISC-V 칩셋 연구",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEEE TCAS / ISSCC",
       "summary": "마이크로와트 전력으로 딥러닝 추론을 수행하는 오픈 아키텍처 NPU."
@@ -1784,7 +1784,7 @@
       "end_year": 2024,
       "duration_years": 5,
       "status": "completed",
-      "status_detail": "하드웨어 보안 침투 방어 CPU 실증 완료",
+      "status_detail": "2019~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEEE Security & Privacy",
       "summary": "메모리 취약점의 70%를 하드웨어 레벨에서 원천 차단하는 CHERI 프로세서."
@@ -1814,7 +1814,7 @@
       "end_year": 2027,
       "duration_years": 5,
       "status": "active",
-      "status_detail": "일본 2nm 양산 파일럿 팹 구축 및 산학 R&D",
+      "status_detail": "2022~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "NEDO Project Announcement",
       "summary": "IBM Albany 나노팹의 2nm GAA 기술을 홋카이도 팹으로 이전하고 최적화."
@@ -1844,7 +1844,7 @@
       "end_year": 2023,
       "duration_years": 6,
       "status": "completed",
-      "status_detail": "스핀 소자 기반 초저전력 캐시 6개년 국책 완료",
+      "status_detail": "2017~2023년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEDM 2021 Paper",
       "summary": "SRAM을 대체할 수 있는 1나노초급 비휘발성 자성 메모리(MRAM) 장비 기술."
@@ -1873,8 +1873,8 @@
       "start_year": 2020,
       "end_year": 2025,
       "duration_years": 5,
-      "status": "active",
-      "status_detail": "수직 자기이방성 터널 접합 산학 연구",
+      "status": "completed",
+      "status_detail": "2020~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEEE Trans. Magnetics",
       "summary": "자성 메모리의 열적 안정성을 10년 이상 유지하는 인터페이스 소재 공정."
@@ -1904,7 +1904,7 @@
       "end_year": 2023,
       "duration_years": 4,
       "status": "completed",
-      "status_detail": "30um 극박 웨이퍼 스텔스 다이싱 완료",
+      "status_detail": "2019~2023년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "Optics Express / Patent",
       "summary": "웨이퍼 내부에 펨토초 레이저를 집광시켜 크랙 없이 칩을 분리하는 절단 기술."
@@ -1933,8 +1933,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "3단 적층 스마트 이미지 센서 산학과제",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "ISSCC 2024 Paper",
       "summary": "화소 어레이, 로직 신호처리 칩, DRAM 메모리를 구리 직결 본딩으로 3단 적층."
@@ -1964,7 +1964,7 @@
       "end_year": 2026,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "중국 국산 대규모 광학 신경망 가속기 연구",
+      "status_detail": "2022~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "Science Advances 2023",
       "summary": "빛의 회절과 간섭을 이용해 거대언어모델 연산을 광속으로 처리하는 텐서 프로세서."
@@ -1994,7 +1994,7 @@
       "end_year": 2024,
       "duration_years": 4,
       "status": "completed",
-      "status_detail": "중국 국산 128단/232단 3D 낸드 식각기 검증",
+      "status_detail": "2020~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "PSST Journal Paper",
       "summary": "외산 식각 장비 대체를 위해 개발된 중국 토종 300mm ICP 식각기 최적화."
@@ -2023,8 +2023,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "중국 국산 초미세 로직 트랜지스터 연구",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEDM Paper / Patent",
       "summary": "서브스레숄드 스윙을 낮춘 차세대 저전력 네거티브 커패시턴스 트랜지스터."
@@ -2054,7 +2054,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2D 소재 기반 세미 플로팅 게이트 메모리",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "Nature Nanotechnology",
       "summary": "원자층 두께의 2D 반도체를 플로팅 게이트에 적용한 비휘발성 메모리 소자."
@@ -2084,7 +2084,7 @@
       "end_year": 2024,
       "duration_years": 4,
       "status": "completed",
-      "status_detail": "3D 수직 저항변화메모리(RRAM) 국책 완료",
+      "status_detail": "2020~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEDM / VLSI / IEEE Paper / Grant",
       "evidence_ref": "IEEE TED / CAS Report",
       "summary": "3차원 크로스바 구조를 통해 테라비트급 집적도를 달성한 ReRAM 메모리."
@@ -2114,7 +2114,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 연구 과제로 현재 활발히 연구 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190069",
       "summary": "엣지 AI 이종 가속기 소프트웨어-하드웨어 협조 설계"
@@ -2143,8 +2143,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "2022~2025년 연구 과제로 현재 활발히 연구 진행 중",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190070",
       "summary": "3nm 공정 고속 메모리 버스 타이밍 보정 회로"
@@ -2174,7 +2174,7 @@
       "end_year": 2026,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2022~2026년 연구 과제로 현재 활발히 연구 진행 중",
+      "status_detail": "2022~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190071",
       "summary": "다이아몬드 기판 집적 고출력 GaN 스위칭 소자"
@@ -2204,7 +2204,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2021~2024년 연구 과제로 과제 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190072",
       "summary": "온칩 중적외선 분광기 실리콘 포토닉스 소자"
@@ -2233,8 +2233,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "2022~2025년 연구 과제로 현재 활발히 연구 진행 중",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190073",
       "summary": "희소 행렬 텐서 연산 가속 공간 컴퓨팅 구조"
@@ -2264,7 +2264,7 @@
       "end_year": 2026,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2022~2026년 연구 과제로 현재 활발히 연구 진행 중",
+      "status_detail": "2022~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190074",
       "summary": "기밀 클라우드 컴퓨팅 하드웨어 신뢰 루트(RoT)"
@@ -2294,7 +2294,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2021~2024년 연구 과제로 과제 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190075",
       "summary": "자가 발전 마이크로 에너지 하베스팅 전력 관리 IC"
@@ -2324,7 +2324,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2021~2024년 연구 과제로 과제 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190076",
       "summary": "위상 절연체 기반 비소산성 나노 배선 연구"
@@ -2353,8 +2353,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "2022~2025년 연구 과제로 현재 활발히 연구 진행 중",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190077",
       "summary": "2nm GAA 나노시트 계면 원자단위 전자단층촬영"
@@ -2384,7 +2384,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2021~2024년 연구 과제로 과제 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190078",
       "summary": "2D 이종접합 초고속 전하 수송 특성 해석"
@@ -2414,7 +2414,7 @@
       "end_year": 2026,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2022~2026년 연구 과제로 현재 활발히 연구 진행 중",
+      "status_detail": "2022~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190079",
       "summary": "심우주 및 극한 환경용 내방사선 반도체"
@@ -2444,7 +2444,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2021~2024년 연구 과제로 과제 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190080",
       "summary": "서브나노와트급 웨이크업 무선 송수신기"
@@ -2474,7 +2474,7 @@
       "end_year": 2026,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2022~2026년 연구 과제로 현재 활발히 연구 진행 중",
+      "status_detail": "2022~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190081",
       "summary": "통합 메모리 아키텍처 기반 그래프 분석 가속"
@@ -2504,7 +2504,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2021~2024년 연구 과제로 과제 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190082",
       "summary": "10GS/s 초고속 시분할 아날로그-디지털 변환기"
@@ -2534,7 +2534,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 연구 과제로 현재 활발히 연구 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190083",
       "summary": "클라우드 마이크로서비스 워크로드 모델링"
@@ -2563,8 +2563,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "2022~2025년 연구 과제로 현재 활발히 연구 진행 중",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190084",
       "summary": "224Gbps 유선 트랜시버 등화기 회로 설계"
@@ -2594,7 +2594,7 @@
       "end_year": 2023,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2020~2023년 연구 과제로 과제 완료",
+      "status_detail": "2020~2023년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190085",
       "summary": "초소형 자율 로봇용 16nm SoC 반도체"
@@ -2623,8 +2623,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "2022~2025년 연구 과제로 현재 활발히 연구 진행 중",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190086",
       "summary": "2nm 노광 친화적 표준 셀 레이아웃 생성기"
@@ -2654,7 +2654,7 @@
       "end_year": 2027,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2023~2027년 연구 과제로 현재 활발히 연구 진행 중",
+      "status_detail": "2023~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190087",
       "summary": "극저온 강유전체 커패시터 큐비트 판독 회로"
@@ -2684,7 +2684,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 연구 과제로 현재 활발히 연구 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190088",
       "summary": "유리 인터포저 패널 레벨 초미세 배선 공정"
@@ -2714,7 +2714,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2021~2024년 연구 과제로 과제 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190089",
       "summary": "원자층 전기도금 구리 확산방지막 공정"
@@ -2743,8 +2743,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "2022~2025년 연구 과제로 현재 활발히 연구 진행 중",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190090",
       "summary": "3nm GAA 공정 RF 고주파 잡음 모델링"
@@ -2774,7 +2774,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2021~2024년 연구 과제로 과제 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190091",
       "summary": "레이저 리프트오프 기반 3D 이종 집적 공정"
@@ -2803,8 +2803,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "2022~2025년 연구 과제로 현재 활발히 연구 진행 중",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190092",
       "summary": "블록공중합체 유도자기조립 10nm 이하 미세 패턴"
@@ -2833,8 +2833,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "2022~2025년 연구 과제로 현재 활발히 연구 진행 중",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190093",
       "summary": "시각 인지 전용 멀티코어 뉴로모픽 프로세서"
@@ -2864,7 +2864,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2021~2024년 연구 과제로 과제 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190094",
       "summary": "유연 실리콘 판독 회로 집적 바이오센서"
@@ -2893,8 +2893,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "2022~2025년 연구 과제로 현재 활발히 연구 진행 중",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190095",
       "summary": "반데르발스 2D 반도체-그래핀 이종접합 소자"
@@ -2923,8 +2923,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "2022~2025년 연구 과제로 현재 활발히 연구 진행 중",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190096",
       "summary": "비휘발성 스핀 트랜지스터 아날로그 인메모리 엔진"
@@ -2954,7 +2954,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 연구 과제로 현재 활발히 연구 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190097",
       "summary": "CXL 광학 메모리 풀링용 실리콘 포토닉스 송수신기"
@@ -2983,8 +2983,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "2022~2025년 연구 과제로 현재 활발히 연구 진행 중",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190098",
       "summary": "강유전체 HfO2 상전이 실시간 원자단위 TEM 분석"
@@ -3014,7 +3014,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2021~2024년 연구 과제로 과제 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190099",
       "summary": "레이저 열처리 산화물 반도체 3D DRAM 트랜지스터"
@@ -3043,8 +3043,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "2022~2025년 연구 과제로 현재 활발히 연구 진행 중",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190100",
       "summary": "초박막 고이동도 산화인듐 BEOL 트랜지스터 ALD"
@@ -3073,8 +3073,8 @@
       "start_year": 2021,
       "end_year": 2025,
       "duration_years": 4,
-      "status": "active",
-      "status_detail": "2021~2025년 연구 과제로 현재 활발히 연구 진행 중",
+      "status": "completed",
+      "status_detail": "2021~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190101",
       "summary": "수직자기이방성 스핀밸브 SOT-MRAM 원천 기술"
@@ -3103,8 +3103,8 @@
       "start_year": 2021,
       "end_year": 2025,
       "duration_years": 4,
-      "status": "active",
-      "status_detail": "2021~2025년 연구 과제로 현재 활발히 연구 진행 중",
+      "status": "completed",
+      "status_detail": "2021~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190102",
       "summary": "5G 기지국용 질화갈륨 RF 전력증폭기 MMIC"
@@ -3134,7 +3134,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2021~2024년 연구 과제로 과제 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190103",
       "summary": "광전자 집적회로용 고효율 2D 광검출기"
@@ -3164,7 +3164,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2021~2024년 연구 과제로 과제 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190104",
       "summary": "5nm 모바일 AI 영상 처리 엔진"
@@ -3193,8 +3193,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "2022~2025년 연구 과제로 현재 활발히 연구 진행 중",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190105",
       "summary": "3D 임베디드 DRAM용 원자층 증착 IGZO 소자"
@@ -3224,7 +3224,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 연구 과제로 현재 활발히 연구 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190106",
       "summary": "2D 모놀리식 상보성 트랜지스터(CFET) 수직 적층"
@@ -3254,7 +3254,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2021~2024년 연구 과제로 과제 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190107",
       "summary": "3nm 이하 미세 핀 식각용 고밀도 플라즈마 진단"
@@ -3284,7 +3284,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2021~2024년 연구 과제로 과제 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190108",
       "summary": "고출력 고주파 GaN HEMT 전력 소자"
@@ -3314,7 +3314,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2021~2024년 연구 과제로 과제 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190109",
       "summary": "서브밀리와트 뉴로모픽 임베디드 프로세서"
@@ -3344,7 +3344,7 @@
       "end_year": 2028,
       "duration_years": 5,
       "status": "active",
-      "status_detail": "2023~2028년 연구 과제로 현재 활발히 연구 진행 중",
+      "status_detail": "2023~2028년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190110",
       "summary": "High-NA EUV 투영 광학계 파면 수차 보정 기술"
@@ -3374,7 +3374,7 @@
       "end_year": 2026,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2022~2026년 연구 과제로 현재 활발히 연구 진행 중",
+      "status_detail": "2022~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190111",
       "summary": "300mm 양산 라인 기반 실리콘 양자점 스핀 큐비트"
@@ -3404,7 +3404,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2021~2024년 연구 과제로 과제 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190112",
       "summary": "트렌치 SiC MOSFET 전기-열적 파괴 시뮬레이션"
@@ -3434,7 +3434,7 @@
       "end_year": 2024,
       "duration_years": 4,
       "status": "completed",
-      "status_detail": "2020~2024년 연구 과제로 과제 완료",
+      "status_detail": "2020~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190113",
       "summary": "28nm FD-SOI 기반 멤리스티브 3D SNN 가속기"
@@ -3464,7 +3464,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2021~2024년 연구 과제로 과제 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190114",
       "summary": "상변화 광전자 비휘발성 메모리 매트릭스"
@@ -3493,8 +3493,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "2022~2025년 연구 과제로 현재 활발히 연구 진행 중",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190115",
       "summary": "테라헤르츠 고속 이미징용 그래핀/2D 광검출기"
@@ -3524,7 +3524,7 @@
       "end_year": 2027,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2023~2027년 연구 과제로 현재 활발히 연구 진행 중",
+      "status_detail": "2023~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190116",
       "summary": "실리콘 나노시트 트랜지스터 캐리어 수송 산란 메커니즘"
@@ -3554,7 +3554,7 @@
       "end_year": 2026,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2022~2026년 연구 과제로 현재 활발히 연구 진행 중",
+      "status_detail": "2022~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190117",
       "summary": "고출력 가간섭성 광 빔 라우팅용 포토닉 크리스탈 레이저"
@@ -3584,7 +3584,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2021~2024년 연구 과제로 과제 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190118",
       "summary": "65nm CMOS 기반 300GHz 테라헤르츠 위상배열 송수신기"
@@ -3614,7 +3614,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2021~2024년 연구 과제로 과제 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190119",
       "summary": "SiC 파워 반도체 다이 어태치용 저온 소결 은 나노 페이스트"
@@ -3643,8 +3643,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "2022~2025년 연구 과제로 현재 활발히 연구 진행 중",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190120",
       "summary": "5nm 게이트 피치 초고성능 탄소나노튜브 CMOS 트랜지스터"
@@ -3673,8 +3673,8 @@
       "start_year": 2022,
       "end_year": 2025,
       "duration_years": 3,
-      "status": "active",
-      "status_detail": "2022~2025년 연구 과제로 현재 활발히 연구 진행 중",
+      "status": "completed",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190121",
       "summary": "인라인 웨이퍼 결함 검출용 광전자 테라헤르츠 센싱"
@@ -3704,7 +3704,7 @@
       "end_year": 2026,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2022~2026년 연구 과제로 현재 활발히 연구 진행 중",
+      "status_detail": "2022~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "IEEE / IEDM / NTIS Grant Record",
       "evidence_ref": "Technical Digest & Grant Ref #20190122",
       "summary": "엣지 거대언어모델 추론용 집적 실리콘 포토닉스 텐서 코어"
@@ -3734,7 +3734,7 @@
       "end_year": 2027,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2024~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2024~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240000",
       "summary": "Cornell University Grace Xing (Huili Xing) 연구팀과 Intel의 Sub-1nm Monolayer MoS2 3D Complementary FET (CFET) Stacks 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -3764,7 +3764,7 @@
       "end_year": 2027,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2023~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240001",
       "summary": "Cornell University Debdeep Jena 연구팀과 Texas Instruments의 Wide-Bandgap AlN/GaN Heterostructure High-Power Switches 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -3794,7 +3794,7 @@
       "end_year": 2027,
       "duration_years": 6,
       "status": "active",
-      "status_detail": "2021~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2021~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240002",
       "summary": "Stanford University H.-S. Philip Wong 연구팀과 TSMC의 Monolithic 3D N3XT Architecture with 2D Transition Metal Dichalcogenides 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -3824,7 +3824,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240003",
       "summary": "Stanford University Subhasish Mitra 연구팀과 Intel의 Carbon Nanotube Complementary Logic with Immunity to Metallic Defects 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -3854,7 +3854,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240004",
       "summary": "Stanford University Eric Pop 연구팀과 Applied Materials (AMAT)의 Low-Resistance Contacts to 2D Semiconductors using Semi-Metallic Semimetals 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -3884,7 +3884,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240005",
       "summary": "Stanford University Boris Murmann 연구팀과 Qualcomm의 Ultra-Low-Power High-Speed SAR ADC for 112Gbps SerDes Interfaces 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -3914,7 +3914,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240006",
       "summary": "Stanford University Gordon Wetzstein 연구팀과 KLA Corporation의 Machine Learning-Enhanced Extreme Ultraviolet Interferometric Defect Metrology 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -3944,7 +3944,7 @@
       "end_year": 2024,
       "duration_years": 4,
       "status": "completed",
-      "status_detail": "2020~2024년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2020~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240007",
       "summary": "MIT Tomás Palacios 연구팀과 Texas Instruments의 GaN-on-Si Monolithic Integrated RF & Power Converter Modules 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -3974,7 +3974,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2021~2024년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240008",
       "summary": "MIT Jesús del Alamo 연구팀과 Intel의 Sub-10nm Gate Length InGaAs Quantum Well Transistors for Terahertz Logic 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4004,7 +4004,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240009",
       "summary": "MIT Vivienne Sze 연구팀과 Qualcomm의 Energy-Efficient Spatial AI Accelerators for Edge Transformer Models 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4034,7 +4034,7 @@
       "end_year": 2027,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2023~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240010",
       "summary": "MIT Dirk Englund 연구팀과 NVIDIA의 Diamond Color Center Quantum Qubit Nodes in Silicon Photonic Circuits 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4064,7 +4064,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240011",
       "summary": "MIT Anantha Chandrakasan 연구팀과 Intel Labs의 Cryogenic Energy-Efficient Neural Controller for Qubit Readout 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4094,7 +4094,7 @@
       "end_year": 2027,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2024~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2024~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240012",
       "summary": "UC Berkeley Sayeef Salahuddin 연구팀과 Samsung Electronics의 Negative Capacitance Hafnia-Zirconia Gate Stacks for Sub-0.4V Logic 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4124,7 +4124,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240013",
       "summary": "UC Berkeley Tsu-Jae King Liu 연구팀과 Lam Research의 Work-Function Variation and Channel Surface Roughness in 2nm GAA Nano-Sheets 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4154,7 +4154,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240014",
       "summary": "UC Berkeley David B. Graves 연구팀과 Lam Research의 Cryogenic Atomic Layer Etching Mechanism for 400-Layer 3D NAND Channels 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4184,7 +4184,7 @@
       "end_year": 2023,
       "duration_years": 4,
       "status": "completed",
-      "status_detail": "2019~2023년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2019~2023년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240015",
       "summary": "UC Berkeley Krste Asanović 연구팀과 Qualcomm의 Open-Architecture RISC-V Neural Core Generator for Custom AI SoCs 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4214,7 +4214,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240016",
       "summary": "UC Berkeley Bora Nikolić 연구팀과 Intel의 Monolithic Buck Converters in 3nm FinFET with 90% Power Efficiency 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4244,7 +4244,7 @@
       "end_year": 2027,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2024~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2024~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240017",
       "summary": "Purdue University Kaushik Roy 연구팀과 Intel의 Center for Heterogeneous Integration in Robust Packaging (CHIRP) 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4274,7 +4274,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240018",
       "summary": "Purdue University Peide Ye (Peter Ye) 연구팀과 Micron Technology의 Atomic Layer Deposited Indium Oxide (In2O3) Transistors for 3D DRAM 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4304,7 +4304,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240019",
       "summary": "Purdue University Suresh V. Garimella 연구팀과 TSMC의 Two-Phase Microchannel Liquid Cooling for 1000W Exascale Processors 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4334,7 +4334,7 @@
       "end_year": 2027,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2024~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2024~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240020",
       "summary": "Purdue University Ganesh Subbarayan 연구팀과 Intel의 Interface Delamination and Creep Modeling in Sub-Micron Copper Bumps 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4364,7 +4364,7 @@
       "end_year": 2027,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2024~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2024~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240021",
       "summary": "Georgia Institute of Technology Arijit Raychowdhury 연구팀과 Sony Semiconductor의 Center on Cognitive Multispectral Sensors (COGNISENSE) 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4394,7 +4394,7 @@
       "end_year": 2027,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2023~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240022",
       "summary": "Georgia Institute of Technology Muhannad Bakir 연구팀과 NVIDIA의 Silicon Nanophotonic Interposer and Fluidic Micro-Pin-Fin Heat Sinks 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4424,7 +4424,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240023",
       "summary": "Georgia Institute of Technology Shimeng Yu 연구팀과 Samsung Electronics의 Monolithic 3D Ferroelectric Compute-in-Memory Neural Architecture 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4454,7 +4454,7 @@
       "end_year": 2027,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2024~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2024~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240024",
       "summary": "UC San Diego (UCSD) Tajana Rosing 연구팀과 Samsung Electronics의 Packaging Research in Intelligent Scaling Modules (PRISM Center) 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4484,7 +4484,7 @@
       "end_year": 2027,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2024~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2024~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240025",
       "summary": "UC San Diego (UCSD) Andrew B. Kahng 연구팀과 Broadcom의 Machine Learning-Driven Floorplanning and Clock Tree Synthesis for 3D ICs 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4514,7 +4514,7 @@
       "end_year": 2027,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2024~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2024~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240026",
       "summary": "University of Illinois Urbana-Champaign (UIUC) Josep Torrellas 연구팀과 Broadcom의 Applications Driving Architectures (ACE Center) for Cloud AI 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4544,7 +4544,7 @@
       "end_year": 2026,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2022~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2022~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240027",
       "summary": "Columbia University Michal Lipson 연구팀과 NVIDIA의 Co-Packaged Optics and Silicon Nitride Resonators for Terabit GPU Links 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4574,7 +4574,7 @@
       "end_year": 2027,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2024~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2024~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240028",
       "summary": "Columbia University Harish Krishnaswamy 연구팀과 Qualcomm의 Center on Ubiquitous Connectivity (CUBIC) 140GHz Sub-THz Transceiver 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4604,7 +4604,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240029",
       "summary": "Seoul National University (서울대학교) Byung-Gook Park (박병국 교수) 연구팀과 Samsung Electronics의 Backside Power Delivery Network (BSPDN) and Nano-TSV Reliability 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4634,7 +4634,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240030",
       "summary": "Seoul National University (서울대학교) Hwang Cheol Seong (황철성 교수) 연구팀과 Samsung Electronics의 Atomic Layer Deposition Mechanism of Ruthenium and High-k Dielectrics for 3D DRAM 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4664,7 +4664,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240031",
       "summary": "Seoul National University (서울대학교) Lee Jong-Ho (이종호 교수) 연구팀과 SK Hynix의 Bulk FinFET-Based Neuromorphic Synaptic Transistor Arrays 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4694,7 +4694,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240032",
       "summary": "Seoul National University (서울대학교) Kim Soo-Hwan (김수환 교수) 연구팀과 Samsung Electronics의 Sub-1pJ/bit 112Gbps Die-to-Die Interconnect PHY for 2.5D Packaging 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4724,7 +4724,7 @@
       "end_year": 2026,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2022~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2022~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240033",
       "summary": "KAIST (한국과학기술원) Hoi-Jun Yoo (유회준 교수) 연구팀과 Samsung Electronics의 Ultra-Low-Power Processing-in-Memory (PIM) for Generative AI Acceleration 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4754,7 +4754,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240034",
       "summary": "KAIST (한국과학기술원) Choi Yang-Kyu (최양규 교수) 연구팀과 HPSP의 High-Pressure Gas Annealing for Sub-3nm GAA Channel Defect Passivation 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4784,7 +4784,7 @@
       "end_year": 2027,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2024~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2024~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240035",
       "summary": "KAIST (한국과학기술원) Kim Jung-Ho (김정호 교수) 연구팀과 SK Hynix의 High-Speed Signal and Power Integrity Design in 16-Hi HBM Packaging 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4814,7 +4814,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240036",
       "summary": "KAIST (한국과학기술원) Kyung-Jin Lee (이경진 교수) 연구팀과 Samsung Electronics의 Magnetic Skyrmion and Domain Wall Movement for Terabit Non-Volatile Logic 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4844,7 +4844,7 @@
       "end_year": 2027,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2024~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2024~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240037",
       "summary": "POSTECH (포항공과대학교) Jang-Sik Lee (이장식 교수) 연구팀과 SK Hynix의 Cu-Cu Direct Hybrid Bonding Interface for 16-Hi / 20-Hi Next-Gen HBM 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4874,7 +4874,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240038",
       "summary": "POSTECH (포항공과대학교) Baek Chang-Ki (백창기 교수) 연구팀과 SK Hynix의 Monolithic Thermoelectric Cooling Arrays Integrated in High-Power Packages 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4904,7 +4904,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240039",
       "summary": "Sungkyunkwan University (SKKU - 성균관대) Jung Seung-Boo (정승부 교수) 연구팀과 한미반도체 (Hanmi Semiconductor)의 Laser-Assisted High-Precision Thermal Compression Bonder for HBM 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4934,7 +4934,7 @@
       "end_year": 2025,
       "duration_years": 4,
       "status": "completed",
-      "status_detail": "2021~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2021~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240040",
       "summary": "Sungkyunkwan University (SKKU - 성균관대) Kim Ki Kang (김기강 교수) 연구팀과 Samsung Electronics의 Wafer-Scale 2D MoS2/WS2 Synthesis by MOCVD at Low Temperatures 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4964,7 +4964,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240041",
       "summary": "Yonsei University (연세대학교) Ahn Jong-Hyun (안종현 교수) 연구팀과 SK Hynix의 Monolithic Integration of 2D Materials with High-Frequency RF Circuits 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -4994,7 +4994,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240042",
       "summary": "Korea University (고려대학교) Kim Chul-Woo (김철우 교수) 연구팀과 SK Hynix의 Low-Power Low-Jitter Clock Recovery Circuit for Optical CXL Transceivers 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5024,7 +5024,7 @@
       "end_year": 2027,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2024~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2024~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240043",
       "summary": "UNIST (울산과학기술원) You Chun-Yeol (유천열 교수) 연구팀과 Samsung Electronics의 Field-Free Spin-Orbit Torque SOT-MRAM with 2D Topological Insulators 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5054,7 +5054,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240044",
       "summary": "National Taiwan University (NTU - 대만국립대) Chee-Wee Liu (劉致為) 연구팀과 TSMC의 Sub-1nm High-Speed Transistors with Semi-Metallic Bismuth Contacts 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5084,7 +5084,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240045",
       "summary": "National Yang Ming Chiao Tung University (NYCU - 양명교통대) Edward Yi Chang (張翼) 연구팀과 TSMC의 GaN-on-Silicon Power Transistors for High-Voltage EV Inverters 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5114,7 +5114,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240046",
       "summary": "National Tsing Hua University (NTHU - 청화대) K.N. Tu 연구팀과 TSMC의 CoWoS Advanced Packaging Thermal Stress & Micro-Bump Electromigration 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5144,7 +5144,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240047",
       "summary": "ITRI (대만 공업기술연구원) Shih-Chieh Chang (張世杰) 연구팀과 MediaTek의 Universal Chiplet Interconnect (UCIe) Compliant Fan-Out Packaging 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5174,7 +5174,7 @@
       "end_year": 2027,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2023~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240048",
       "summary": "TSRI (대만반도체연구중심) Chao-Chiun Wang (王朝群) 연구팀과 TSMC의 Sub-5nm Open-Silicon Multi-Project Wafer (MPW) Shuttle Platform 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5204,7 +5204,7 @@
       "end_year": 2027,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2024~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2024~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240049",
       "summary": "IMEC (벨기에 뢰번) Kurt Ronse (IMEC Director) 연구팀과 ASML의 High-NA (0.55 NA) EUV Lithography Pilot Line and Metal Oxide Resists 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5234,7 +5234,7 @@
       "end_year": 2027,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2023~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240050",
       "summary": "KU Leuven (루벤 가톨릭대) Stefan De Gendt 연구팀과 Intel의 Monolithic 3D Complementary FET (CFET) at A14/A10 Angstrom Nodes 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5264,7 +5264,7 @@
       "end_year": 2027,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2023~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240051",
       "summary": "CEA-Leti (프랑스 원자력청 전자정보기술연구소) Thomas Ernst 연구팀과 STMicroelectronics의 10nm / 7nm FD-SOI with Embedded Phase Change Memory (ePCM) 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5294,7 +5294,7 @@
       "end_year": 2027,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2024~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2024~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240052",
       "summary": "Eindhoven University of Technology (TU/e - 아인트호벤 공대) A.J. den Boef 연구팀과 ASML의 High-NA EUV Stochastic Defect Metrology and Wavefront Optics 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5324,7 +5324,7 @@
       "end_year": 2026,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2022~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2022~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240053",
       "summary": "Fraunhofer FMD / IPMS (독일 프라운호퍼) Peter Schneider 연구팀과 Infineon Technologies의 200mm (8-Inch) Silicon Carbide Epitaxy Defect Passivation 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5354,7 +5354,7 @@
       "end_year": 2025,
       "duration_years": 4,
       "status": "completed",
-      "status_detail": "2021~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2021~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240054",
       "summary": "Technical University of Munich (TUM - 뮌헨 공대) Gerhard Wachutka 연구팀과 Infineon Technologies의 Trench-Gate Silicon Carbide MOSFET Avalanche Breakdown Ruggedness 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5384,7 +5384,7 @@
       "end_year": 2022,
       "duration_years": 4,
       "status": "completed",
-      "status_detail": "2018~2022년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2018~2022년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240055",
       "summary": "EPFL (스위스 로잔 연방공과대학교) Paul Muralt 연구팀과 STMicroelectronics의 Piezoelectric Micromachined Ultrasonic Transducers in AlScN Thin Films 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5414,7 +5414,7 @@
       "end_year": 2023,
       "duration_years": 4,
       "status": "completed",
-      "status_detail": "2019~2023년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2019~2023년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240056",
       "summary": "TU Dresden (드레스덴 공과대학교) Frank Ellinger 연구팀과 GlobalFoundries의 22FDX 22nm Ultra-Low Power 77GHz Millimeter-Wave Radar SoC 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5444,7 +5444,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240057",
       "summary": "ETH Zurich (취리히 연방공과대학교) Luca Benini 연구팀과 GlobalFoundries의 PULP: Parallel Ultra-Low-Power RISC-V Neural Core Engine in 12nm 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5474,7 +5474,7 @@
       "end_year": 2025,
       "duration_years": 5,
       "status": "completed",
-      "status_detail": "2020~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2020~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240058",
       "summary": "University of Cambridge Robert Watson 연구팀과 Arm의 Morello Capability-Based Secure Hardware Processor on CHERI 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5504,7 +5504,7 @@
       "end_year": 2027,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2023~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240059",
       "summary": "The University of Tokyo (도쿄대학교) Takao Someya (染谷 隆夫) 연구팀과 Rapidus의 2nm Gate-All-Around Nano-Sheet Technology Transfer & Co-Optimization 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5534,7 +5534,7 @@
       "end_year": 2024,
       "duration_years": 6,
       "status": "completed",
-      "status_detail": "2018~2024년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2018~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240060",
       "summary": "Tohoku University (도호쿠대학교) Tetsuo Endoh (遠藤 哲郎) 연구팀과 Tokyo Electron (TEL)의 Sub-10nm Ultra-High-Speed STT-MRAM for Last-Level Cache 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5564,7 +5564,7 @@
       "end_year": 2026,
       "duration_years": 5,
       "status": "active",
-      "status_detail": "2021~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2021~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240061",
       "summary": "Tohoku University (도호쿠대학교) Hideo Ohno (大野 英男) 연구팀과 Tokyo Electron (TEL)의 Perpendicular Magnetic Tunnel Junctions with CoFeB-MgO Interface 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5594,7 +5594,7 @@
       "end_year": 2024,
       "duration_years": 4,
       "status": "completed",
-      "status_detail": "2020~2024년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2020~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240062",
       "summary": "AIST (일본 국립산업기술종합연구소 TIA) Dr. Shinya Sakuma 연구팀과 Disco Corporation의 Sub-Surface Stealth Dicing by Ultrafast Laser for Ultra-Thin Wafers 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5624,7 +5624,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240063",
       "summary": "The University of Tokyo (도쿄대학교) Tadahiro Kuroda (黒田 忠広) 연구팀과 Sony Semiconductor의 3D Stacked CMOS Image Sensor with In-Pixel AI Processor 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5654,7 +5654,7 @@
       "end_year": 2027,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2023~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240064",
       "summary": "Tsinghua University (칭화대학교) Lu-Chao Chen (陈鲁朝) 연구팀과 Huawei (HiSilicon)의 All-Optical Large-Scale Neural Processing Chip (Taichi) 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5684,7 +5684,7 @@
       "end_year": 2025,
       "duration_years": 4,
       "status": "completed",
-      "status_detail": "2021~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2021~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240065",
       "summary": "Tsinghua University (칭화대학교) You-Nian Wang (王友年) 연구팀과 NAURA Technology의 High-Density Inductively Coupled Plasma Etcher for 3D NAND 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5714,7 +5714,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240066",
       "summary": "Peking University (베이징대학교) Ru Huang (黄如) 연구팀과 SMIC의 Steep-Slope Transistors and Negative Capacitance FETs in Sub-3nm 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5744,7 +5744,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240067",
       "summary": "Fudan University (푸단대학교) Peng Zhou (周鹏) 연구팀과 SMIC의 Atomically Thin MoS2 Semi-Floating Gate Memory with 10-Year Retention 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5774,7 +5774,7 @@
       "end_year": 2025,
       "duration_years": 4,
       "status": "completed",
-      "status_detail": "2021~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2021~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240068",
       "summary": "Institute of Microelectronics of CAS (IMECAS - 중국과학원) Dr. Ming Liu (刘明) 연구팀과 YMTC의 3D Vertical Crossbar RRAM for In-Memory Pattern Recognition 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5804,7 +5804,7 @@
       "end_year": 2027,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2024~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2024~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240069",
       "summary": "Stanford University Philip Levis 연구팀과 Google의 Hardware-Software Co-Design for Heterogeneous AI Edge Accelerators 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5834,7 +5834,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240070",
       "summary": "Stanford University Mark Horowitz 연구팀과 Intel의 High-Speed Memory Bus Timing Calibration in 3nm FinFET 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5864,7 +5864,7 @@
       "end_year": 2027,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2023~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240071",
       "summary": "Stanford University Srabanti Chowdhury 연구팀과 Texas Instruments의 Diamond-Integrated Wide-Bandgap GaN High-Power Switches 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5894,7 +5894,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240072",
       "summary": "MIT Juejun Hu 연구팀과 Applied Materials (AMAT)의 On-Chip Chalcogenide Mid-Infrared Spectrometer with Integrated Photodetectors 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5924,7 +5924,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240073",
       "summary": "MIT Joel Emer 연구팀과 NVIDIA의 Spatial Hardware Accelerator Architecture for Sparse Matrix Tensor Operations 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5954,7 +5954,7 @@
       "end_year": 2027,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2023~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240074",
       "summary": "UC Berkeley Dawn Song 연구팀과 Intel의 Hardware-Enforced Zero-Trust Security for Confidential Cloud Computing 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -5984,7 +5984,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240075",
       "summary": "UC Berkeley Prabal Dutta 연구팀과 Texas Instruments의 Ultra-Low Power Ambient Sensor Nodes with Micro-Harvesting Power IC 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6014,7 +6014,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240076",
       "summary": "Purdue University Zhihong Chen 연구팀과 Intel의 Topological Insulator Quantum Devices for Non-Dissipative Interconnects 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6044,7 +6044,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240077",
       "summary": "Cornell University David Muller 연구팀과 Applied Materials (AMAT)의 Atomic Electron Tomography of Interface Dislocation in 2nm GAA Nano-Sheets 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6074,7 +6074,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240078",
       "summary": "Cornell University Farhan Rana 연구팀과 Intel Labs의 Ultrafast Carrier Dynamics in 2D Transition Metal Dichalcogenide Heterobilayers 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6104,7 +6104,7 @@
       "end_year": 2027,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2023~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240079",
       "summary": "Georgia Institute of Technology Saibal Mukhopadhyay 연구팀과 Northrop Grumman / TI의 Radiation-Hardened Microelectronics for Hypersonic and Deep-Space Missions 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6134,7 +6134,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240080",
       "summary": "UC San Diego (UCSD) Patrick Mercier 연구팀과 Qualcomm의 Ultra-Low Power Sub-nW Wake-Up Radios for Distributed Sensor Networks 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6164,7 +6164,7 @@
       "end_year": 2027,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2023~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240081",
       "summary": "University of Illinois Urbana-Champaign (UIUC) Wen-Mei Hwu 연구팀과 NVIDIA의 GPU Accelerated Graph Analytics Engine with Unified Memory Architecture 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6194,7 +6194,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240082",
       "summary": "University of Michigan Michael Flynn 연구팀과 Analog Devices / TI의 Low-Power 12-bit 10GS/s Time-Interleaved ADC for 5G Infrastructure 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6224,7 +6224,7 @@
       "end_year": 2027,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2024~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2024~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240083",
       "summary": "UT Austin Lizy John 연구팀과 Intel의 Workload Characterization and Performance Modeling of Cloud Microservices 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6254,7 +6254,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240084",
       "summary": "UCLA Behzad Razavi 연구팀과 Broadcom의 Sub-Terahertz Wireline Transceiver Equalization Techniques for 224Gbps SerDes 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6284,7 +6284,7 @@
       "end_year": 2024,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2021~2024년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2021~2024년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240085",
       "summary": "Harvard University Gu-Yeon Wei 연구팀과 Intel Labs의 Millimeter-Scale Autonomous Robotic Brain SoC in 16nm CMOS 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6314,7 +6314,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240086",
       "summary": "Carnegie Mellon University (CMU) Larry Pileggi 연구팀과 TSMC의 Lithography-Friendly Standard Cell Layout Generation for 2nm Nodes 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6344,7 +6344,7 @@
       "end_year": 2027,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2024~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2024~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240087",
       "summary": "University of Notre Dame Suman Datta 연구팀과 Intel의 Cryogenic Ferroelectric Capacitor Arrays for Quantum Bit Readout 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6374,7 +6374,7 @@
       "end_year": 2027,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2024~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2024~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240088",
       "summary": "Penn State University Venky Sundaram 연구팀과 Applied Materials (AMAT)의 Glass Interposer Panel Processing and Ultra-Fine Line Lithography 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6404,7 +6404,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240089",
       "summary": "Seoul National University (서울대학교) Lee Hyuck-Mo (이혁모 교수) 연구팀과 원익IPS (Wonik IPS)의 Electrochemical Atomic Layer Deposition for Ultra-Thin Copper Barrier Seed 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6434,7 +6434,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240090",
       "summary": "Seoul National University (서울대학교) Shin Hyung-Cheol (신형철 교수) 연구팀과 Samsung Electronics의 RF Transistor Noise Modeling and Extraction for 3nm GAA Technology 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6464,7 +6464,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240091",
       "summary": "KAIST (한국과학기술원) Keon Jae Lee (이건재 교수) 연구팀과 Samsung Electronics의 Laser Lift-Off Process for Flexible Micro-LED and 3D Heterogeneous ICs 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6494,7 +6494,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240092",
       "summary": "KAIST (한국과학기술원) Sang-Ouk Kim (김상욱 교수) 연구팀과 동진쎄미켐 (Dongjin Semichem)의 Directed Self-Assembly (DSA) of Block Copolymers for Sub-10nm EUV Pitch 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6524,7 +6524,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240093",
       "summary": "POSTECH (포항공과대학교) Song Woong-Pyo (송웅표 교수) 연구팀과 SK Hynix의 Multi-Core Neuromorphic Processor Architecture for Vision Perception 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6554,7 +6554,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240094",
       "summary": "Sungkyunkwan University (SKKU - 성균관대) Lee Nae-Eung (이내응 교수) 연구팀과 Samsung Electronics의 Wearable Biosensor Array Integrated with Flexible Silicon Readout Circuit 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6584,7 +6584,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240095",
       "summary": "Sungkyunkwan University (SKKU - 성균관대) Woo Jong Yu (유우종 교수) 연구팀과 Samsung Electronics의 2D Semiconductor-Graphene Van der Waals Heterostructures for Logic 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6614,7 +6614,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240096",
       "summary": "Yonsei University (연세대학교) Min Kyoung-Rok (민경록 교수) 연구팀과 SK Hynix의 Analog In-Memory Computing Engine using Non-Volatile Spin Transistors 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6644,7 +6644,7 @@
       "end_year": 2027,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2024~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2024~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240097",
       "summary": "Korea University (고려대학교) Woo-Young Choi (최우영 교수) 연구팀과 SK Hynix의 Monolithic Silicon Photonics Transceiver for CXL Optical Memory Pooling 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6674,7 +6674,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240098",
       "summary": "UNIST (울산과학기술원) Lee Zonghoon (이종훈 교수) 연구팀과 Samsung Electronics의 In-Situ Atomic Resolution TEM Analysis of Phase Transitions in Ferroelectric HfO2 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6704,7 +6704,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240099",
       "summary": "DGIST (대구경북과학기술원) Kwon Hyuk-Jun (권혁준 교수) 연구팀과 SK Hynix의 Laser-Annealed Oxide Semiconductor Thin-Film Transistors for 3D DRAM 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6734,7 +6734,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240100",
       "summary": "Hanyang University (한양대학교) Park Jin-Seong (박진성 교수) 연구팀과 원익IPS (Wonik IPS)의 Atomic Layer Deposition of Ultra-Thin High-Mobility In2O3 for BEOL Transistors 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6764,7 +6764,7 @@
       "end_year": 2026,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2022~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2022~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240101",
       "summary": "KIST (한국과학기술연구원) Choi Joon-Yeon (최준연 단장) 연구팀과 Samsung Electronics의 Spin-Valves with Perpendicular Magnetic Anisotropy for SOT-MRAM 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6794,7 +6794,7 @@
       "end_year": 2026,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2022~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2022~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240102",
       "summary": "ETRI (한국전자통신연구원) Kang Dong-Seung (강동승 박사) 연구팀과 한화시스템의 Gallium Nitride (GaN) RF Power Amplifier MMIC for 5G Base Stations 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6824,7 +6824,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240103",
       "summary": "National Taiwan University (NTU - 대만국립대) Chih-I Wu (吳志毅) 연구팀과 TSMC의 High-Efficiency 2D Photodetectors for Monolithic Optoelectronic ICs 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6854,7 +6854,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240104",
       "summary": "National Taiwan University (NTU - 대만국립대) Chen-Yi Lee (李鎮宜) 연구팀과 MediaTek의 Low-Power AI Video Processing Engine in 5nm FinFET for Mobile Phones 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6884,7 +6884,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240105",
       "summary": "National Yang Ming Chiao Tung University (NYCU - 양명교통대) Po-Tsun Liu (劉柏村) 연구팀과 MediaTek의 Atomic-Layer Deposited IGZO Transistors for 3D Embedded DRAM 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6914,7 +6914,7 @@
       "end_year": 2027,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2024~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2024~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240106",
       "summary": "National Yang Ming Chiao Tung University (NYCU - 양명교통대) K.P. Huang 연구팀과 TSMC의 Monolithic 3D Complementary FETs using 2D Monolayer Chalcogenides 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6944,7 +6944,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240107",
       "summary": "National Tsing Hua University (NTHU - 청화대) Keh-Chyang Leou (劉克強) 연구팀과 TSMC의 High-Density Inductively Coupled Plasma Diagnosis for Sub-3nm Fin Etching 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -6974,7 +6974,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240108",
       "summary": "National Cheng Kung University (NCKU - 성공대) Ray-Hua Horng (洪瑞華) 연구팀과 Delta Electronics의 High-Power High-Frequency Gallium Nitride High Electron Mobility Transistors 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -7004,7 +7004,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240109",
       "summary": "KU Leuven (루벤 가톨릭대) Marian Verhelst 연구팀과 NXP Semiconductors의 Sub-mW Neuromorphic Embedded Processing in 16nm FinFET 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -7034,7 +7034,7 @@
       "end_year": 2027,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2024~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2024~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240110",
       "summary": "Eindhoven University of Technology (TU/e - 아인트호벤 공대) Peter de Jager 연구팀과 ASML의 Wavefront Distortion Correction in High-NA EUV Projection Optics 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -7064,7 +7064,7 @@
       "end_year": 2027,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2023~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240111",
       "summary": "CEA-Leti (프랑스 원자력청 전자정보기술연구소) Maud Vinet 연구팀과 Intel Labs의 Silicon Quantum Dots Spin Qubits Fabricated on 300mm CMOS Line 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -7094,7 +7094,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240112",
       "summary": "Technical University of Munich (TUM - 뮌헨 공대) Gerhard Wachutka 연구팀과 Infineon Technologies의 Electro-Thermal Breakdown Simulation of Trench SiC MOSFETs 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -7124,7 +7124,7 @@
       "end_year": 2025,
       "duration_years": 4,
       "status": "completed",
-      "status_detail": "2021~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2021~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240113",
       "summary": "EPFL (스위스 로잔 연방공과대학교) Adrian Ionescu 연구팀과 STMicroelectronics의 Memristive 3D Spiking Neural Network Accelerators in 28nm FD-SOI 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -7154,7 +7154,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240114",
       "summary": "University of Oxford Harish Bhaskaran 연구팀과 Intel Labs의 Phase-Change Optoelectronic Non-Volatile Memory Matrices 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -7184,7 +7184,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240115",
       "summary": "RWTH Aachen University Max Lemme 연구팀과 Infineon Technologies의 Graphene & 2D Photodetectors for Terahertz High-Speed Imaging 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -7214,7 +7214,7 @@
       "end_year": 2027,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2024~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2024~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240116",
       "summary": "The University of Tokyo (도쿄대학교) Ken Uchida (内田 建) 연구팀과 Rapidus의 Silicon Nano-Sheet Transistor Transport and Scattering Mechanisms 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -7244,7 +7244,7 @@
       "end_year": 2027,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2023~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240117",
       "summary": "Kyoto University (교토대학교) Susumu Noda (野田 進) 연구팀과 Sony Semiconductor의 Photonic Crystal Lasers for High-Power Coherent Optical Beam Routing 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -7274,7 +7274,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240118",
       "summary": "Tokyo Institute of Technology (도쿄공업대) Kenichi Okada (岡田 健一) 연구팀과 Advantest의 300GHz Terahertz Phased-Array Transceiver in 65nm CMOS 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -7304,7 +7304,7 @@
       "end_year": 2025,
       "duration_years": 3,
       "status": "completed",
-      "status_detail": "2022~2025년 산학 연계 양산 파일럿 라인 검증 완료",
+      "status_detail": "2022~2025년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240119",
       "summary": "Osaka University (오사카대학교) Katsuaki Suganuma (菅沼 克昭) 연구팀과 Infineon Technologies의 Low-Temperature Sintered Ag Nanoparticle Paste for SiC Die Attach 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -7334,7 +7334,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240120",
       "summary": "Peking University (베이징대학교) Lian-Mao Peng (彭练矛) 연구팀과 Huawei (HiSilicon)의 Carbon Nanotube High-Performance CMOS Transistors with 5nm Gate Pitch 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -7364,7 +7364,7 @@
       "end_year": 2026,
       "duration_years": 3,
       "status": "active",
-      "status_detail": "2023~2026년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2026년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240121",
       "summary": "Zhejiang University (저장대학교) Yao-Chun Shen 연구팀과 Zhejiang Lab (즈장연구소)의 Optoelectronic Terahertz Sensing for In-Line Wafer Defect Detection 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
@@ -7394,7 +7394,7 @@
       "end_year": 2027,
       "duration_years": 4,
       "status": "active",
-      "status_detail": "2023~2027년 산학 연계 양산 파일럿 라인 검증 진행 중",
+      "status_detail": "2023~2027년 산학과제로 현재 활성 연구 진행 중",
       "evidence_type": "Joint Paper / Follow-up Grant",
       "evidence_ref": "IEEE Transactions on Electron Devices (TED) Vol. 72 & Patent #20240122",
       "summary": "Zhejiang Lab (즈장연구소) Dr. Wei Wang 연구팀과 Huawei (HiSilicon)의 Integrated Silicon Photonics Tensor Core Processor for Edge LLM Inference 원천 기술을 300mm 파일럿 팹 라인에 실증 적용하기 위한 후속 연계 과제임."
