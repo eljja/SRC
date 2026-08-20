@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Global Semiconductor R&D Observatory | 산학연 R&D 협력 지도 & 연결망</title>
+  
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  
+  <!-- Custom App Styles -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- D3.js v7 & Leaflet.js -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Header Bar -->
+  <header>
+    <div class="brand-section">
+      <div class="brand-logo">
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 0 0 2.25-2.25V5.25a2.25 2.25 0 0 0-2.25-2.25H6.75A2.25 2.25 0 0 0 4.5 5.25v13.5A2.25 2.25 0 0 0 6.75 21Z" />
+        </svg>
+        <span>SRC Semi-Observatory</span>
+      </div>
+      <span class="brand-tagline">글로벌 반도체 산학연(産學研) R&D 협력 지도 및 상호 연결망</span>
+    </div>
+
+    <!-- Freshness Tracker & Live Date Badge -->
+    <div class="header-meta-section" id="header-freshness-badge-container">
+      <!-- Injected by js/tracker.js -->
+    </div>
+
+    <!-- View Switch Tabs -->
+    <div class="view-tabs">
+      <button class="view-tab-btn active" data-view="map">
+        <span>🗺️ 세계 지도</span>
+      </button>
+      <button class="view-tab-btn" data-view="network">
+        <span>🕸️ 관계망 그래프</span>
+      </button>
+      <button class="view-tab-btn" data-view="table">
+        <span>📋 전체 목록</span>
+      </button>
+      <button class="view-tab-btn" data-view="analytics">
+        <span>📊 통계·랭킹</span>
+      </button>
+    </div>
+
+    <!-- Actions -->
+    <div style="display: flex; gap: 0.5rem; align-items: center;">
+      <button class="header-action-btn" id="btn-export-json" title="현재 데이터셋 JSON 다운로드">
+        <span>📥 JSON 내보내기</span>
+      </button>
+      <a href="https://github.com/eljja/SRC" target="_blank" class="header-action-btn" style="text-decoration: none;" title="GitHub 저장소 바로가기">
+        <span>📂 GitHub</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- App Main Container -->
+  <div class="app-container">
+    
+    <!-- Sidebar Control Panel -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <!-- Global Search Box -->
+        <div class="search-box">
+          <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+          </svg>
+          <input type="text" id="global-search-input" placeholder="기업, 대학, 교수, 연구주제 검색...">
+        </div>
+
+        <!-- Real-time Summary Stat Chips -->
+        <div class="stats-summary-bar">
+          <div class="stat-chip">
+            <div class="stat-chip-number" id="stat-total-count">0</div>
+            <div class="stat-chip-label">조사 과제수</div>
+          </div>
+          <div class="stat-chip">
+            <div class="stat-chip-number" id="stat-active-count" style="color: #34d399;">0</div>
+            <div class="stat-chip-label">현재 진행중</div>
+          </div>
+          <div class="stat-chip">
+            <div class="stat-chip-number" id="stat-funding-total" style="color: #fbbf24;">$0M</div>
+            <div class="stat-chip-label">총 펀딩규모</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Sections -->
+      <div class="filter-accordion">
+        
+        <!-- Status Filter Pills -->
+        <div class="filter-group">
+          <div class="filter-title">
+            <span>과제 진행 상태</span>
+            <span style="font-size: 10px; color: var(--text-muted);">3년 주기 산학</span>
+          </div>
+          <div class="status-pill-group">
+            <div class="status-pill active" data-status="all">전체</div>
+            <div class="status-pill" data-status="active">🟢 진행중</div>
+            <div class="status-pill" data-status="completed">⚪ 완료</div>
+          </div>
+        </div>
+
+        <!-- Company Filter -->
+        <div class="filter-group">
+          <div class="filter-title">
+            <span>참여 / 발주 기업 (Company)</span>
+          </div>
+          <select id="filter-company" class="filter-select">
+            <option value="all">전체 기업 (All Companies)</option>
+          </select>
+        </div>
+
+        <!-- University Filter -->
+        <div class="filter-group">
+          <div class="filter-title">
+            <span>수행 대학 (University)</span>
+          </div>
+          <select id="filter-university" class="filter-select">
+            <option value="all">전체 대학교 (All Universities)</option>
+          </select>
+        </div>
+
+        <!-- Professor Filter -->
+        <div class="filter-group">
+          <div class="filter-title">
+            <span>담당 교수 / 연구책임자 (PI)</span>
+          </div>
+          <select id="filter-professor" class="filter-select">
+            <option value="all">전체 교수 / PI (All Professors)</option>
+          </select>
+        </div>
+
+        <!-- Institute / Consortium Filter -->
+        <div class="filter-group">
+          <div class="filter-title">
+            <span>연구소 / 컨소시엄 (Institute / SRC)</span>
+          </div>
+          <select id="filter-institute" class="filter-select">
+            <option value="all">전체 연구소 (All Institutes & Consortia)</option>
+          </select>
+        </div>
+
+        <!-- Research Topic Category -->
+        <div class="filter-group">
+          <div class="filter-title">
+            <span>차세대 기술 분야 (Domain)</span>
+          </div>
+          <select id="filter-category" class="filter-select">
+            <option value="all">전체 기술 분야 (All Categories)</option>
+          </select>
+        </div>
+
+        <!-- Sort By -->
+        <div class="filter-group">
+          <div class="filter-title">
+            <span>정렬 기준 (Sort By)</span>
+          </div>
+          <div class="sort-btn-group">
+            <button class="sort-btn active" data-sort="start_year_desc">최신 연도순</button>
+            <button class="sort-btn" data-sort="funding_desc">펀딩 금액순</button>
+            <button class="sort-btn" data-sort="company">기업명순</button>
+            <button class="sort-btn" data-sort="professor">교수명순</button>
+          </div>
+        </div>
+
+        <!-- Reset Button -->
+        <button id="btn-reset-filters" class="header-action-btn" style="width: 100%; justify-content: center; margin-top: 0.5rem; background: rgba(55, 65, 81, 0.4);">
+          <span>🔄 필터 초기화</span>
+        </button>
+
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="content-area">
+      
+      <!-- 1. Map View Container -->
+      <div id="map-view" class="view-container active">
+        <div id="map-container"></div>
+        <!-- Map Legend -->
+        <div class="map-legend">
+          <div style="font-weight: 700; color: #fff; margin-bottom: 2px;">지도 범례</div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: #38bdf8; box-shadow: 0 0 6px #38bdf8;"></div>
+            <span>대학교 (담당교수 연구실)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: #a78bfa; box-shadow: 0 0 6px #a78bfa;"></div>
+            <span>반도체 기업 (본사/연구소)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: #34d399; box-shadow: 0 0 6px #34d399;"></div>
+            <span>연구소 / 컨소시엄 (IMEC, SRC 등)</span>
+          </div>
+          <div class="legend-item">
+            <div style="width: 16px; height: 2px; background: #06b6d4; border-top: 1px dashed #06b6d4;"></div>
+            <span>진행중 협력 (Active Link)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Network Graph View Container -->
+      <div id="network-view" class="view-container">
+        <div id="network-container"></div>
+      </div>
+
+      <!-- 3. Table Directory View Container -->
+      <div id="table-view" class="view-container">
+        <div class="table-header-row">
+          <div class="table-title">글로벌 반도체 산학연 R&D 디렉토리</div>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>연구 주제 / 프로젝트</th>
+              <th>참여 기업</th>
+              <th>수행 대학교</th>
+              <th>담당 교수 (PI)</th>
+              <th>컨소시엄 / 연구소</th>
+              <th>펀딩 규모</th>
+              <th>진행 상태 / 기간</th>
+            </tr>
+          </thead>
+          <tbody id="table-directory-body">
+            <!-- Rendered by js/app.js -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 4. Analytics & Stats View Container -->
+      <div id="analytics-view" class="view-container">
+        <div class="analytics-card">
+          <div class="card-title">🏢 최다 산학협력 반도체 기업 (Top Companies)</div>
+          <div class="ranking-list" id="analytics-companies-list"></div>
+        </div>
+        <div class="analytics-card">
+          <div class="card-title">🏛️ 최다 연구 수주 대학교 (Top Universities)</div>
+          <div class="ranking-list" id="analytics-unis-list"></div>
+        </div>
+        <div class="analytics-card">
+          <div class="card-title">🌐 주요 컨소시엄 및 연구소 (Top Institutes)</div>
+          <div class="ranking-list" id="analytics-institutes-list"></div>
+        </div>
+        <div class="analytics-card">
+          <div class="card-title">🔬 기술 분야별 연구 비중 (Domain Breakdown)</div>
+          <div class="ranking-list" id="analytics-categories-list"></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Detailed Project Modal Overlay -->
+  <div class="detail-modal-overlay" id="project-detail-modal-overlay">
+    <div class="detail-modal">
+      <button class="modal-close-btn" id="modal-close-btn">&times;</button>
+      
+      <div class="modal-header">
+        <div class="modal-title" id="modal-title">프로젝트 명칭</div>
+        <div class="modal-badge-row">
+          <span class="badge-status badge-active" id="modal-status">진행중</span>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-field">
+          <div class="field-label">연구 핵심 주제</div>
+          <div class="field-value" id="modal-topic" style="color: #60a5fa;">-</div>
+        </div>
+        <div class="modal-field">
+          <div class="field-label">참여 / 발주 기업</div>
+          <div class="field-value" id="modal-company" style="color: #a78bfa;">-</div>
+        </div>
+        <div class="modal-field">
+          <div class="field-label">수행 대학교 및 위치</div>
+          <div class="field-value" id="modal-university" style="color: #38bdf8;">-</div>
+        </div>
+        <div class="modal-field">
+          <div class="field-label">담당 교수 / 연구책임자 (PI)</div>
+          <div class="field-value" id="modal-professor" style="color: #fbbf24;">-</div>
+        </div>
+        <div class="modal-field">
+          <div class="field-label">연구소 / 컨소시엄</div>
+          <div class="field-value" id="modal-institute" style="color: #34d399;">-</div>
+        </div>
+        <div class="modal-field">
+          <div class="field-label">펀딩 규모 및 지원처</div>
+          <div class="field-value" id="modal-funding">-</div>
+        </div>
+        <div class="modal-field">
+          <div class="field-label">연구 수행 기간</div>
+          <div class="field-value" id="modal-period">-</div>
+        </div>
+        <div class="modal-field">
+          <div class="field-label">근거 데이터 / 출처</div>
+          <div class="field-value" id="modal-evidence" style="font-size: 11px;">-</div>
+        </div>
+        <div class="modal-full-field">
+          <div class="field-label">연구 상세 내용 및 파급 효과</div>
+          <div class="field-value" id="modal-summary" style="font-weight: normal; line-height: 1.6; color: #d1d5db;">-</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- App Scripts -->
+  <script src="js/dataManager.js"></script>
+  <script src="js/tracker.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/network.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
