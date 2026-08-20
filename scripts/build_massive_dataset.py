@@ -862,9 +862,9 @@ def build_massive_authentic_dataset():
             })
             counter += 1
 
-            if len(dataset) >= 880:
+            if len(dataset) >= 2000:
                 break
-        if len(dataset) >= 880:
+        if len(dataset) >= 2000:
             break
 
     return dataset
