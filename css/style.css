@@ -876,25 +876,68 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.5rem 0.75rem;
+  padding: 0.55rem 0.85rem;
   background: rgba(10, 14, 23, 0.6);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ranking-item:hover {
+  background: rgba(30, 58, 138, 0.4) !important;
+  border-color: var(--accent-blue) !important;
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.ranking-name {
+  width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: color 0.2s ease;
+}
+
+.ranking-item:hover .ranking-name {
+  color: #38bdf8 !important;
+  font-weight: 700;
 }
 
 .ranking-bar-wrapper {
   flex: 1;
   margin: 0 1rem;
-  height: 6px;
+  height: 7px;
   background: rgba(55, 65, 81, 0.5);
-  border-radius: 3px;
+  border-radius: 4px;
   overflow: hidden;
 }
 
 .ranking-bar {
   height: 100%;
   background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
-  border-radius: 3px;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+.ranking-count-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.ranking-arrow {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.ranking-item:hover .ranking-arrow {
+  color: #38bdf8;
+  transform: translateX(3px);
 }
 
 /* Detail Drawer / Modal */

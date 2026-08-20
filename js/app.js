@@ -283,26 +283,91 @@ class App {
   renderAnalytics() {
     const rankings = this.dataManager.getAnalyticsRankings();
 
-    const renderBarList = (containerId, items) => {
+    const renderBarList = (containerId, items, filterType) => {
       const container = document.getElementById(containerId);
       if (!container || !items || items.length === 0) return;
       const maxVal = Math.max(...items.map(i => i[1]), 1);
 
-      container.innerHTML = items.map(([name, count]) => `
-        <div class="ranking-item">
-          <span style="width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
-          <div class="ranking-bar-wrapper">
-            <div class="ranking-bar" style="width: ${(count / maxVal) * 100}%;"></div>
+      container.innerHTML = items.map(([name, count]) => {
+        const safeName = name.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+        return `
+          <div class="ranking-item" onclick="window.app.filterByAnalyticsItem('${filterType}', '${safeName}')" title="클릭하여 '${name}' 관련 과제 전체 목록으로 이동">
+            <span class="ranking-name">${name}</span>
+            <div class="ranking-bar-wrapper">
+              <div class="ranking-bar" style="width: ${(count / maxVal) * 100}%;"></div>
+            </div>
+            <div class="ranking-count-wrapper">
+              <strong style="color: #06b6d4;">${count}건</strong>
+              <span class="ranking-arrow">➔</span>
+            </div>
           </div>
-          <strong style="color: #06b6d4;">${count}건</strong>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     };
 
-    renderBarList('analytics-companies-list', rankings.topCompanies);
-    renderBarList('analytics-unis-list', rankings.topUniversities);
-    renderBarList('analytics-institutes-list', rankings.topInstitutes);
-    renderBarList('analytics-categories-list', rankings.categoryBreakdown);
+    renderBarList('analytics-companies-list', rankings.topCompanies, 'company');
+    renderBarList('analytics-unis-list', rankings.topUniversities, 'university');
+    renderBarList('analytics-institutes-list', rankings.topInstitutes, 'institute');
+    renderBarList('analytics-categories-list', rankings.categoryBreakdown, 'category');
+  }
+
+  filterByAnalyticsItem(filterType, value) {
+    // 1. Reset all filters and set the selected filter
+    this.dataManager.resetFilters();
+    this.dataManager.setFilter(filterType, value);
+
+    // 2. Sync sidebar form inputs
+    const searchInput = document.getElementById('global-search-input');
+    if (searchInput) searchInput.value = '';
+
+    const selectMap = {
+      company: 'filter-company',
+      university: 'filter-university',
+      professor: 'filter-professor',
+      institute: 'filter-institute',
+      category: 'filter-category'
+    };
+
+    // Reset all dropdowns to 'all'
+    Object.values(selectMap).forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = 'all';
+    });
+
+    // Select the target dropdown option
+    const targetSelectId = selectMap[filterType];
+    if (targetSelectId) {
+      const selectEl = document.getElementById(targetSelectId);
+      if (selectEl) {
+        let found = false;
+        for (let i = 0; i < selectEl.options.length; i++) {
+          if (selectEl.options[i].value === value) {
+            selectEl.selectedIndex = i;
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          const opt = document.createElement('option');
+          opt.value = value;
+          opt.textContent = value;
+          selectEl.appendChild(opt);
+          selectEl.value = value;
+        }
+      }
+    }
+
+    // Reset status pills to 'all'
+    document.querySelectorAll('.status-pill').forEach(p => p.classList.remove('active'));
+    const allPill = document.querySelector('.status-pill[data-status="all"]');
+    if (allPill) allPill.classList.add('active');
+
+    // 3. Reset table pagination to page 1
+    this.tableCurrentPage = 1;
+
+    // 4. Switch view to Table Directory (전체 목록) and render filtered results
+    this.switchView('table');
+    this.updateAllViews();
   }
 
   showProjectModal(projectId) {
