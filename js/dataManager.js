@@ -191,6 +191,8 @@ class DataManager {
     const companyCount = {};
     // Top Universities
     const uniCount = {};
+    // Top Professors / PIs
+    const profCount = {};
     // Top Institutes
     const instCount = {};
     // Domain breakdown
@@ -207,6 +209,10 @@ class DataManager {
         const item = p.university.trim();
         uniCount[item] = (uniCount[item] || 0) + 1;
       }
+      if (p.professor && p.professor !== '-' && p.professor !== '미지정') {
+        const item = p.professor.trim();
+        profCount[item] = (profCount[item] || 0) + 1;
+      }
       if (p.institute_or_consortium) {
         const item = p.institute_or_consortium.trim();
         instCount[item] = (instCount[item] || 0) + 1;
@@ -219,9 +225,10 @@ class DataManager {
     const sortObject = (obj) => Object.entries(obj).sort((a, b) => b[1] - a[1]);
 
     return {
-      topCompanies: sortObject(companyCount).slice(0, 7),
-      topUniversities: sortObject(uniCount).slice(0, 7),
-      topInstitutes: sortObject(instCount).slice(0, 7),
+      topCompanies: sortObject(companyCount).slice(0, 8),
+      topUniversities: sortObject(uniCount).slice(0, 8),
+      topProfessors: sortObject(profCount).slice(0, 8),
+      topInstitutes: sortObject(instCount).slice(0, 8),
       categoryBreakdown: sortObject(categoryCount)
     };
   }

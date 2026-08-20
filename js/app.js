@@ -307,6 +307,7 @@ class App {
 
     renderBarList('analytics-companies-list', rankings.topCompanies, 'company');
     renderBarList('analytics-unis-list', rankings.topUniversities, 'university');
+    renderBarList('analytics-professors-list', rankings.topProfessors, 'professor');
     renderBarList('analytics-institutes-list', rankings.topInstitutes, 'institute');
     renderBarList('analytics-categories-list', rankings.categoryBreakdown, 'category');
   }
