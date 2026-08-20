@@ -447,6 +447,27 @@ class App {
       console.error('Failed to export JSON:', err);
     }
   }
+
+  toggleMapPopupMore(btn) {
+    const container = btn.closest('.map-node-popup-content');
+    if (!container) return;
+    const hiddenItems = container.querySelectorAll('.map-popup-project-item');
+    const isExpanded = btn.getAttribute('data-expanded') === 'true';
+
+    if (isExpanded) {
+      hiddenItems.forEach((item, idx) => {
+        if (idx >= 4) item.style.display = 'none';
+      });
+      btn.setAttribute('data-expanded', 'false');
+      btn.innerHTML = `🔽 + 외 ${hiddenItems.length - 4}개 산학 과제 팝업에서 펼치기`;
+    } else {
+      hiddenItems.forEach(item => {
+        item.style.display = 'block';
+      });
+      btn.setAttribute('data-expanded', 'true');
+      btn.innerHTML = `🔼 목록 접기`;
+    }
+  }
 }
 
 window.addEventListener('DOMContentLoaded', () => {

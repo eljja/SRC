@@ -157,31 +157,52 @@ class MapView {
 
     const marker = L.marker([node.lat, node.lng], { icon: customIcon });
 
-    // Popup Content
-    const topProjects = node.projects.slice(0, 4);
-    const projectListHtml = topProjects.map(p => `
-      <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 11px;">
+    const safeNodeName = node.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    const filterType = isUni ? 'university' : 'company';
+
+    // Projects list (first 4 visible, remaining collapsible)
+    const projectListHtml = node.projects.map((p, idx) => `
+      <div class="map-popup-project-item" style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 11px; ${idx >= 4 ? 'display: none;' : ''}">
         <strong style="color: #60a5fa;">${p.topic}</strong><br/>
         <span style="color: #9ca3af;">${p.professor ? '👨‍🏫 ' + p.professor : ''} (${p.start_year}~${p.end_year})</span><br/>
-        <span class="badge-status ${p.status === 'active' ? 'badge-active' : 'badge-completed'}">${p.status === 'active' ? '진행중' : '완료'}</span>
+        <span class="badge-status ${p.status === 'active' ? 'badge-active' : (p.status === 'completed' ? 'badge-completed' : 'badge-uncertain')}">${p.status === 'active' ? '진행중' : (p.status === 'completed' ? '완료' : '추정')}</span>
         <button onclick="window.app.showProjectModal('${p.id}')" style="background: #3b82f6; border: none; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; cursor: pointer; float: right; margin-top: 2px;">상세보기</button>
       </div>
     `).join('');
 
-    const moreHtml = node.projects.length > 4 
-      ? `<div style="margin-top: 6px; font-size: 10px; color: #9ca3af; text-align: center;">+ 외 ${node.projects.length - 4}개 산학 과제</div>` 
-      : '';
+    const toggleMoreBtn = node.projects.length > 4 ? `
+      <div style="margin-top: 8px; text-align: center;">
+        <button onclick="window.app.toggleMapPopupMore(this)" 
+                style="background: rgba(255,255,255,0.08); border: 1px dashed rgba(255,255,255,0.25); color: #93c5fd; padding: 4px 8px; border-radius: 4px; font-size: 10.5px; cursor: pointer; width: 100%; font-weight: 500;">
+          🔽 + 외 ${node.projects.length - 4}개 산학 과제 팝업에서 펼치기
+        </button>
+      </div>
+    ` : '';
+
+    const filterButtonHtml = `
+      <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.15); text-align: center;">
+        <button onclick="window.app.filterByAnalyticsItem('${filterType}', '${safeNodeName}')" 
+                style="background: rgba(59, 130, 246, 0.25); border: 1px solid #3b82f6; color: #60a5fa; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; width: 100%; transition: all 0.2s;"
+                onmouseover="this.style.background='rgba(59, 130, 246, 0.45)'"
+                onmouseout="this.style.background='rgba(59, 130, 246, 0.25)'">
+          📋 '${node.name}' 전체 과제 (${node.projects.length}건) 목록 필터링 ➔
+        </button>
+      </div>
+    `;
 
     const popupHtml = `
-      <div style="min-width: 240px; font-family: inherit;">
+      <div class="map-node-popup-content" style="min-width: 260px; max-width: 320px; max-height: 380px; overflow-y: auto; font-family: inherit; padding-right: 2px;">
         <div style="font-size: 13px; font-weight: 700; color: ${isUni ? '#38bdf8' : '#a78bfa'};">
           ${isUni ? '🏛️ ' : '🏢 '} ${node.name}
         </div>
         <div style="font-size: 11px; color: #9ca3af; margin-bottom: 4px;">
           📍 ${node.city || ''}, ${node.country || ''} (총 ${node.projects.length}건 산학연 R&D 과제)
         </div>
-        ${projectListHtml}
-        ${moreHtml}
+        <div class="map-popup-projects-list">
+          ${projectListHtml}
+        </div>
+        ${toggleMoreBtn}
+        ${filterButtonHtml}
       </div>
     `;
 
@@ -230,12 +251,12 @@ class MapView {
     });
 
     const projectSamples = pair.projects.slice(0, 3).map(p => `• ${p.topic} (${p.professor || '미지정'})`).join('<br/>');
-    const extraCount = pair.projects.length > 3 ? `<br/><em>+ 외 ${pair.projects.length - 3}건</em>` : '';
+    const extraCount = pair.projects.length > 3 ? `<br/><em>+ 외 ${pair.projects.length - 3}건 (클릭 시 전체 목록)</em>` : '';
 
     polyline.bindTooltip(`
       <div style="font-size: 11px; max-width: 260px;">
         <strong style="color: #60a5fa;">${pair.company} ↔ ${pair.university}</strong>
-        <span style="color: #cbd5e1;">(${pair.projects.length}개 산학 과제)</span><br/>
+        <span style="color: #cbd5e1;">(${pair.projects.length}개 과제)</span><br/>
         <div style="margin-top: 4px; color: #9ca3af; font-size: 10px;">
           ${projectSamples}
           ${extraCount}
@@ -243,11 +264,47 @@ class MapView {
       </div>
     `, { sticky: true });
 
-    polyline.on('click', () => {
-      if (this.onProjectSelect && pair.projects.length > 0) {
-        this.onProjectSelect(pair.projects[0].id);
-      }
-    });
+    const safeComp = pair.company.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    const safeUni = pair.university.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+    const lineProjectsHtml = pair.projects.map((p, idx) => `
+      <div class="map-popup-project-item" style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 11px; ${idx >= 3 ? 'display: none;' : ''}">
+        <strong style="color: #38bdf8;">${p.topic}</strong><br/>
+        <span style="color: #9ca3af;">${p.professor ? '👨‍🏫 ' + p.professor : ''} (${p.start_year}~${p.end_year})</span><br/>
+        <span class="badge-status ${p.status === 'active' ? 'badge-active' : (p.status === 'completed' ? 'badge-completed' : 'badge-uncertain')}">${p.status === 'active' ? '진행중' : (p.status === 'completed' ? '완료' : '추정')}</span>
+        <button onclick="window.app.showProjectModal('${p.id}')" style="background: #3b82f6; border: none; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; cursor: pointer; float: right; margin-top: 2px;">상세보기</button>
+      </div>
+    `).join('');
+
+    const toggleLineMoreBtn = pair.projects.length > 3 ? `
+      <div style="margin-top: 8px; text-align: center;">
+        <button onclick="window.app.toggleMapPopupMore(this)" 
+                style="background: rgba(255,255,255,0.08); border: 1px dashed rgba(255,255,255,0.25); color: #93c5fd; padding: 4px 8px; border-radius: 4px; font-size: 10.5px; cursor: pointer; width: 100%; font-weight: 500;">
+          🔽 + 외 ${pair.projects.length - 3}개 산학 과제 펼치기
+        </button>
+      </div>
+    ` : '';
+
+    const linePopupHtml = `
+      <div class="map-node-popup-content" style="min-width: 260px; max-width: 320px; max-height: 380px; overflow-y: auto; font-family: inherit; padding-right: 2px;">
+        <div style="font-size: 13px; font-weight: 700; color: #60a5fa;">
+          🏢 ${pair.company} ↔ 🏛️ ${pair.university}
+        </div>
+        <div style="font-size: 11px; color: #9ca3af; margin-bottom: 4px;">
+          총 ${pair.projects.length}건의 공동 연구개발 과제
+        </div>
+        <div class="map-popup-projects-list">
+          ${lineProjectsHtml}
+        </div>
+        ${toggleLineMoreBtn}
+        <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.15); display: flex; gap: 4px;">
+          <button onclick="window.app.filterByAnalyticsItem('company', '${safeComp}')" style="flex: 1; background: rgba(167, 139, 250, 0.25); border: 1px solid #a78bfa; color: #c4b5fd; padding: 5px 6px; border-radius: 5px; font-size: 10px; font-weight: 600; cursor: pointer;">🏢 ${pair.company} 목록</button>
+          <button onclick="window.app.filterByAnalyticsItem('university', '${safeUni}')" style="flex: 1; background: rgba(56, 189, 248, 0.25); border: 1px solid #38bdf8; color: #7dd3fc; padding: 5px 6px; border-radius: 5px; font-size: 10px; font-weight: 600; cursor: pointer;">🏛️ ${pair.university} 목록</button>
+        </div>
+      </div>
+    `;
+
+    polyline.bindPopup(linePopupHtml);
 
     this.linesLayer.addLayer(polyline);
   }
