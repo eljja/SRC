@@ -22,7 +22,11 @@ class DataManager {
 
   async loadData() {
     try {
-      const response = await fetch('data/collaborations.json');
+      const cacheBuster = `t=${Date.now()}`;
+      const response = await fetch(`data/collaborations.json?${cacheBuster}`, {
+        cache: 'no-store',
+        headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' }
+      });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
