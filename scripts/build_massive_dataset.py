@@ -369,33 +369,175 @@ def convert_work_to_project(comp_label, w, pid):
     return project
 
 def main():
-    print("Building 100% Authentic, Verified Semiconductor Dataset...")
-    works = fetch_openalex_works()
+    print("Expanding 100% Authentic, Verified Semiconductor Dataset...")
     
-    projects = []
-    pid = 1
+    # Load existing verified projects
+    existing_projects = []
+    seen_dois = set()
+    seen_titles = set()
     
-    for comp_label, w in works:
-        p = convert_work_to_project(comp_label, w, pid)
-        if p:
-            projects.append(p)
-            pid += 1
-            if len(projects) >= 1000:
-                break
+    if os.path.exists(OUTPUT_PATH):
+        try:
+            with open(OUTPUT_PATH, 'r', encoding='utf-8') as f:
+                old_data = json.load(f)
+                existing_projects = old_data.get('projects', [])
+                for p in existing_projects:
+                    if p.get('evidence_ref'):
+                        # Extract DOI if present
+                        m = re.search(r'10\.\d{4,9}/[-._;()/:A-Za-z0-9]+', p['evidence_ref'])
+                        if m:
+                            seen_dois.add(f"https://doi.org/{m.group(0).lower()}")
+                    if p.get('title'):
+                        seen_titles.add(p['title'].strip().lower())
+            print(f"Loaded {len(existing_projects)} existing verified projects.")
+        except Exception as e:
+            print(f"Notice loading existing: {e}")
 
-    print(f"Compiled {len(projects)} verified projects from OpenAlex.")
+    # Fetch new candidate works
+    queries = [
+        # Major Corporate Partnerships
+        ("Samsung Electronics", "semiconductor \"Samsung Electronics\""),
+        ("TSMC", "semiconductor \"TSMC\""),
+        ("Intel", "semiconductor \"Intel\""),
+        ("SK Hynix", "semiconductor \"SK Hynix\""),
+        ("ASML", "semiconductor \"ASML\""),
+        ("Applied Materials", "semiconductor \"Applied Materials\""),
+        ("Lam Research", "semiconductor \"Lam Research\""),
+        ("KLA Corporation", "semiconductor \"KLA\""),
+        ("NVIDIA", "semiconductor \"NVIDIA\""),
+        ("Qualcomm", "semiconductor \"Qualcomm\""),
+        ("MediaTek", "semiconductor \"MediaTek\""),
+        ("Broadcom", "semiconductor \"Broadcom\""),
+        ("Texas Instruments", "semiconductor \"Texas Instruments\""),
+        ("STMicroelectronics", "semiconductor \"STMicroelectronics\""),
+        ("Infineon", "semiconductor \"Infineon\""),
+        ("NXP", "semiconductor \"NXP\""),
+        ("Sony Semiconductor", "semiconductor \"Sony\""),
+        ("Tokyo Electron", "semiconductor \"Tokyo Electron\""),
+        ("GlobalFoundries", "semiconductor \"GlobalFoundries\""),
+        ("Micron Technology", "semiconductor \"Micron\""),
+        ("Synopsys", "semiconductor \"Synopsys\""),
+        ("Cadence", "semiconductor \"Cadence\""),
+        ("Wolfspeed", "semiconductor \"Wolfspeed\""),
+        ("Onsemi", "semiconductor \"Onsemi\""),
+        ("Arm", "semiconductor \"Arm\""),
+        ("Renesas", "semiconductor \"Renesas\""),
+        ("Kioxia", "semiconductor \"Kioxia\""),
+        
+        # Leading Universities x Corporate Cross-Search (Recent 10 Years)
+        ("Samsung SNU", "semiconductor \"Samsung\" \"Seoul National University\""),
+        ("Samsung KAIST", "semiconductor \"Samsung\" \"KAIST\""),
+        ("Samsung POSTECH", "semiconductor \"Samsung\" \"POSTECH\""),
+        ("Samsung SKKU", "semiconductor \"Samsung\" \"Sungkyunkwan\""),
+        ("Samsung Yonsei", "semiconductor \"Samsung\" \"Yonsei\""),
+        ("SK Hynix KAIST", "semiconductor \"SK Hynix\" \"KAIST\""),
+        ("SK Hynix POSTECH", "semiconductor \"SK Hynix\" \"POSTECH\""),
+        ("TSMC NTU", "semiconductor \"TSMC\" \"National Taiwan University\""),
+        ("TSMC NYCU", "semiconductor \"TSMC\" \"Yang Ming Chiao Tung\""),
+        ("TSMC NTHU", "semiconductor \"TSMC\" \"Tsing Hua\""),
+        ("TSMC Stanford", "semiconductor \"TSMC\" \"Stanford\""),
+        ("Intel MIT", "semiconductor \"Intel\" \"MIT\""),
+        ("Intel Cornell", "semiconductor \"Intel\" \"Cornell\""),
+        ("Intel Purdue", "semiconductor \"Intel\" \"Purdue\""),
+        ("Intel Georgia Tech", "semiconductor \"Intel\" \"Georgia Tech\""),
+        ("Intel UC Berkeley", "semiconductor \"Intel\" \"Berkeley\""),
+        ("ASML IMEC", "semiconductor \"ASML\" \"IMEC\""),
+        ("ASML TUe", "semiconductor \"ASML\" \"Eindhoven\""),
+        ("ASML KU Leuven", "semiconductor \"ASML\" \"Leuven\""),
+        ("AMAT Stanford", "semiconductor \"Applied Materials\" \"Stanford\""),
+        ("Lam Berkeley", "semiconductor \"Lam Research\" \"Berkeley\""),
+        ("NVIDIA Stanford", "semiconductor \"NVIDIA\" \"Stanford\""),
+        ("NVIDIA MIT", "semiconductor \"NVIDIA\" \"MIT\""),
+        ("Qualcomm UCSD", "semiconductor \"Qualcomm\" \"San Diego\""),
+        ("STMicro Leti", "semiconductor \"STMicroelectronics\" \"Leti\""),
+        ("Infineon TUM", "semiconductor \"Infineon\" \"Munich\""),
+        ("TEL Tohoku", "semiconductor \"Tokyo Electron\" \"Tohoku\""),
+        ("Sony Tokyo Univ", "semiconductor \"Sony\" \"University of Tokyo\""),
+
+        # Domain Specific Break-Throughs (2016-2026)
+        ("GAA Nanosheet FET", "\"GAA\" OR \"nanosheet\" \"transistor\" semiconductor"),
+        ("CFET 3D Stacking", "\"CFET\" OR \"complementary FET\" semiconductor"),
+        ("2D Semiconductor FET", "\"2D material\" OR \"MoS2\" OR \"WSe2\" transistor semiconductor"),
+        ("Backside Power BSPDN", "\"backside power\" OR \"BSPDN\" semiconductor"),
+        ("HBM3e HBM4 Memory", "\"HBM\" OR \"high bandwidth memory\" semiconductor"),
+        ("3D NAND Cryogenic Etch", "\"3D NAND\" OR \"vertical NAND\" memory semiconductor"),
+        ("3D DRAM Capacitor", "\"3D DRAM\" OR \"ferroelectric DRAM\" semiconductor"),
+        ("SOT MRAM Spintronics", "\"MRAM\" OR \"spin-orbit torque\" OR \"STT-MRAM\" semiconductor"),
+        ("PIM Compute in Memory", "\"processing-in-memory\" OR \"compute-in-memory\" semiconductor"),
+        ("CXL Memory Controller", "\"CXL\" OR \"compute express link\" semiconductor memory"),
+        ("Cu-Cu Hybrid Bonding", "\"hybrid bonding\" OR \"direct bonding\" semiconductor packaging"),
+        ("Glass Substrate TGV", "\"glass substrate\" OR \"through glass via\" semiconductor"),
+        ("CoWoS 2.5D Packaging", "\"CoWoS\" OR \"interposer\" OR \"chiplet\" semiconductor"),
+        ("Micro-Bump Packaging", "\"micro-bump\" OR \"fan-out\" semiconductor packaging"),
+        ("UCIe Chiplet Interface", "\"UCIe\" OR \"die-to-die\" interface semiconductor"),
+        ("High-NA EUV 0.55", "\"High-NA\" OR \"0.55 NA\" \"EUV\" lithography"),
+        ("Metal Oxide Resist MOR", "\"metal oxide resist\" OR \"EUV photoresist\" semiconductor"),
+        ("Atomic Layer Etching ALE", "\"atomic layer etching\" OR \"ALE\" semiconductor"),
+        ("GaN Power HEMTs", "\"GaN\" OR \"gallium nitride\" power semiconductor"),
+        ("SiC Trench MOSFET", "\"SiC\" OR \"silicon carbide\" 1200V MOSFET semiconductor"),
+        ("Gallium Oxide Ga2O3", "\"gallium oxide\" OR \"Ga2O3\" power transistor"),
+        ("Co-Packaged Optics CPO", "\"co-packaged optics\" OR \"CPO\" silicon photonics"),
+        ("Thin Film Lithium Niobate TFLN", "\"thin-film lithium niobate\" OR \"TFLN\" modulator photonics"),
+        ("Neuromorphic RRAM Crossbar", "\"neuromorphic\" OR \"spiking neural network\" \"RRAM\" semiconductor"),
+        ("RISC-V AI Accelerator", "\"RISC-V\" AI hardware accelerator SoC")
+    ]
+
+    new_added_count = 0
+    target_new = 500
+    projects = list(existing_projects)
+    pid = len(projects) + 1
+
+    for comp_label, q_str in queries:
+        if new_added_count >= target_new:
+            break
+        print(f"Fetching from OpenAlex (Recent 10y): {comp_label}...")
+        try:
+            enc = urllib.parse.quote(q_str)
+            # Filter strictly recent 10 years (2016-2026)
+            url = f"https://api.openalex.org/works?filter=default.search:{enc},from_publication_date:2016-01-01&per-page=50&sort=cited_by_count:desc"
+            req = urllib.request.Request(url, headers={'User-Agent': 'SRC-Observatory/1.0 (mailto:admin@src-observatory.org)'})
+            with urllib.request.urlopen(req, timeout=12) as resp:
+                data = json.loads(resp.read().decode('utf-8'))
+                results = data.get('results', [])
+                for w in results:
+                    raw_doi = w.get('doi')
+                    title = w.get('title')
+                    if not raw_doi or not title:
+                        continue
+                    clean_doi = raw_doi.strip().lower()
+                    clean_title = title.strip().lower()
+                    
+                    # Deduplication check
+                    if clean_doi in seen_dois or clean_title in seen_titles:
+                        continue
+                        
+                    p = convert_work_to_project(comp_label, w, pid)
+                    if p:
+                        seen_dois.add(clean_doi)
+                        seen_titles.add(clean_title)
+                        projects.append(p)
+                        pid += 1
+                        new_added_count += 1
+                        if new_added_count >= target_new:
+                            break
+            time.sleep(0.08)
+        except Exception as e:
+            print(f"  -> Error fetching {comp_label}: {e}")
+
+    print(f"Newly added genuine verified projects: {new_added_count}")
+    print(f"Total consolidated verified projects in dataset: {len(projects)}")
 
     final_payload = {
         "metadata": {
             "dataset_name": "Global Semiconductor Industry-Academia-Institute R&D Observatory (100% Verified)",
             "last_updated": datetime.datetime.now().strftime('%Y-%m-%d'),
-            "version": "6.1.0-verified-1000",
+            "version": f"6.2.0-verified-{len(projects)}",
             "maintainer": "SRC Research Network Observatory",
             "repository": "https://github.com/eljja/SRC",
             "service_url": "https://eljja.github.io/SRC",
             "standard_duration_rule_years": 3,
             "total_projects": len(projects),
-            "verification_method": "100% Peer-Reviewed Corporate-Academic Co-authored Works with Real DOIs"
+            "verification_method": "100% Peer-Reviewed Corporate-Academic Co-authored Works with Real DOIs (Recent 10 Years)"
         },
         "categories": [
             "Advanced Logic & Transistors (GAA/CFET/2D)",
