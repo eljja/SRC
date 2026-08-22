@@ -192,6 +192,8 @@ def fetch_openalex_works():
         ("NVIDIA", "semiconductor \"NVIDIA\""),
         ("Qualcomm", "semiconductor \"Qualcomm\""),
         ("MediaTek", "semiconductor \"MediaTek\""),
+        ("Broadcom", "semiconductor \"Broadcom\""),
+        ("Texas Instruments", "semiconductor \"Texas Instruments\""),
         ("STMicroelectronics", "semiconductor \"STMicroelectronics\""),
         ("Infineon", "semiconductor \"Infineon\""),
         ("NXP", "semiconductor \"NXP\""),
@@ -202,11 +204,36 @@ def fetch_openalex_works():
         ("Synopsys", "semiconductor \"Synopsys\""),
         ("Cadence", "semiconductor \"Cadence\""),
         ("Wolfspeed", "semiconductor \"Wolfspeed\""),
-        ("GAA Transistor", "GAA nanosheet semiconductor"),
-        ("HBM 3D NAND", "HBM DRAM 3D NAND semiconductor"),
-        ("Hybrid Bonding", "hybrid bonding chiplet packaging semiconductor"),
-        ("EUV Lithography", "EUV High-NA lithography semiconductor"),
-        ("GaN SiC Power", "GaN SiC power semiconductor")
+        ("Onsemi", "semiconductor \"Onsemi\""),
+        ("Arm", "semiconductor \"Arm\""),
+        ("Renesas", "semiconductor \"Renesas\""),
+        ("Kioxia", "semiconductor \"Kioxia\""),
+        ("GAA Nanosheet FET", "\"GAA\" OR \"nanosheet\" \"transistor\" semiconductor"),
+        ("CFET 3D Stacking", "\"CFET\" OR \"complementary FET\" semiconductor"),
+        ("2D Semiconductor FET", "\"2D material\" OR \"MoS2\" OR \"WSe2\" transistor semiconductor"),
+        ("Backside Power BSPDN", "\"backside power\" OR \"BSPDN\" semiconductor"),
+        ("HBM3e HBM4 Memory", "\"HBM\" OR \"high bandwidth memory\" semiconductor"),
+        ("3D NAND Cryogenic Etch", "\"3D NAND\" OR \"vertical NAND\" memory semiconductor"),
+        ("3D DRAM Capacitor", "\"3D DRAM\" OR \"ferroelectric DRAM\" semiconductor"),
+        ("SOT MRAM Spintronics", "\"MRAM\" OR \"spin-orbit torque\" OR \"STT-MRAM\" semiconductor"),
+        ("PIM Compute in Memory", "\"processing-in-memory\" OR \"compute-in-memory\" semiconductor"),
+        ("CXL Memory Controller", "\"CXL\" OR \"compute express link\" semiconductor memory"),
+        ("Cu-Cu Hybrid Bonding", "\"hybrid bonding\" OR \"direct bonding\" semiconductor packaging"),
+        ("Glass Substrate TGV", "\"glass substrate\" OR \"through glass via\" semiconductor"),
+        ("CoWoS 2.5D Packaging", "\"CoWoS\" OR \"interposer\" OR \"chiplet\" semiconductor"),
+        ("Micro-Bump Packaging", "\"micro-bump\" OR \"fan-out\" semiconductor packaging"),
+        ("UCIe Chiplet Interface", "\"UCIe\" OR \"die-to-die\" interface semiconductor"),
+        ("High-NA EUV 0.55", "\"High-NA\" OR \"0.55 NA\" \"EUV\" lithography"),
+        ("Metal Oxide Resist MOR", "\"metal oxide resist\" OR \"EUV photoresist\" semiconductor"),
+        ("EUV Pellicle Carbon Nanotube", "\"EUV pellicle\" OR \"carbon nanotube pellicle\" semiconductor"),
+        ("Atomic Layer Etching ALE", "\"atomic layer etching\" OR \"ALE\" semiconductor"),
+        ("GaN Power HEMTs", "\"GaN\" OR \"gallium nitride\" power semiconductor"),
+        ("SiC Trench MOSFET", "\"SiC\" OR \"silicon carbide\" 1200V MOSFET semiconductor"),
+        ("Gallium Oxide Ga2O3", "\"gallium oxide\" OR \"Ga2O3\" power transistor"),
+        ("Co-Packaged Optics CPO", "\"co-packaged optics\" OR \"CPO\" silicon photonics"),
+        ("Thin Film Lithium Niobate TFLN", "\"thin-film lithium niobate\" OR \"TFLN\" modulator photonics"),
+        ("Neuromorphic RRAM Crossbar", "\"neuromorphic\" OR \"spiking neural network\" \"RRAM\" semiconductor"),
+        ("RISC-V AI Accelerator", "\"RISC-V\" AI hardware accelerator SoC")
     ]
 
     collected = []
@@ -216,7 +243,7 @@ def fetch_openalex_works():
         print(f"Fetching from OpenAlex: {comp_label}...")
         try:
             enc = urllib.parse.quote(q_str)
-            url = f"https://api.openalex.org/works?filter=default.search:{enc},from_publication_date:2018-01-01&per-page=35&sort=cited_by_count:desc"
+            url = f"https://api.openalex.org/works?filter=default.search:{enc},from_publication_date:2018-01-01&per-page=50&sort=cited_by_count:desc"
             req = urllib.request.Request(url, headers={'User-Agent': 'SRC-Observatory/1.0 (mailto:admin@src-observatory.org)'})
             with urllib.request.urlopen(req, timeout=12) as resp:
                 data = json.loads(resp.read().decode('utf-8'))
@@ -228,7 +255,7 @@ def fetch_openalex_works():
                         continue
                     seen_dois.add(doi)
                     collected.append((comp_label, w))
-            time.sleep(0.12)
+            time.sleep(0.1)
         except Exception as e:
             print(f"  -> Error fetching {comp_label}: {e}")
 
@@ -353,7 +380,7 @@ def main():
         if p:
             projects.append(p)
             pid += 1
-            if len(projects) >= 500:
+            if len(projects) >= 1000:
                 break
 
     print(f"Compiled {len(projects)} verified projects from OpenAlex.")
@@ -362,7 +389,7 @@ def main():
         "metadata": {
             "dataset_name": "Global Semiconductor Industry-Academia-Institute R&D Observatory (100% Verified)",
             "last_updated": datetime.datetime.now().strftime('%Y-%m-%d'),
-            "version": "6.0.0-verified",
+            "version": "6.1.0-verified-1000",
             "maintainer": "SRC Research Network Observatory",
             "repository": "https://github.com/eljja/SRC",
             "service_url": "https://eljja.github.io/SRC",
