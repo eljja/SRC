@@ -6,14 +6,14 @@
   <title>Global Semiconductor R&D Observatory | 산학연 R&D 협력 지도 & 연결망</title>
   
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=7.1.0">
-  <link rel="apple-touch-icon" href="favicon.svg?v=7.1.0">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=7.2.0">
+  <link rel="apple-touch-icon" href="favicon.svg?v=7.2.0">
   
   <!-- Leaflet Map CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   
   <!-- Custom App Styles -->
-  <link rel="stylesheet" href="css/style.css?v=7.1.0">
+  <link rel="stylesheet" href="css/style.css?v=7.2.0">
   
   <!-- D3.js v7 & Leaflet.js -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -187,26 +187,53 @@
     <main class="content-area">
       
       <!-- 1. Map View Container -->
+      <!-- 1. Map View Container -->
       <div id="map-view" class="view-container active">
         <div id="map-container"></div>
+        
+        <!-- Map Floating Visual Control Toolbar -->
+        <div class="map-floating-toolbar">
+          <div class="toolbar-group">
+            <span class="toolbar-label">연결선 모드</span>
+            <div class="toolbar-btns">
+              <button class="map-mode-btn active" data-mode="smart" title="줌 레벨에 맞춰 최적화된 핵심 축선 자동 표시">⚡ 스마트 자동</button>
+              <button class="map-mode-btn" data-mode="focused" title="마커 호버/클릭 시 해당 기관 선만 집중 표시">🎯 선택 집중</button>
+              <button class="map-mode-btn" data-mode="major" title="협력 건수 3건 이상 주요 산학 회랑만 표시">🌟 주요 협력</button>
+              <button class="map-mode-btn" data-mode="nodes_only" title="연결선 없이 연구 거점 마커만 표시">📍 마커만</button>
+            </div>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <span class="toolbar-label">컬러링</span>
+            <div class="toolbar-btns">
+              <button class="map-color-btn active" data-color="gradient" title="기업 브랜드색 ➔ 대학 권역색 2색 그라데이션">🌈 기관 그라데이션</button>
+              <button class="map-color-btn" data-color="category" title="7대 기술 도메인별 색상">🏷️ 기술 도메인별</button>
+            </div>
+          </div>
+        </div>
+
         <!-- Map Legend -->
         <div class="map-legend">
-          <div style="font-weight: 700; color: #fff; margin-bottom: 2px;">지도 범례</div>
+          <div style="font-weight: 700; color: #fff; margin-bottom: 2px;">산학협력 컬러 범례</div>
           <div class="legend-item">
-            <div class="legend-dot" style="background: #38bdf8; box-shadow: 0 0 6px #38bdf8;"></div>
-            <span>대학교 (담당교수 연구실)</span>
+            <div class="legend-dot" style="background: #3b82f6; box-shadow: 0 0 6px #3b82f6;"></div>
+            <span>글로벌 기업 (삼성, TSMC, Intel, NVIDIA 등)</span>
           </div>
           <div class="legend-item">
-            <div class="legend-dot" style="background: #a78bfa; box-shadow: 0 0 6px #a78bfa;"></div>
-            <span>반도체 기업 (본사/연구소)</span>
+            <div class="legend-dot" style="background: #10b981; box-shadow: 0 0 6px #10b981;"></div>
+            <span>한국 대학군 (서울대, KAIST, 포항공대 등)</span>
           </div>
           <div class="legend-item">
-            <div class="legend-dot" style="background: #34d399; box-shadow: 0 0 6px #34d399;"></div>
-            <span>연구소 / 컨소시엄 (IMEC, SRC 등)</span>
+            <div class="legend-dot" style="background: #f59e0b; box-shadow: 0 0 6px #f59e0b;"></div>
+            <span>미국 명문대군 (MIT, Stanford, Berkeley 등)</span>
           </div>
           <div class="legend-item">
-            <div style="width: 16px; height: 2px; background: #06b6d4; border-top: 1px dashed #06b6d4;"></div>
-            <span>진행중 협력 (Active Link)</span>
+            <div class="legend-dot" style="background: #818cf8; box-shadow: 0 0 6px #818cf8;"></div>
+            <span>유럽 연구기관 (IMEC, Leuven, CEA-Leti 등)</span>
+          </div>
+          <div class="legend-item">
+            <div style="width: 18px; height: 3px; background: linear-gradient(90deg, #3b82f6, #10b981); border-radius: 2px;"></div>
+            <span>기업 ➔ 대학 2색 그라데이션 회랑</span>
           </div>
         </div>
       </div>
@@ -336,11 +363,11 @@
   </div>
 
   <!-- App Scripts -->
-  <script src="js/dataManager.js?v=7.1.0"></script>
-  <script src="js/tracker.js?v=7.1.0"></script>
-  <script src="js/map.js?v=7.1.0"></script>
-  <script src="js/network.js?v=7.1.0"></script>
-  <script src="js/app.js?v=7.1.0"></script>
+  <script src="js/dataManager.js?v=7.2.0"></script>
+  <script src="js/tracker.js?v=7.2.0"></script>
+  <script src="js/map.js?v=7.2.0"></script>
+  <script src="js/network.js?v=7.2.0"></script>
+  <script src="js/app.js?v=7.2.0"></script>
 
 </body>
 </html>

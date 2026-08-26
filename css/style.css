@@ -510,22 +510,158 @@ header {
   box-shadow: 0 0 12px rgba(52, 211, 153, 0.8);
 }
 
+/* Map Floating Visual Control Toolbar */
+.map-floating-toolbar {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-lg);
+  padding: 0.45rem 0.8rem;
+  z-index: 800;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6), 0 0 15px rgba(59, 130, 246, 0.15);
+  pointer-events: auto;
+  user-select: none;
+  max-width: 90%;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.toolbar-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-right: 0.2rem;
+}
+
+.toolbar-btns {
+  display: flex;
+  gap: 0.25rem;
+  background: rgba(10, 14, 23, 0.6);
+  padding: 2px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.map-mode-btn, .map-color-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  padding: 0.35rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+}
+
+.map-mode-btn:hover, .map-color-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.map-mode-btn.active, .map-color-btn.active {
+  background: var(--accent-blue);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+  font-weight: 700;
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Map Connection Arcs & Neon Laser Effects */
+.connection-arc {
+  transition: stroke 0.3s ease, stroke-width 0.3s ease, opacity 0.3s ease, filter 0.3s ease;
+  cursor: pointer;
+}
+
+.connection-arc.dimmed-arc {
+  opacity: 0.06 !important;
+  stroke-width: 1px !important;
+}
+
+.connection-arc.highlighted-arc {
+  opacity: 1 !important;
+  stroke-width: 4.5px !important;
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.85)) drop-shadow(0 0 12px rgba(99, 102, 241, 0.6));
+  animation: laserPulse 2s infinite alternate;
+  z-index: 1000 !important;
+}
+
+.connection-arc.active-flow {
+  stroke-dasharray: 8, 6;
+  animation: flowDash 1.2s linear infinite;
+}
+
+@keyframes flowDash {
+  from {
+    stroke-dashoffset: 28;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes laserPulse {
+  0% {
+    filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.7)) drop-shadow(0 0 8px rgba(99, 102, 241, 0.4));
+  }
+  100% {
+    filter: drop-shadow(0 0 8px rgba(56, 189, 248, 1)) drop-shadow(0 0 16px rgba(99, 102, 241, 0.9));
+  }
+}
+
+.custom-map-node.dimmed-node {
+  opacity: 0.18 !important;
+  transform: scale(0.85) !important;
+}
+
+.custom-map-node.highlighted-node {
+  transform: scale(1.35) !important;
+  box-shadow: 0 0 20px rgba(56, 189, 248, 1), 0 0 35px rgba(99, 102, 241, 0.8) !important;
+  z-index: 1500 !important;
+}
+
 /* Map Legend */
 .map-legend {
   position: absolute;
   bottom: 24px;
   left: 24px;
-  background: rgba(17, 24, 39, 0.9);
+  background: rgba(15, 23, 42, 0.92);
   backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--border-color);
-  padding: 0.75rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.85rem 1.1rem;
   border-radius: var(--radius-md);
   z-index: 800;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.45rem;
   font-size: 0.75rem;
   pointer-events: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
 }
 
 .legend-item {
