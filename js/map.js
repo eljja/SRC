@@ -272,11 +272,15 @@ class MapView {
             lat: p.university_lat,
             lng: p.university_lng,
             projects: [],
-            connectedKeys: new Set()
+            connectedKeys: new Set(),
+            pairKeys: new Set()
           });
         }
         this.uniqueNodes.get(uniKey).projects.push(p);
-        if (p.company) this.uniqueNodes.get(uniKey).connectedKeys.add(`comp_${p.company}`);
+        if (p.company) {
+          this.uniqueNodes.get(uniKey).connectedKeys.add(`comp_${p.company}`);
+          this.uniqueNodes.get(uniKey).pairKeys.add(`pair_${p.company}__${p.university}`);
+        }
       }
 
       // Company Node
@@ -292,11 +296,15 @@ class MapView {
             lat: p.company_lat,
             lng: p.company_lng,
             projects: [],
-            connectedKeys: new Set()
+            connectedKeys: new Set(),
+            pairKeys: new Set()
           });
         }
         this.uniqueNodes.get(compKey).projects.push(p);
-        if (p.university) this.uniqueNodes.get(compKey).connectedKeys.add(`uni_${p.university}`);
+        if (p.university) {
+          this.uniqueNodes.get(compKey).connectedKeys.add(`uni_${p.university}`);
+          this.uniqueNodes.get(compKey).pairKeys.add(`pair_${p.company}__${p.university}`);
+        }
       }
 
       // Aggregate Connection Pair
@@ -338,30 +346,34 @@ class MapView {
     
     // Dynamic node size scaled logarithmically for ~8,000 items
     const size = Math.min(38, Math.max(18, 16 + Math.log2(count + 1) * 3.5));
-    
-    const className = isUni ? 'custom-map-node node-university' : 'custom-map-node node-company';
+    const nodeClass = isUni ? 'node-university' : 'node-company';
 
     const customIcon = L.divIcon({
-      className: className,
+      className: 'custom-map-marker-container',
       iconSize: [size, size],
-      html: `<span style="font-size: ${size > 26 ? '11px' : '9.5px'}; font-weight: 700;">${count > 999 ? Math.round(count/1000)+'k' : count}</span>`
+      iconAnchor: [size / 2, size / 2],
+      html: `<div class="map-node-inner ${nodeClass}" id="map-node-inner-${node.key}" style="width: ${size}px; height: ${size}px;">
+               <span style="font-size: ${size > 26 ? '11px' : '9.5px'}; font-weight: 700;">${count > 999 ? Math.round(count / 1000) + 'k' : count}</span>
+             </div>`
     });
 
     const marker = L.marker([node.lat, node.lng], { icon: customIcon });
 
-    // Node interactions
+    // Node interactions with requestAnimationFrame for smooth 60fps
     marker.on('mouseover', () => {
       this.hoveredNodeKey = node.key;
-      this.highlightNodeNetwork(node.key);
+      requestAnimationFrame(() => this.highlightNodeNetwork(node.key));
     });
 
     marker.on('mouseout', () => {
       this.hoveredNodeKey = null;
-      if (!this.focusedNodeKey) {
-        this.clearFocus();
-      } else {
-        this.highlightNodeNetwork(this.focusedNodeKey);
-      }
+      requestAnimationFrame(() => {
+        if (!this.focusedNodeKey) {
+          this.clearFocus();
+        } else {
+          this.highlightNodeNetwork(this.focusedNodeKey);
+        }
+      });
     });
 
     marker.on('click', (e) => {
@@ -492,17 +504,19 @@ class MapView {
       </div>
     `, { sticky: true });
 
-    // Polyline interactions
+    // Polyline interactions with requestAnimationFrame for smooth 60fps
     polyline.on('mouseover', () => {
-      this.highlightSinglePair(pair.key);
+      requestAnimationFrame(() => this.highlightSinglePair(pair.key));
     });
 
     polyline.on('mouseout', () => {
-      if (!this.focusedNodeKey) {
-        this.clearFocus();
-      } else {
-        this.highlightNodeNetwork(this.focusedNodeKey);
-      }
+      requestAnimationFrame(() => {
+        if (!this.focusedNodeKey) {
+          this.clearFocus();
+        } else {
+          this.highlightNodeNetwork(this.focusedNodeKey);
+        }
+      });
     });
 
     polyline.on('click', (e) => {
@@ -592,110 +606,73 @@ class MapView {
     const node = this.uniqueNodes.get(nodeKey);
     if (!node) return;
 
-    const connectedKeys = node.connectedKeys;
+    const mapContainer = document.getElementById(this.containerId);
+    if (mapContainer) mapContainer.classList.add('map-focus-active');
 
-    // Highlight / Dim Polylines
-    this.pairPolylineMap.forEach((polyline, pairKey) => {
-      const pair = polyline.pairData;
-      if (!pair) return;
+    // Fast reset previous highlight classes
+    document.querySelectorAll('.connection-arc.arc-focused').forEach(el => el.classList.remove('arc-focused'));
+    document.querySelectorAll('.map-node-inner.node-focused').forEach(el => el.classList.remove('node-focused'));
 
-      const isConnected = (pair.companyKey === nodeKey || pair.uniKey === nodeKey);
+    // Highlight target node
+    const targetInner = document.getElementById(`map-node-inner-${nodeKey}`);
+    if (targetInner) targetInner.classList.add('node-focused');
 
-      if (isConnected) {
+    // Highlight connected nodes
+    node.connectedKeys.forEach(cKey => {
+      const cInner = document.getElementById(`map-node-inner-${cKey}`);
+      if (cInner) cInner.classList.add('node-focused');
+    });
+
+    // Highlight connected pair lines
+    node.pairKeys.forEach(pKey => {
+      const polyline = this.pairPolylineMap.get(pKey);
+      if (polyline) {
         if (!this.linesLayer.hasLayer(polyline)) {
           this.linesLayer.addLayer(polyline);
         }
         if (polyline._path) {
-          polyline._path.classList.remove('dimmed-arc');
-          polyline._path.classList.add('highlighted-arc');
-        }
-        polyline.setStyle({ opacity: 1 });
-      } else {
-        if (polyline._path) {
-          polyline._path.classList.remove('highlighted-arc');
-          polyline._path.classList.add('dimmed-arc');
-        }
-        polyline.setStyle({ opacity: 0.06 });
-      }
-    });
-
-    // Highlight / Dim Node Markers
-    this.nodeMarkerMap.forEach((marker, nKey) => {
-      const isTarget = (nKey === nodeKey);
-      const isConnected = connectedKeys.has(nKey);
-      const el = marker.getElement();
-
-      if (el) {
-        if (isTarget || isConnected) {
-          el.classList.remove('dimmed-node');
-          if (isTarget) el.classList.add('highlighted-node');
-        } else {
-          el.classList.remove('highlighted-node');
-          el.classList.add('dimmed-node');
+          polyline._path.classList.add('arc-focused');
         }
       }
     });
   }
 
   highlightSinglePair(pairKey) {
-    const targetPolyline = this.pairPolylineMap.get(pairKey);
-    if (!targetPolyline) return;
-    const pair = targetPolyline.pairData;
+    const polyline = this.pairPolylineMap.get(pairKey);
+    if (!polyline) return;
+    const pair = polyline.pairData;
+    if (!pair) return;
 
-    this.pairPolylineMap.forEach((polyline, pKey) => {
-      if (polyline._path) {
-        if (pKey === pairKey) {
-          polyline._path.classList.remove('dimmed-arc');
-          polyline._path.classList.add('highlighted-arc');
-          polyline.setStyle({ opacity: 1 });
-        } else {
-          polyline._path.classList.remove('highlighted-arc');
-          polyline._path.classList.add('dimmed-arc');
-          polyline.setStyle({ opacity: 0.06 });
-        }
-      }
-    });
+    const mapContainer = document.getElementById(this.containerId);
+    if (mapContainer) mapContainer.classList.add('map-focus-active');
 
-    if (pair) {
-      this.nodeMarkerMap.forEach((marker, nKey) => {
-        const el = marker.getElement();
-        if (el) {
-          if (nKey === pair.companyKey || nKey === pair.uniKey) {
-            el.classList.remove('dimmed-node');
-            el.classList.add('highlighted-node');
-          } else {
-            el.classList.remove('highlighted-node');
-            el.classList.add('dimmed-node');
-          }
-        }
-      });
+    // Fast reset previous highlight classes
+    document.querySelectorAll('.connection-arc.arc-focused').forEach(el => el.classList.remove('arc-focused'));
+    document.querySelectorAll('.map-node-inner.node-focused').forEach(el => el.classList.remove('node-focused'));
+
+    // Highlight this arc
+    if (polyline._path) {
+      polyline._path.classList.add('arc-focused');
     }
+
+    // Highlight endpoints
+    const compInner = document.getElementById(`map-node-inner-${pair.companyKey}`);
+    const uniInner = document.getElementById(`map-node-inner-${pair.uniKey}`);
+    if (compInner) compInner.classList.add('node-focused');
+    if (uniInner) uniInner.classList.add('node-focused');
   }
 
   clearFocus() {
     this.focusedNodeKey = null;
     this.hoveredNodeKey = null;
 
-    // Reset Polylines
-    this.pairPolylineMap.forEach(polyline => {
-      if (polyline._path) {
-        polyline._path.classList.remove('highlighted-arc', 'dimmed-arc');
-      }
-      const count = polyline.pairData ? polyline.pairData.projects.length : 1;
-      const hasActive = polyline.pairData && polyline.pairData.projects.some(p => p.status === 'active');
-      polyline.setStyle({
-        opacity: hasActive ? 0.72 : 0.45,
-        weight: Math.min(5.5, Math.max(1.4, 1.2 + Math.log2(count + 1) * 0.8))
-      });
-    });
+    const mapContainer = document.getElementById(this.containerId);
+    if (mapContainer) {
+      mapContainer.classList.remove('map-focus-active');
+    }
 
-    // Reset Nodes
-    this.nodeMarkerMap.forEach(marker => {
-      const el = marker.getElement();
-      if (el) {
-        el.classList.remove('highlighted-node', 'dimmed-node');
-      }
-    });
+    document.querySelectorAll('.connection-arc.arc-focused').forEach(el => el.classList.remove('arc-focused'));
+    document.querySelectorAll('.map-node-inner.node-focused').forEach(el => el.classList.remove('node-focused'));
 
     this.updateLOD();
   }
