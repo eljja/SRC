@@ -236,7 +236,16 @@ class NetworkView {
       }
     });
 
-    // D3 Force Simulation (Smooth & performant for ~100 nodes)
+    // Pre-distribute node positions around the canvas center
+    const centerRadius = Math.min(width, height) * 0.32;
+    this.nodes.forEach((n, i) => {
+      const angle = (i / Math.max(1, this.nodes.length)) * 2 * Math.PI;
+      const r = centerRadius * (0.35 + 0.65 * Math.random());
+      n.x = width / 2 + r * Math.cos(angle);
+      n.y = height / 2 + r * Math.sin(angle);
+    });
+
+    // D3 Force Simulation (Smooth & performant)
     this.simulation = d3.forceSimulation(this.nodes)
       .alphaDecay(0.04)
       .velocityDecay(0.4)
@@ -245,7 +254,13 @@ class NetworkView {
       .force('center', d3.forceCenter(width / 2, height / 2))
       .force('collision', d3.forceCollide().radius(d => 12 + Math.min(d.val * 0.8, 22)));
 
-    // Render Links
+    // Pre-calculate simulation layout synchronously so nodes appear immediately in place
+    this.simulation.stop();
+    for (let i = 0; i < 150; ++i) {
+      this.simulation.tick();
+    }
+
+    // Render Links with immediate coordinates
     const link = g.append('g')
       .attr('class', 'links-group')
       .selectAll('line')
@@ -255,9 +270,13 @@ class NetworkView {
       .attr('stroke', d => d.hasActive ? '#06b6d4' : '#4b5563')
       .attr('stroke-opacity', 0.65)
       .attr('stroke-width', d => Math.min(5, Math.max(1.2, 1 + Math.sqrt(d.weight) * 0.8)))
-      .attr('stroke-dasharray', d => d.hasActive ? '4,4' : null);
+      .attr('stroke-dasharray', d => d.hasActive ? '4,4' : null)
+      .attr('x1', d => d.source.x)
+      .attr('y1', d => d.source.y)
+      .attr('x2', d => d.target.x)
+      .attr('y2', d => d.target.y);
 
-    // Render Nodes Group
+    // Render Nodes Group with immediate transform
     const node = g.append('g')
       .attr('class', 'nodes-group')
       .selectAll('g')
@@ -265,6 +284,7 @@ class NetworkView {
       .join('g')
       .attr('class', 'network-node')
       .attr('id', d => `node_${d.id.replace(/[^a-zA-Z0-9_-]/g, '_')}`)
+      .attr('transform', d => `translate(${d.x},${d.y})`)
       .call(d3.drag()
         .on('start', (event, d) => {
           if (!event.active) this.simulation.alphaTarget(0.3).restart();
@@ -331,6 +351,8 @@ class NetworkView {
       node
         .attr('transform', d => `translate(${d.x},${d.y})`);
     });
+
+    this.simulation.alpha(0.05).restart();
   }
 
   handleNodeClick(d) {
