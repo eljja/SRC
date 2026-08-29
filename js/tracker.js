@@ -57,12 +57,12 @@ class Tracker {
     const freshness = this.calculateFreshness();
 
     container.innerHTML = `
-      <div class="freshness-tracker-badge" title="${freshness.recommendation}">
+      <div class="freshness-tracker-badge" title="${freshness.recommendation} • 7,920건 전수 조사 (Crossref/Europe PMC 검증)">
         <span class="freshness-indicator ${freshness.status}"></span>
         <div class="meta-date-info">
-          <span>DB 갱신: <strong>${freshness.lastUpdatedStr}</strong></span>
-          <span style="opacity: 0.4;">|</span>
-          <span>접속일: <strong>${freshness.clientDateStr}</strong></span>
+          <span>DB <strong>${freshness.lastUpdatedStr}</strong></span>
+          <span class="meta-date-detail" style="opacity: 0.4;">|</span>
+          <span class="meta-date-detail">접속 <strong>${freshness.clientDateStr}</strong></span>
           <span style="opacity: 0.4;">|</span>
           <span style="color: ${freshness.status === 'fresh' ? '#34d399' : (freshness.status === 'moderate' ? '#fbbf24' : '#f43f5e')}">
             ${freshness.statusText}

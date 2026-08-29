@@ -10,6 +10,10 @@ class App {
     this.networkView = null;
     this.currentView = 'map'; // 'map' | 'network' | 'table' | 'analytics'
     this.tableCurrentPage = 1;
+    this.tablePageSize = 40;
+    this.analyticsTopN = 10;
+    this.analyticsSortBy = 'count'; // 'count' | 'funding'
+    this._searchDebounceTimer = null;
   }
 
   async init() {
@@ -90,13 +94,30 @@ class App {
   }
 
   bindEventListeners() {
-    // Search input
+    // Search input with 250ms debounce
     const searchInput = document.getElementById('global-search-input');
     searchInput.addEventListener('input', (e) => {
-      this.tableCurrentPage = 1;
-      this.dataManager.setFilter('searchQuery', e.target.value);
-      this.updateAllViews();
+      clearTimeout(this._searchDebounceTimer);
+      const clearBtn = document.getElementById('btn-clear-search');
+      if (clearBtn) clearBtn.classList.toggle('visible', e.target.value.length > 0);
+      this._searchDebounceTimer = setTimeout(() => {
+        this.tableCurrentPage = 1;
+        this.dataManager.setFilter('searchQuery', e.target.value);
+        this.updateAllViews();
+      }, 250);
     });
+
+    // Search clear button
+    const clearSearchBtn = document.getElementById('btn-clear-search');
+    if (clearSearchBtn) {
+      clearSearchBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        clearSearchBtn.classList.remove('visible');
+        this.dataManager.setFilter('searchQuery', '');
+        this.tableCurrentPage = 1;
+        this.updateAllViews();
+      });
+    }
 
     // Filters
     document.getElementById('filter-company').addEventListener('change', (e) => {
@@ -154,6 +175,7 @@ class App {
       this.tableCurrentPage = 1;
       this.dataManager.resetFilters();
       searchInput.value = '';
+      if (clearSearchBtn) clearSearchBtn.classList.remove('visible');
       document.getElementById('filter-company').value = 'all';
       document.getElementById('filter-university').value = 'all';
       document.getElementById('filter-professor').value = 'all';
@@ -173,7 +195,7 @@ class App {
       });
     });
 
-    // Modal close
+    // Modal close (button, overlay, and Escape key)
     document.getElementById('modal-close-btn').addEventListener('click', () => {
       this.closeModal();
     });
@@ -182,6 +204,26 @@ class App {
         this.closeModal();
       }
     });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') this.closeModal();
+    });
+
+    // Mobile sidebar drawer toggle
+    const mobileMenuBtn = document.getElementById('btn-toggle-sidebar');
+    const sidebar = document.querySelector('.sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    if (mobileMenuBtn && sidebar) {
+      mobileMenuBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('drawer-open');
+        if (backdrop) backdrop.classList.toggle('active');
+      });
+      if (backdrop) {
+        backdrop.addEventListener('click', () => {
+          sidebar.classList.remove('drawer-open');
+          backdrop.classList.remove('active');
+        });
+      }
+    }
 
     // Export Data JSON
     document.getElementById('btn-export-json').addEventListener('click', () => {
@@ -239,12 +281,12 @@ class App {
     }
 
     if (list.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #9ca3af; padding: 2rem;">검색 결과가 없습니다.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="7" class="table-empty-state">검색 결과가 없습니다.</td></tr>`;
       if (paginationBar) paginationBar.innerHTML = '';
       return;
     }
 
-    const pageSize = 40;
+    const pageSize = this.tablePageSize;
     const totalPages = Math.ceil(list.length / pageSize);
     if (!this.tableCurrentPage || this.tableCurrentPage < 1) this.tableCurrentPage = 1;
     if (this.tableCurrentPage > totalPages) this.tableCurrentPage = totalPages;
@@ -253,35 +295,85 @@ class App {
     const pageItems = list.slice(startIndex, startIndex + pageSize);
 
     tbody.innerHTML = pageItems.map(p => `
-      <tr style="cursor: pointer;" onclick="window.app.showProjectModal('${p.id}')">
+      <tr class="table-row-clickable" data-project-id="${p.id}">
         <td>
-          <strong style="color: #60a5fa;">${p.topic}</strong><br/>
-          <span style="font-size: 11px; color: #9ca3af;">${p.title}</span>
-          ${p.phases && p.phases.length > 1 ? `<span class="hud-tag" style="margin-left: 4px; font-size: 10px; background: rgba(59,130,246,0.3);">${p.phases.length}단계 연계</span>` : ''}
+          <strong class="table-topic-text">${p.topic}</strong><br/>
+          <span class="table-title-sub">${p.title}</span>
+          ${p.phases && p.phases.length > 1 ? `<span class="hud-tag phase-tag">${p.phases.length}단계 연계</span>` : ''}
         </td>
-        <td><span style="color: #a78bfa; font-weight: 600;">${p.company}</span></td>
-        <td><strong style="color: #38bdf8;">${p.university}</strong></td>
-        <td><span style="color: #fbbf24;">${p.professor || '-'}</span></td>
-        <td><span style="font-size: 11px; color: #34d399;">${p.institute_or_consortium || '-'}</span></td>
-        <td><span style="font-weight: 600;">${p.funding_display || '-'}</span></td>
+        <td><span class="table-company-text">${p.company}</span></td>
+        <td><strong class="table-uni-text">${p.university}</strong></td>
+        <td><span class="table-prof-text">${p.professor || '-'}</span></td>
+        <td><span class="table-inst-text">${p.institute_or_consortium || '-'}</span></td>
+        <td><span class="table-funding-text">${p.funding_display || '-'}</span></td>
         <td>
           <span class="badge-status ${p.status === 'active' ? 'badge-active' : (p.status === 'completed' ? 'badge-completed' : 'badge-uncertain')}">
             ${p.status === 'active' ? '진행중' : (p.status === 'completed' ? '완료' : '추정')}
           </span>
-          <span style="font-size: 11px; color: #6b7280; margin-left: 4px;">(${p.start_year}~${p.end_year})</span>
+          <span class="table-period-text">(${p.start_year}~${p.end_year})</span>
         </td>
       </tr>
     `).join('');
 
-    // Render Pagination Bar
+    // Event delegation for table rows
+    tbody.querySelectorAll('.table-row-clickable').forEach(row => {
+      row.addEventListener('click', () => {
+        this.showProjectModal(row.getAttribute('data-project-id'));
+      });
+    });
+
+    // Enhanced Pagination Bar with page numbers
     if (paginationBar) {
+      const cp = this.tableCurrentPage;
+      let pageNumsHtml = '';
+      const maxVisible = 7;
+      let startPage = Math.max(1, cp - Math.floor(maxVisible / 2));
+      let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+      if (endPage - startPage < maxVisible - 1) startPage = Math.max(1, endPage - maxVisible + 1);
+
+      if (startPage > 1) pageNumsHtml += `<button class="page-btn page-num" data-page="1">1</button>`;
+      if (startPage > 2) pageNumsHtml += `<span class="page-ellipsis">…</span>`;
+      for (let i = startPage; i <= endPage; i++) {
+        pageNumsHtml += `<button class="page-btn page-num ${i === cp ? 'active' : ''}" data-page="${i}">${i}</button>`;
+      }
+      if (endPage < totalPages - 1) pageNumsHtml += `<span class="page-ellipsis">…</span>`;
+      if (endPage < totalPages) pageNumsHtml += `<button class="page-btn page-num" data-page="${totalPages}">${totalPages}</button>`;
+
       paginationBar.innerHTML = `
-        <button class="page-btn" ${this.tableCurrentPage === 1 ? 'disabled' : ''} onclick="window.app.setTablePage(1)">⏮ 처음</button>
-        <button class="page-btn" ${this.tableCurrentPage === 1 ? 'disabled' : ''} onclick="window.app.setTablePage(${this.tableCurrentPage - 1})">◀ 이전</button>
-        <span class="page-info-label">페이지 ${this.tableCurrentPage} / ${totalPages} (${startIndex + 1}-${Math.min(startIndex + pageSize, list.length)} / 총 ${list.length}건)</span>
-        <button class="page-btn" ${this.tableCurrentPage === totalPages ? 'disabled' : ''} onclick="window.app.setTablePage(${this.tableCurrentPage + 1})">다음 ▶</button>
-        <button class="page-btn" ${this.tableCurrentPage === totalPages ? 'disabled' : ''} onclick="window.app.setTablePage(${totalPages})">⏭ 끝</button>
+        <div class="pagination-left">
+          <button class="page-btn" data-page="1" ${cp === 1 ? 'disabled' : ''}>⏮</button>
+          <button class="page-btn" data-page="${cp - 1}" ${cp === 1 ? 'disabled' : ''}>◀</button>
+          ${pageNumsHtml}
+          <button class="page-btn" data-page="${cp + 1}" ${cp === totalPages ? 'disabled' : ''}>▶</button>
+          <button class="page-btn" data-page="${totalPages}" ${cp === totalPages ? 'disabled' : ''}>⏭</button>
+        </div>
+        <div class="pagination-right">
+          <span class="page-info-label">${startIndex + 1}-${Math.min(startIndex + pageSize, list.length)} / ${list.length}건</span>
+          <select class="page-size-select" title="페이지 크기">
+            <option value="20" ${pageSize === 20 ? 'selected' : ''}>20건</option>
+            <option value="40" ${pageSize === 40 ? 'selected' : ''}>40건</option>
+            <option value="100" ${pageSize === 100 ? 'selected' : ''}>100건</option>
+          </select>
+        </div>
       `;
+
+      // Bind page buttons via event delegation
+      paginationBar.querySelectorAll('.page-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const page = parseInt(btn.getAttribute('data-page'));
+          if (!isNaN(page) && page >= 1 && page <= totalPages) this.setTablePage(page);
+        });
+      });
+
+      // Bind page size selector
+      const pageSizeSelect = paginationBar.querySelector('.page-size-select');
+      if (pageSizeSelect) {
+        pageSizeSelect.addEventListener('change', (e) => {
+          this.tablePageSize = parseInt(e.target.value);
+          this.tableCurrentPage = 1;
+          this.renderTableDirectory();
+        });
+      }
     }
   }
 
@@ -291,28 +383,39 @@ class App {
   }
 
   renderAnalytics() {
-    const rankings = this.dataManager.getAnalyticsRankings();
+    const rankings = this.dataManager.getAnalyticsRankings(this.analyticsTopN);
 
+    // Render ranking bar lists
     const renderBarList = (containerId, items, filterType) => {
       const container = document.getElementById(containerId);
-      if (!container || !items || items.length === 0) return;
+      if (!container || !items || items.length === 0) {
+        if (container) container.innerHTML = '<div class="analytics-empty">데이터 없음</div>';
+        return;
+      }
       const maxVal = Math.max(...items.map(i => i[1]), 1);
 
       container.innerHTML = items.map(([name, count]) => {
         const safeName = name.replace(/'/g, "\\'").replace(/"/g, "&quot;");
         return `
-          <div class="ranking-item" onclick="window.app.filterByAnalyticsItem('${filterType}', '${safeName}')" title="클릭하여 '${name}' 관련 과제 전체 목록으로 이동">
+          <div class="ranking-item" tabindex="0" role="button" data-filter-type="${filterType}" data-filter-value="${safeName}" title="클릭: '${name}' 과제 전체 목록">
             <span class="ranking-name">${name}</span>
             <div class="ranking-bar-wrapper">
               <div class="ranking-bar" style="width: ${(count / maxVal) * 100}%;"></div>
             </div>
             <div class="ranking-count-wrapper">
-              <strong style="color: #06b6d4;">${count}건</strong>
+              <strong class="ranking-count-num">${count}건</strong>
               <span class="ranking-arrow">➔</span>
             </div>
           </div>
         `;
       }).join('');
+
+      // Event delegation for ranking items
+      container.querySelectorAll('.ranking-item').forEach(item => {
+        item.addEventListener('click', () => {
+          this.filterByAnalyticsItem(item.dataset.filterType, item.dataset.filterValue);
+        });
+      });
     };
 
     renderBarList('analytics-companies-list', rankings.topCompanies, 'company');
@@ -320,6 +423,206 @@ class App {
     renderBarList('analytics-professors-list', rankings.topProfessors, 'professor');
     renderBarList('analytics-institutes-list', rankings.topInstitutes, 'institute');
     renderBarList('analytics-categories-list', rankings.categoryBreakdown, 'category');
+
+    // Render D3 Charts
+    this.renderYearlyTrendChart();
+    this.renderDomainDonutChart(rankings.categoryBreakdown);
+    this.renderRegionalChart();
+
+    // Bind Top-N toggle if present
+    const topNBtns = document.querySelectorAll('.analytics-topn-btn');
+    topNBtns.forEach(btn => {
+      btn.classList.toggle('active', parseInt(btn.dataset.topn) === this.analyticsTopN || (btn.dataset.topn === 'all' && this.analyticsTopN >= 999));
+      btn.addEventListener('click', () => {
+        topNBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        this.analyticsTopN = btn.dataset.topn === 'all' ? 999 : parseInt(btn.dataset.topn);
+        this.renderAnalytics();
+      });
+    });
+  }
+
+  renderYearlyTrendChart() {
+    const container = document.getElementById('chart-yearly-trend');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const trendData = this.dataManager.getYearlyTrend();
+    if (!trendData || trendData.length === 0) return;
+
+    const margin = { top: 20, right: 20, bottom: 35, left: 45 };
+    const width = container.clientWidth - margin.left - margin.right;
+    const height = 200 - margin.top - margin.bottom;
+    if (width <= 0) return;
+
+    const svg = d3.select(container).append('svg')
+      .attr('width', width + margin.left + margin.right)
+      .attr('height', height + margin.top + margin.bottom)
+      .append('g')
+      .attr('transform', `translate(${margin.left},${margin.top})`);
+
+    const x = d3.scaleBand().domain(trendData.map(d => d.year)).range([0, width]).padding(0.3);
+    const maxTotal = d3.max(trendData, d => d.total);
+    const y = d3.scaleLinear().domain([0, maxTotal * 1.1]).range([height, 0]);
+
+    // Grid lines
+    svg.append('g').attr('class', 'chart-grid')
+      .call(d3.axisLeft(y).ticks(5).tickSize(-width).tickFormat(''))
+      .selectAll('line').attr('stroke', 'rgba(255,255,255,0.06)');
+
+    // Stacked bars
+    trendData.forEach(d => {
+      const barWidth = x.bandwidth();
+      // Completed (bottom)
+      svg.append('rect')
+        .attr('x', x(d.year)).attr('y', y(d.completed))
+        .attr('width', barWidth).attr('height', height - y(d.completed))
+        .attr('fill', '#6b7280').attr('rx', 3).attr('opacity', 0.85);
+      // Active (stacked on top)
+      svg.append('rect')
+        .attr('x', x(d.year)).attr('y', y(d.completed + d.active))
+        .attr('width', barWidth).attr('height', y(d.completed) - y(d.completed + d.active))
+        .attr('fill', '#10b981').attr('rx', 3).attr('opacity', 0.9);
+      // Total label
+      svg.append('text')
+        .attr('x', x(d.year) + barWidth / 2).attr('y', y(d.total) - 5)
+        .attr('text-anchor', 'middle').attr('fill', '#e5e7eb')
+        .attr('font-size', '11px').attr('font-weight', '600')
+        .text(d.total);
+    });
+
+    // Axes
+    svg.append('g').attr('transform', `translate(0,${height})`)
+      .call(d3.axisBottom(x).tickFormat(d => d))
+      .selectAll('text').attr('fill', '#9ca3af').attr('font-size', '11px');
+    svg.append('g')
+      .call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('d')))
+      .selectAll('text').attr('fill', '#9ca3af').attr('font-size', '11px');
+
+    // Remove domain lines
+    svg.selectAll('.domain').attr('stroke', 'rgba(255,255,255,0.1)');
+
+    // Legend
+    const legend = d3.select(container).append('div').attr('class', 'chart-legend-inline');
+    legend.html(`
+      <span class="chart-legend-dot" style="background:#10b981"></span> 진행중
+      <span class="chart-legend-dot" style="background:#6b7280;margin-left:12px"></span> 완료
+    `);
+  }
+
+  renderDomainDonutChart(categoryData) {
+    const container = document.getElementById('chart-domain-donut');
+    if (!container || !categoryData || categoryData.length === 0) return;
+    container.innerHTML = '';
+
+    const width = Math.min(container.clientWidth, 260);
+    const height = width;
+    const radius = width / 2 - 10;
+    if (radius <= 0) return;
+
+    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#f43f5e', '#06b6d4', '#ec4899'];
+    const total = categoryData.reduce((s, c) => s + c[1], 0);
+
+    const svg = d3.select(container).append('svg')
+      .attr('width', width).attr('height', height)
+      .append('g')
+      .attr('transform', `translate(${width / 2},${height / 2})`);
+
+    const pie = d3.pie().value(d => d[1]).sort(null);
+    const arc = d3.arc().innerRadius(radius * 0.55).outerRadius(radius);
+    const hoverArc = d3.arc().innerRadius(radius * 0.52).outerRadius(radius + 6);
+
+    const arcs = svg.selectAll('.arc').data(pie(categoryData)).enter().append('g');
+
+    arcs.append('path')
+      .attr('d', arc)
+      .attr('fill', (d, i) => colors[i % colors.length])
+      .attr('stroke', '#0a0e17').attr('stroke-width', 2)
+      .attr('opacity', 0.9)
+      .style('cursor', 'pointer')
+      .on('mouseenter', function(event, d) {
+        d3.select(this).transition().duration(150).attr('d', hoverArc).attr('opacity', 1);
+        centerLabel.text(`${d.data[0]}`);
+        centerCount.text(`${d.data[1]}건 (${((d.data[1] / total) * 100).toFixed(1)}%)`);
+      })
+      .on('mouseleave', function() {
+        d3.select(this).transition().duration(150).attr('d', arc).attr('opacity', 0.9);
+        centerLabel.text('기술 도메인');
+        centerCount.text(`${total}건`);
+      })
+      .on('click', (event, d) => {
+        this.filterByAnalyticsItem('category', d.data[0]);
+      });
+
+    // Center text
+    const centerLabel = svg.append('text')
+      .attr('text-anchor', 'middle').attr('y', -6)
+      .attr('fill', '#9ca3af').attr('font-size', '11px')
+      .text('기술 도메인');
+    const centerCount = svg.append('text')
+      .attr('text-anchor', 'middle').attr('y', 14)
+      .attr('fill', '#f9fafb').attr('font-size', '16px').attr('font-weight', '700')
+      .text(`${total}건`);
+
+    // Color legend below
+    const legendDiv = d3.select(container).append('div').attr('class', 'donut-legend');
+    categoryData.forEach(([name, count], i) => {
+      legendDiv.append('div').attr('class', 'donut-legend-item')
+        .html(`<span class="chart-legend-dot" style="background:${colors[i % colors.length]}"></span> ${name} <span class="donut-legend-count">${count}</span>`);
+    });
+  }
+
+  renderRegionalChart() {
+    const container = document.getElementById('chart-regional-dist');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const regionData = this.dataManager.getRegionalDistribution();
+    if (!regionData || regionData.length === 0) return;
+
+    const margin = { top: 10, right: 50, bottom: 5, left: 120 };
+    const barHeight = 28;
+    const height = regionData.length * barHeight + margin.top + margin.bottom;
+    const width = container.clientWidth - margin.left - margin.right;
+    if (width <= 0) return;
+
+    const regionColors = {
+      '한국 (South Korea)': '#3b82f6',
+      '미국 (USA)': '#f59e0b',
+      '대만 (Taiwan)': '#10b981',
+      '유럽 (Europe)': '#8b5cf6',
+      '일본 (Japan)': '#f43f5e',
+      '중국 (China)': '#ec4899',
+      '기타 (Others)': '#6b7280'
+    };
+
+    const svg = d3.select(container).append('svg')
+      .attr('width', width + margin.left + margin.right)
+      .attr('height', height)
+      .append('g')
+      .attr('transform', `translate(${margin.left},${margin.top})`);
+
+    const maxCount = d3.max(regionData, d => d.count);
+    const x = d3.scaleLinear().domain([0, maxCount * 1.15]).range([0, width]);
+    const y = d3.scaleBand().domain(regionData.map(d => d.region)).range([0, height - margin.top - margin.bottom]).padding(0.25);
+
+    regionData.forEach(d => {
+      svg.append('rect')
+        .attr('x', 0).attr('y', y(d.region))
+        .attr('width', x(d.count)).attr('height', y.bandwidth())
+        .attr('fill', regionColors[d.region] || '#6b7280')
+        .attr('rx', 4).attr('opacity', 0.85);
+
+      svg.append('text')
+        .attr('x', x(d.count) + 6).attr('y', y(d.region) + y.bandwidth() / 2 + 4)
+        .attr('fill', '#e5e7eb').attr('font-size', '12px').attr('font-weight', '600')
+        .text(`${d.count}건`);
+    });
+
+    svg.append('g')
+      .call(d3.axisLeft(y).tickSize(0))
+      .selectAll('text').attr('fill', '#d1d5db').attr('font-size', '11px');
+    svg.selectAll('.domain').remove();
   }
 
   filterByAnalyticsItem(filterType, value) {

@@ -23,6 +23,8 @@ class NetworkView {
     this.links = [];
     this.adjacency = new Map(); // nodeId -> Set of neighbor nodeIds
     this.linkIncidentMap = new Map(); // linkIndex -> [sourceId, targetId]
+    this.lodMode = 'core'; // 'core' or 'all'
+    this.lastProjects = [];
   }
 
   init() {
@@ -37,6 +39,7 @@ class NetworkView {
         <button class="network-btn" id="btn-net-zoomout" title="축소">➖ 축소</button>
         <button class="network-btn" id="btn-net-fit" title="화면 맞춤">🎯 화면 맞춤</button>
         <button class="network-btn" id="btn-net-reset" title="시뮬레이션 재정렬">🔄 재정렬</button>
+        <button class="network-btn" id="btn-network-lod" title="핵심 거점망 / 전체 연결망 토글">⚡ 핵심 거점망</button>
         <button class="network-btn" id="btn-net-clear" title="선택 해제" style="display: none;">✨ 강조 해제</button>
       </div>
       <div class="network-hud" id="network-hud">
@@ -73,6 +76,16 @@ class NetworkView {
       }
     });
 
+    const lodBtn = document.getElementById('btn-network-lod');
+    if (lodBtn) {
+      lodBtn.textContent = this.lodMode === 'core' ? '⚡ 핵심 거점망' : '🌐 전체 연결망';
+      lodBtn.addEventListener('click', (e) => {
+        this.lodMode = this.lodMode === 'core' ? 'all' : 'core';
+        e.target.textContent = this.lodMode === 'core' ? '⚡ 핵심 거점망' : '🌐 전체 연결망';
+        if (this.lastProjects) this.render(this.lastProjects);
+      });
+    }
+
     document.getElementById('btn-net-clear').addEventListener('click', () => {
       this.clearFocus();
     });
@@ -85,6 +98,7 @@ class NetworkView {
   }
 
   render(projects) {
+    this.lastProjects = projects;
     this.init();
     const container = document.getElementById(this.containerId);
     const width = container.clientWidth || 900;
@@ -184,7 +198,12 @@ class NetworkView {
     });
 
     this.nodes = Array.from(nodeMap.values());
-    this.links = Array.from(linkMap.values());
+    if (this.lodMode === 'core') {
+      this.nodes = this.nodes.filter(n => n.val >= 2);
+    }
+    
+    const nodeIds = new Set(this.nodes.map(n => n.id));
+    this.links = Array.from(linkMap.values()).filter(l => nodeIds.has(l.source) && nodeIds.has(l.target));
 
     // Color definitions
     const colorScale = {
@@ -203,6 +222,9 @@ class NetworkView {
       .scaleExtent([0.15, 6])
       .on('zoom', (event) => {
         g.attr('transform', event.transform);
+        const z = event.transform.k;
+        g.selectAll('.node-label')
+          .style('display', d => (d.val >= 5 || z > 1.8) ? 'block' : 'none');
       });
 
     svg.call(this.zoom);
@@ -216,6 +238,8 @@ class NetworkView {
 
     // D3 Force Simulation (Smooth & performant for ~100 nodes)
     this.simulation = d3.forceSimulation(this.nodes)
+      .alphaDecay(0.04)
+      .velocityDecay(0.4)
       .force('link', d3.forceLink(this.links).id(d => d.id).distance(d => 50 + Math.max(10, 80 - d.weight * 2)))
       .force('charge', d3.forceManyBody().strength(-200))
       .force('center', d3.forceCenter(width / 2, height / 2))
@@ -266,6 +290,7 @@ class NetworkView {
 
     // Node Labels
     node.append('text')
+      .attr('class', 'node-label')
       .text(d => d.label.length > 20 ? d.label.slice(0, 18) + '...' : d.label)
       .attr('x', d => Math.min(26, 8 + Math.sqrt(d.val) * 2.2) + 4)
       .attr('y', 4)
@@ -273,6 +298,7 @@ class NetworkView {
       .attr('font-size', '10px')
       .attr('font-weight', '600')
       .attr('font-family', 'sans-serif')
+      .style('display', d => d.val >= 5 ? 'block' : 'none')
       .style('paint-order', 'stroke fill')
       .style('stroke', '#060910')
       .style('stroke-width', '3px')
@@ -288,8 +314,9 @@ class NetworkView {
     // Double Click: Open Project Modal if available
     node.on('dblclick', (event, d) => {
       event.stopPropagation();
-      if (d.projectId && this.onProjectSelect) {
-        this.onProjectSelect(d.projectId);
+      const filterType = d.type === 'university' ? 'university' : (d.type === 'company' ? 'company' : 'category');
+      if (window.app && window.app.filterByAnalyticsItem) {
+        window.app.filterByAnalyticsItem(filterType, d.rawName || d.label);
       }
     });
 

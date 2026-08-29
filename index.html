@@ -119,11 +119,12 @@
     </div>
 
     <!-- Actions -->
-    <div style="display: flex; gap: 0.5rem; align-items: center;">
+    <div class="header-actions">
+      <button class="mobile-menu-btn" id="btn-toggle-sidebar" aria-label="필터 메뉴 열기">☰</button>
       <button class="header-action-btn" id="btn-export-json" title="현재 데이터셋 JSON 다운로드" aria-label="데이터셋 JSON 다운로드">
-        <span>📥 JSON 내보내기</span>
+        <span>📥 JSON</span>
       </button>
-      <a href="https://github.com/eljja/SRC" target="_blank" rel="noopener noreferrer" class="header-action-btn" style="text-decoration: none;" title="GitHub 저장소 바로가기" aria-label="GitHub 저장소 바로가기">
+      <a href="https://github.com/eljja/SRC" target="_blank" rel="noopener noreferrer" class="header-action-btn" title="GitHub 저장소 바로가기" aria-label="GitHub 저장소 바로가기">
         <span>📂 GitHub</span>
       </a>
     </div>
@@ -132,15 +133,19 @@
   <!-- App Main Container -->
   <div class="app-container">
     
+    <!-- Mobile Sidebar Backdrop -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+    
     <!-- Sidebar Control Panel -->
     <aside class="sidebar">
       <div class="sidebar-header">
         <!-- Global Search Box -->
-        <div class="search-box">
+        <div class="search-box search-wrapper">
           <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
           </svg>
           <input type="text" id="global-search-input" placeholder="기업, 대학, 교수, 연구주제 검색..." aria-label="글로벌 연구 과제 및 기관 검색">
+          <button id="btn-clear-search" class="search-clear-btn" type="button" aria-label="검색어 지우기">&times;</button>
         </div>
 
         <!-- Real-time Summary Stat Chips -->
@@ -166,20 +171,20 @@
         <!-- Status Filter Pills -->
         <div class="filter-group">
           <div class="filter-title">
-            <span>과제 진행 상태</span>
+            <label>과제 진행 상태</label>
             <span style="font-size: 10px; color: var(--text-muted);">3년 주기 산학</span>
           </div>
-          <div class="status-pill-group">
-            <div class="status-pill active" data-status="all">전체</div>
-            <div class="status-pill" data-status="active">🟢 진행중</div>
-            <div class="status-pill" data-status="completed">⚪ 완료</div>
+          <div class="status-pill-group" role="radiogroup" aria-label="과제 진행 상태 선택">
+            <button type="button" class="status-pill active" data-status="all" role="radio" aria-checked="true">전체</button>
+            <button type="button" class="status-pill" data-status="active" role="radio" aria-checked="false">🟢 진행중</button>
+            <button type="button" class="status-pill" data-status="completed" role="radio" aria-checked="false">⚪ 완료</button>
           </div>
         </div>
 
         <!-- Company Filter -->
         <div class="filter-group">
           <div class="filter-title">
-            <span>참여 / 발주 기업 (Company)</span>
+            <label for="filter-company">참여 / 발주 기업 (Company)</label>
           </div>
           <select id="filter-company" class="filter-select">
             <option value="all">전체 기업 (All Companies)</option>
@@ -189,7 +194,7 @@
         <!-- University Filter -->
         <div class="filter-group">
           <div class="filter-title">
-            <span>수행 대학 (University)</span>
+            <label for="filter-university">수행 대학 (University)</label>
           </div>
           <select id="filter-university" class="filter-select">
             <option value="all">전체 대학교 (All Universities)</option>
@@ -199,7 +204,7 @@
         <!-- Professor Filter -->
         <div class="filter-group">
           <div class="filter-title">
-            <span>담당 교수 / 연구책임자 (PI)</span>
+            <label for="filter-professor">담당 교수 / 연구책임자 (PI)</label>
           </div>
           <select id="filter-professor" class="filter-select">
             <option value="all">전체 교수 / PI (All Professors)</option>
@@ -209,7 +214,7 @@
         <!-- Institute / Consortium Filter -->
         <div class="filter-group">
           <div class="filter-title">
-            <span>연구소 / 컨소시엄 (Institute / SRC)</span>
+            <label for="filter-institute">연구소 / 컨소시엄 (Institute / SRC)</label>
           </div>
           <select id="filter-institute" class="filter-select">
             <option value="all">전체 연구소 (All Institutes & Consortia)</option>
@@ -219,7 +224,7 @@
         <!-- Research Topic Category -->
         <div class="filter-group">
           <div class="filter-title">
-            <span>차세대 기술 분야 (Domain)</span>
+            <label for="filter-category">차세대 기술 분야 (Domain)</label>
           </div>
           <select id="filter-category" class="filter-select">
             <option value="all">전체 기술 분야 (All Categories)</option>
@@ -229,18 +234,18 @@
         <!-- Sort By -->
         <div class="filter-group">
           <div class="filter-title">
-            <span>정렬 기준 (Sort By)</span>
+            <label>정렬 기준 (Sort By)</label>
           </div>
-          <div class="sort-btn-group">
-            <button class="sort-btn active" data-sort="start_year_desc">최신 연도순</button>
-            <button class="sort-btn" data-sort="funding_desc">펀딩 금액순</button>
-            <button class="sort-btn" data-sort="company">기업명순</button>
-            <button class="sort-btn" data-sort="professor">교수명순</button>
+          <div class="sort-btn-group" role="group" aria-label="정렬 기준">
+            <button type="button" class="sort-btn active" data-sort="start_year_desc">최신 연도순</button>
+            <button type="button" class="sort-btn" data-sort="funding_desc">펀딩 금액순</button>
+            <button type="button" class="sort-btn" data-sort="company">기업명순</button>
+            <button type="button" class="sort-btn" data-sort="professor">교수명순</button>
           </div>
         </div>
 
         <!-- Reset Button -->
-        <button id="btn-reset-filters" class="header-action-btn" style="width: 100%; justify-content: center; margin-top: 0.5rem; background: rgba(55, 65, 81, 0.4);">
+        <button id="btn-reset-filters" type="button" class="header-action-btn" style="width: 100%; justify-content: center; margin-top: 0.5rem; background: rgba(55, 65, 81, 0.4);">
           <span>🔄 필터 초기화</span>
         </button>
 
@@ -251,8 +256,7 @@
     <main class="content-area">
       
       <!-- 1. Map View Container -->
-      <!-- 1. Map View Container -->
-      <div id="map-view" class="view-container active">
+      <div id="map-view" class="view-container active" role="tabpanel" aria-label="세계 지도">
         <div id="map-container"></div>
         
         <!-- Map Floating Visual Control Toolbar -->
@@ -303,12 +307,12 @@
       </div>
 
       <!-- 2. Network Graph View Container -->
-      <div id="network-view" class="view-container">
+      <div id="network-view" class="view-container" role="tabpanel" aria-label="관계망 그래프">
         <div id="network-container"></div>
       </div>
 
       <!-- 3. Table Directory View Container -->
-      <div id="table-view" class="view-container">
+      <div id="table-view" class="view-container" role="tabpanel" aria-label="전체 과제 목록">
         <div class="table-header-row">
           <div class="table-title">글로벌 반도체 산학연 R&D 디렉토리</div>
           <div id="table-count-summary" style="font-size: 0.82rem; color: var(--text-secondary);">총 0개 과제</div>
@@ -338,11 +342,45 @@
       </div>
 
       <!-- 4. Analytics & Stats View Container -->
-      <div id="analytics-view" class="view-container">
-        <div class="analytics-guide-banner" style="grid-column: 1 / -1; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.4); border-radius: var(--radius-md); padding: 0.75rem 1.25rem; font-size: 0.85rem; color: #93c5fd; display: flex; align-items: center; gap: 0.6rem;">
-          <span>💡</span>
-          <span><strong>인터랙티브 랭킹</strong>: 아래 각 항목(기업명, 대학명, 교수명, 연구소명, 기술분야)을 클릭하면 해당 조건으로 즉시 필터링되어 <strong>전체 과제 목록</strong>으로 자동 전환됩니다.</span>
+      <div id="analytics-view" class="view-container" role="tabpanel" aria-label="통계 및 랭킹 분석">
+        
+        <!-- Interactive Guide Banner -->
+        <div class="analytics-guide-banner">
+          <span class="guide-icon">💡</span>
+          <span class="guide-text"><strong>인터랙티브 분석</strong>: 차트나 랭킹 항목(기업, 대학, 교수, 연구소, 기술분야)을 클릭하면 조건에 맞는 <strong>과제 전체 목록</strong>으로 즉시 전환됩니다.</span>
         </div>
+
+        <!-- 3 D3 Visual Analytics Charts Section -->
+        <div class="analytics-card card-span-2">
+          <div class="card-title">📈 연도별 산학협력 R&D 추이 및 진행 상태 (2020~2026)</div>
+          <div id="chart-yearly-trend" class="analytics-chart-box"></div>
+        </div>
+
+        <div class="analytics-card">
+          <div class="card-title">🔬 7대 기술 도메인 비중 (Domain Distribution)</div>
+          <div id="chart-domain-donut" class="analytics-donut-box"></div>
+        </div>
+
+        <div class="analytics-card card-span-2">
+          <div class="card-title">🌍 주요 국가 및 권역별 연구 협력 분포 (Regional Distribution)</div>
+          <div id="chart-regional-dist" class="analytics-chart-box"></div>
+        </div>
+
+        <!-- Top-N Controls & Rankings Header -->
+        <div class="analytics-toolbar-row card-span-full">
+          <div class="analytics-section-title">📊 부문별 핵심 랭킹 & 점유율</div>
+          <div class="analytics-topn-control">
+            <span class="topn-label">표시 건수:</span>
+            <div class="topn-btn-group">
+              <button type="button" class="analytics-topn-btn" data-topn="5">Top 5</button>
+              <button type="button" class="analytics-topn-btn active" data-topn="10">Top 10</button>
+              <button type="button" class="analytics-topn-btn" data-topn="20">Top 20</button>
+              <button type="button" class="analytics-topn-btn" data-topn="all">전체</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5 Interactive Ranking Cards -->
         <div class="analytics-card">
           <div class="card-title">🏢 최다 산학협력 반도체 기업 (Top Companies)</div>
           <div class="ranking-list" id="analytics-companies-list"></div>
@@ -427,11 +465,11 @@
   </div>
 
   <!-- App Scripts -->
-  <script src="js/dataManager.js?v=7.2.1"></script>
-  <script src="js/tracker.js?v=7.2.1"></script>
-  <script src="js/map.js?v=7.2.1"></script>
-  <script src="js/network.js?v=7.2.1"></script>
-  <script src="js/app.js?v=7.2.1"></script>
+  <script src="js/dataManager.js?v=7.3.0"></script>
+  <script src="js/tracker.js?v=7.3.0"></script>
+  <script src="js/map.js?v=7.3.0"></script>
+  <script src="js/network.js?v=7.3.0"></script>
+  <script src="js/app.js?v=7.3.0"></script>
 
 </body>
 </html>

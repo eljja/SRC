@@ -69,17 +69,15 @@ class DataManager {
     let result = [...this.rawProjects];
 
     // Search query filter (title, topic, professor, university, company, summary)
-    if (this.filters.searchQuery && this.filters.searchQuery.trim() !== '') {
-      const q = this.filters.searchQuery.toLowerCase().trim();
-      result = result.filter(p => 
-        (p.title && p.title.toLowerCase().includes(q)) ||
-        (p.topic && p.topic.toLowerCase().includes(q)) ||
-        (p.professor && p.professor.toLowerCase().includes(q)) ||
-        (p.university && p.university.toLowerCase().includes(q)) ||
-        (p.company && p.company.toLowerCase().includes(q)) ||
-        (p.institute_or_consortium && p.institute_or_consortium.toLowerCase().includes(q)) ||
-        (p.summary && p.summary.toLowerCase().includes(q))
-      );
+    if (this.filters.searchQuery) {
+      const terms = this.filters.searchQuery.toLowerCase().split(/\s+/).filter(t => t.length > 0);
+      result = result.filter(p => {
+        const searchableText = [
+          p.title, p.topic, p.professor, p.university, p.company,
+          p.institute_or_consortium, p.summary, p.category
+        ].filter(Boolean).join(' ').toLowerCase();
+        return terms.every(term => searchableText.includes(term));
+      });
     }
 
     // Company filter
@@ -194,7 +192,7 @@ class DataManager {
     };
   }
 
-  getAnalyticsRankings() {
+  getAnalyticsRankings(topN = 8) {
     // Top Companies
     const companyCount = {};
     // Top Universities
@@ -206,7 +204,7 @@ class DataManager {
     // Domain breakdown
     const categoryCount = {};
 
-    const projectsToCount = this.filteredProjects.length > 0 ? this.filteredProjects : this.rawProjects;
+    const projectsToCount = this.filteredProjects;
 
     projectsToCount.forEach(p => {
       if (p.company) {
@@ -237,12 +235,55 @@ class DataManager {
     const sortObject = (obj) => Object.entries(obj).sort((a, b) => b[1] - a[1]);
 
     return {
-      topCompanies: sortObject(companyCount).slice(0, 8),
-      topUniversities: sortObject(uniCount).slice(0, 8),
-      topProfessors: sortObject(profCount).slice(0, 8),
-      topInstitutes: sortObject(instCount).slice(0, 8),
+      topCompanies: sortObject(companyCount).slice(0, topN),
+      topUniversities: sortObject(uniCount).slice(0, topN),
+      topProfessors: sortObject(profCount).slice(0, topN),
+      topInstitutes: sortObject(instCount).slice(0, topN),
       categoryBreakdown: sortObject(categoryCount)
     };
+  }
+
+  getYearlyTrend() {
+    const projects = this.filteredProjects.length > 0 ? this.filteredProjects : this.rawProjects;
+    const yearMap = {};
+    projects.forEach(p => {
+      const year = p.start_year || 'Unknown';
+      if (!yearMap[year]) yearMap[year] = { total: 0, active: 0, completed: 0 };
+      yearMap[year].total++;
+      if (p.status === 'active') yearMap[year].active++;
+      else if (p.status === 'completed') yearMap[year].completed++;
+    });
+    return Object.keys(yearMap)
+      .filter(y => y !== 'Unknown')
+      .sort()
+      .map(year => ({ year: parseInt(year), ...yearMap[year] }));
+  }
+
+  getRegionalDistribution() {
+    const projects = this.filteredProjects.length > 0 ? this.filteredProjects : this.rawProjects;
+    const regionMap = {
+      '한국 (South Korea)': 0,
+      '미국 (USA)': 0,
+      '대만 (Taiwan)': 0,
+      '유럽 (Europe)': 0,
+      '일본 (Japan)': 0,
+      '중국 (China)': 0,
+      '기타 (Others)': 0
+    };
+    const euroCountries = ['Belgium', 'Netherlands', 'Germany', 'France', 'UK', 'Switzerland', 'Italy', 'Austria', 'Ireland', 'Finland', 'Sweden', 'Norway', 'Denmark'];
+    projects.forEach(p => {
+      const country = p.university_country || '';
+      if (country === 'South Korea') regionMap['한국 (South Korea)']++;
+      else if (country === 'USA') regionMap['미국 (USA)']++;
+      else if (country === 'Taiwan') regionMap['대만 (Taiwan)']++;
+      else if (country === 'Japan') regionMap['일본 (Japan)']++;
+      else if (country === 'China') regionMap['중국 (China)']++;
+      else if (euroCountries.includes(country)) regionMap['유럽 (Europe)']++;
+      else regionMap['기타 (Others)']++;
+    });
+    return Object.entries(regionMap)
+      .map(([region, count]) => ({ region, count }))
+      .sort((a, b) => b.count - a.count);
   }
 }
 
