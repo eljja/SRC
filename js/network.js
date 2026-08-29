@@ -1,13 +1,12 @@
 /**
- * NetworkView Module (v3.0)
+ * NetworkView Module (v7.3.0)
  * Renders an interactive D3.js Force-Directed Graph connecting
- * Companies, Consortia/Institutes, Universities/Professors, and Research Topics.
+ * Technology Domains/Topics, Companies, and Universities.
  * Supports:
- * - Canvas Drag & Multi-touch / Wheel Zooming
- * - Interactive Node Focus: Clicking a node highlights its direct neighbors/links and dims (tones down) other unrelated elements
- * - Canvas click to reset focus
- * - Zoom controls (+ / - / Reset / Focus Clear)
- * - Selected Node HUD Information Box
+ * - 🔬 주제·기업 관심도 중심망 (Topic & Company Interest Mode): Highlights which companies and universities invest in each domain
+ * - 🌐 기관 협력망 (Institution Mode): Highlights corporate-academic partnerships
+ * - Interactive Node Focus with Rich Domain & Company Breakdown HUD
+ * - Core Hub LOD Filtering and Instant Settled Rendering (Pre-warmed simulation)
  */
 class NetworkView {
   constructor(containerId, onProjectSelect) {
@@ -22,8 +21,8 @@ class NetworkView {
     this.nodes = [];
     this.links = [];
     this.adjacency = new Map(); // nodeId -> Set of neighbor nodeIds
-    this.linkIncidentMap = new Map(); // linkIndex -> [sourceId, targetId]
     this.lodMode = 'core'; // 'core' or 'all'
+    this.graphMode = 'topic'; // 'topic' (주제·기업 관심도 중심망) or 'institution' (기관 협력망)
     this.lastProjects = [];
   }
 
@@ -35,11 +34,16 @@ class NetworkView {
     container.innerHTML = `
       <svg id="network-svg"></svg>
       <div class="network-controls">
-        <button class="network-btn" id="btn-net-zoomin" title="확대">➕ 확대</button>
-        <button class="network-btn" id="btn-net-zoomout" title="축소">➖ 축소</button>
+        <div class="network-mode-group">
+          <button class="network-btn ${this.graphMode === 'topic' ? 'active' : ''}" id="btn-net-mode-topic" title="7대 기술 도메인 중심 글로벌 기업 관심도 및 대학 연구 집중도 시각화">🔬 주제·기업 관심도 중심망</button>
+          <button class="network-btn ${this.graphMode === 'institution' ? 'active' : ''}" id="btn-net-mode-inst" title="기업-대학-연구소 간의 직접 산학 협력망">🌐 기관 협력망</button>
+        </div>
+        <div class="network-btn-separator"></div>
+        <button class="network-btn" id="btn-network-lod" title="핵심 거점망 / 전체 연결망 토글">${this.lodMode === 'core' ? '⚡ 핵심 거점망' : '🌐 전체 연결망'}</button>
         <button class="network-btn" id="btn-net-fit" title="화면 맞춤">🎯 화면 맞춤</button>
         <button class="network-btn" id="btn-net-reset" title="시뮬레이션 재정렬">🔄 재정렬</button>
-        <button class="network-btn" id="btn-network-lod" title="핵심 거점망 / 전체 연결망 토글">⚡ 핵심 거점망</button>
+        <button class="network-btn" id="btn-net-zoomin" title="확대">➕</button>
+        <button class="network-btn" id="btn-net-zoomout" title="축소">➖</button>
         <button class="network-btn" id="btn-net-clear" title="선택 해제" style="display: none;">✨ 강조 해제</button>
       </div>
       <div class="network-hud" id="network-hud">
@@ -48,12 +52,31 @@ class NetworkView {
           <button id="hud-close-btn" style="background: none; border: none; color: #9ca3af; cursor: pointer; font-size: 14px;">&times;</button>
         </div>
         <div class="network-hud-desc" id="hud-type-desc">-</div>
-        <div style="font-size: 11px; font-weight: 700; color: #94a3b8; margin-top: 4px;">🔗 연결된 산학 파트너 (<span id="hud-conn-count">0</span>):</div>
-        <div class="network-hud-collaborators" id="hud-collaborators"></div>
+        <div class="hud-dynamic-section" id="hud-dynamic-content"></div>
       </div>
     `;
 
     // Bind Network Controls
+    document.getElementById('btn-net-mode-topic').addEventListener('click', () => {
+      this.graphMode = 'topic';
+      document.getElementById('btn-net-mode-topic').classList.add('active');
+      document.getElementById('btn-net-mode-inst').classList.remove('active');
+      if (this.lastProjects) this.render(this.lastProjects);
+    });
+
+    document.getElementById('btn-net-mode-inst').addEventListener('click', () => {
+      this.graphMode = 'institution';
+      document.getElementById('btn-net-mode-inst').classList.add('active');
+      document.getElementById('btn-net-mode-topic').classList.remove('active');
+      if (this.lastProjects) this.render(this.lastProjects);
+    });
+
+    document.getElementById('btn-network-lod').addEventListener('click', (e) => {
+      this.lodMode = this.lodMode === 'core' ? 'all' : 'core';
+      e.target.textContent = this.lodMode === 'core' ? '⚡ 핵심 거점망' : '🌐 전체 연결망';
+      if (this.lastProjects) this.render(this.lastProjects);
+    });
+
     document.getElementById('btn-net-zoomin').addEventListener('click', () => {
       if (this.svg && this.zoom) {
         this.svg.transition().duration(300).call(this.zoom.scaleBy, 1.3);
@@ -72,19 +95,9 @@ class NetworkView {
 
     document.getElementById('btn-net-reset').addEventListener('click', () => {
       if (this.simulation) {
-        this.simulation.alpha(1).restart();
+        this.simulation.alpha(0.6).restart();
       }
     });
-
-    const lodBtn = document.getElementById('btn-network-lod');
-    if (lodBtn) {
-      lodBtn.textContent = this.lodMode === 'core' ? '⚡ 핵심 거점망' : '🌐 전체 연결망';
-      lodBtn.addEventListener('click', (e) => {
-        this.lodMode = this.lodMode === 'core' ? 'all' : 'core';
-        e.target.textContent = this.lodMode === 'core' ? '⚡ 핵심 거점망' : '🌐 전체 연결망';
-        if (this.lastProjects) this.render(this.lastProjects);
-      });
-    }
 
     document.getElementById('btn-net-clear').addEventListener('click', () => {
       this.clearFocus();
@@ -113,9 +126,18 @@ class NetworkView {
 
     if (!projects || projects.length === 0) return;
 
-    // Build Graph Nodes and Links from projects
+    const categoryInfo = {
+      'AI & Neuromorphic Computing': { short: 'AI & NPU 뉴로모픽', color: '#3b82f6', icon: '🧠' },
+      'Advanced Logic & Transistors (GAA/CFET/2D)': { short: 'GAA & CFET 차세대 로직', color: '#10b981', icon: '⚡' },
+      'Power & Compound Semiconductors (GaN/SiC)': { short: '전력·화합물 (GaN/SiC)', color: '#f59e0b', icon: '🔋' },
+      'Lithography & Metrology (EUV/High-NA)': { short: 'EUV & High-NA 리소그래피', color: '#8b5cf6', icon: '🔬' },
+      'Memory & Storage (HBM/PIM/3D NAND)': { short: 'HBM & 3D 적층 메모리', color: '#f43f5e', icon: '💾' },
+      'Advanced Packaging & Chiplets (3D/Hybrid Bonding)': { short: '첨단 패키징 & 칩렛 (3D 본딩)', color: '#06b6d4', icon: '📦' },
+      'Silicon Photonics & Optical I/O': { short: '실리콘 포토닉스 (광반도체)', color: '#ec4899', icon: '💡' }
+    };
+
     const nodeMap = new Map();
-    const linkMap = new Map(); // "source__target" -> link object
+    const linkMap = new Map();
     this.adjacency = new Map();
 
     const addNeighbor = (id1, id2) => {
@@ -127,7 +149,7 @@ class NetworkView {
 
     const getNode = (id, label, type, extra = {}) => {
       if (!nodeMap.has(id)) {
-        nodeMap.set(id, { id, label, type, projects: [], professors: new Set(), ...extra, val: 0 });
+        nodeMap.set(id, { id, label, type, projects: [], val: 0, compBreakdown: {}, uniBreakdown: {}, topicBreakdown: {}, ...extra });
       }
       return nodeMap.get(id);
     };
@@ -156,52 +178,95 @@ class NetworkView {
       addNeighbor(sourceId, targetId);
     };
 
-    projects.forEach(p => {
-      // 1. Company Node
-      const compId = `comp_${p.company}`;
-      const compNode = getNode(compId, p.company, 'company', { rawName: p.company });
-      compNode.val += 1;
-      compNode.projects.push(p);
+    if (this.graphMode === 'topic') {
+      // ===== Mode 1: Topic & Company Interest Network =====
+      projects.forEach(p => {
+        const cat = p.category || '기타';
+        const catId = `cat_${cat}`;
+        const catMeta = categoryInfo[cat] || { short: cat, color: '#f59e0b', icon: '🔬' };
+        
+        // 1. Topic Node (Focal Hub)
+        const catNode = getNode(catId, catMeta.short, 'category', {
+          fullLabel: cat,
+          color: catMeta.color,
+          icon: catMeta.icon
+        });
+        catNode.val += 1;
+        catNode.projects.push(p);
+        catNode.compBreakdown[p.company] = (catNode.compBreakdown[p.company] || 0) + 1;
+        catNode.uniBreakdown[p.university] = (catNode.uniBreakdown[p.university] || 0) + 1;
 
-      // 2. University Node
-      const uniId = `uni_${p.university}`;
-      const uniNode = getNode(uniId, p.university, 'university', { rawName: p.university, city: p.university_city, country: p.university_country });
-      uniNode.val += 1;
-      uniNode.projects.push(p);
-      if (p.professor && p.professor !== '-' && p.professor !== '미지정') {
-        uniNode.professors.add(p.professor);
+        // 2. Company Node
+        const compId = `comp_${p.company}`;
+        const compNode = getNode(compId, p.company, 'company', { rawName: p.company });
+        compNode.val += 1;
+        compNode.projects.push(p);
+        compNode.topicBreakdown[cat] = (compNode.topicBreakdown[cat] || 0) + 1;
+        compNode.uniBreakdown[p.university] = (compNode.uniBreakdown[p.university] || 0) + 1;
+
+        // 3. University Node
+        const uniId = `uni_${p.university}`;
+        const uniNode = getNode(uniId, p.university, 'university', {
+          rawName: p.university,
+          city: p.university_city,
+          country: p.university_country
+        });
+        uniNode.val += 1;
+        uniNode.projects.push(p);
+        uniNode.topicBreakdown[cat] = (uniNode.topicBreakdown[cat] || 0) + 1;
+        uniNode.compBreakdown[p.company] = (uniNode.compBreakdown[p.company] || 0) + 1;
+
+        // Links: Company ➔ Topic (Primary Interest Link), University ➔ Topic (Research Focus Link)
+        addLink(compId, catId, p, 'company-topic');
+        addLink(uniId, catId, p, 'uni-topic');
+      });
+
+      this.nodes = Array.from(nodeMap.values());
+      if (this.lodMode === 'core') {
+        // In core mode: keep all 7 topics, companies with >= 5 projects, and universities with >= 4 projects
+        this.nodes = this.nodes.filter(n => n.type === 'category' || n.val >= 3);
       }
 
-      // 3. Category / Domain Node
-      const catId = `cat_${p.category || '기타'}`;
-      const catNode = getNode(catId, p.category || '기타', 'category', { rawName: p.category });
-      catNode.val += 1;
-      catNode.projects.push(p);
+    } else {
+      // ===== Mode 2: Classic Institution Collaboration Network =====
+      projects.forEach(p => {
+        const compId = `comp_${p.company}`;
+        const compNode = getNode(compId, p.company, 'company', { rawName: p.company });
+        compNode.val += 1;
+        compNode.projects.push(p);
 
-      // 4. Institute / Consortium Node (optional)
-      let instId = null;
-      if (p.institute_or_consortium && p.institute_or_consortium !== '-' && p.institute_or_consortium !== '해당 없음') {
-        instId = `inst_${p.institute_or_consortium}`;
-        const instNode = getNode(instId, p.institute_or_consortium, 'institute', { rawName: p.institute_or_consortium });
-        instNode.val += 1;
-        instNode.projects.push(p);
+        const uniId = `uni_${p.university}`;
+        const uniNode = getNode(uniId, p.university, 'university', { rawName: p.university, city: p.university_city, country: p.university_country });
+        uniNode.val += 1;
+        uniNode.projects.push(p);
+
+        const catId = `cat_${p.category || '기타'}`;
+        const catNode = getNode(catId, p.category || '기타', 'category', { rawName: p.category });
+        catNode.val += 1;
+        catNode.projects.push(p);
+
+        let instId = null;
+        if (p.institute_or_consortium && p.institute_or_consortium !== '-' && p.institute_or_consortium !== '해당 없음') {
+          instId = `inst_${p.institute_or_consortium}`;
+          const instNode = getNode(instId, p.institute_or_consortium, 'institute', { rawName: p.institute_or_consortium });
+          instNode.val += 1;
+          instNode.projects.push(p);
+        }
+
+        addLink(compId, uniId, p, 'industry-acad');
+        addLink(uniId, catId, p, 'research-domain');
+        if (instId) {
+          addLink(compId, instId, p, 'consortium');
+          addLink(instId, uniId, p, 'consortium');
+        }
+      });
+
+      this.nodes = Array.from(nodeMap.values());
+      if (this.lodMode === 'core') {
+        this.nodes = this.nodes.filter(n => n.val >= 2);
       }
-
-      // Add Links
-      addLink(compId, uniId, p, 'industry-acad');
-      addLink(uniId, catId, p, 'research-domain');
-
-      if (instId) {
-        addLink(compId, instId, p, 'consortium');
-        addLink(instId, uniId, p, 'consortium');
-      }
-    });
-
-    this.nodes = Array.from(nodeMap.values());
-    if (this.lodMode === 'core') {
-      this.nodes = this.nodes.filter(n => n.val >= 2);
     }
-    
+
     const nodeIds = new Set(this.nodes.map(n => n.id));
     this.links = Array.from(linkMap.values()).filter(l => nodeIds.has(l.source) && nodeIds.has(l.target));
 
@@ -210,7 +275,7 @@ class NetworkView {
       company: '#a78bfa',     // Purple
       university: '#38bdf8',  // Cyan/Blue
       institute: '#34d399',   // Emerald
-      category: '#f59e0b'     // Amber
+      category: '#f59e0b'     // Amber/Gold for Topics
     };
 
     // Zoom container
@@ -224,59 +289,79 @@ class NetworkView {
         g.attr('transform', event.transform);
         const z = event.transform.k;
         g.selectAll('.node-label')
-          .style('display', d => (d.val >= 5 || z > 1.8) ? 'block' : 'none');
+          .style('display', d => (d.type === 'category' || d.val >= 8 || z > 1.6) ? 'block' : 'none');
       });
 
     svg.call(this.zoom);
 
-    // Canvas click resets focus to normal
     svg.on('click', (event) => {
       if (event.target.tagName === 'svg' || event.target.classList.contains('network-main-group')) {
         this.clearFocus();
       }
     });
 
-    // Pre-distribute node positions around the canvas center
-    const centerRadius = Math.min(width, height) * 0.32;
-    this.nodes.forEach((n, i) => {
-      const angle = (i / Math.max(1, this.nodes.length)) * 2 * Math.PI;
-      const r = centerRadius * (0.35 + 0.65 * Math.random());
+    // Arrange Initial Positions in stable layout
+    const centerRadius = Math.min(width, height) * 0.35;
+    const catNodes = this.nodes.filter(n => n.type === 'category');
+    catNodes.forEach((cn, i) => {
+      const angle = (i / Math.max(1, catNodes.length)) * 2 * Math.PI - Math.PI / 2;
+      cn.x = width / 2 + centerRadius * Math.cos(angle);
+      cn.y = height / 2 + centerRadius * Math.sin(angle);
+    });
+
+    const nonCatNodes = this.nodes.filter(n => n.type !== 'category');
+    nonCatNodes.forEach((n, i) => {
+      const angle = (i / Math.max(1, nonCatNodes.length)) * 2 * Math.PI;
+      const r = centerRadius * (0.2 + 0.9 * Math.random());
       n.x = width / 2 + r * Math.cos(angle);
       n.y = height / 2 + r * Math.sin(angle);
     });
 
-    // D3 Force Simulation (Smooth & performant)
+    // D3 Force Simulation
     this.simulation = d3.forceSimulation(this.nodes)
-      .alphaDecay(0.04)
+      .alphaDecay(0.045)
       .velocityDecay(0.4)
-      .force('link', d3.forceLink(this.links).id(d => d.id).distance(d => 50 + Math.max(10, 80 - d.weight * 2)))
-      .force('charge', d3.forceManyBody().strength(-200))
+      .force('link', d3.forceLink(this.links).id(d => d.id).distance(d => {
+        if (this.graphMode === 'topic') {
+          return d.linkType === 'company-topic' ? 65 : 80;
+        }
+        return 50 + Math.max(10, 80 - d.weight * 2);
+      }))
+      .force('charge', d3.forceManyBody().strength(d => d.type === 'category' ? -350 : -140))
       .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide().radius(d => 12 + Math.min(d.val * 0.8, 22)));
+      .force('collision', d3.forceCollide().radius(d => {
+        if (d.type === 'category') return 34;
+        return 10 + Math.min(d.val * 0.6, 20);
+      }));
 
-    // Pre-calculate simulation layout synchronously so nodes appear immediately in place
+    // Pre-calculate simulation synchronously
     this.simulation.stop();
     for (let i = 0; i < 150; ++i) {
       this.simulation.tick();
     }
 
-    // Render Links with immediate coordinates
+    // Render Links
     const link = g.append('g')
       .attr('class', 'links-group')
       .selectAll('line')
       .data(this.links)
       .join('line')
       .attr('class', 'network-link')
-      .attr('stroke', d => d.hasActive ? '#06b6d4' : '#4b5563')
-      .attr('stroke-opacity', 0.65)
-      .attr('stroke-width', d => Math.min(5, Math.max(1.2, 1 + Math.sqrt(d.weight) * 0.8)))
+      .attr('stroke', d => {
+        if (d.hasActive) return '#06b6d4';
+        if (d.linkType === 'company-topic') return '#a78bfa';
+        if (d.linkType === 'uni-topic') return '#38bdf8';
+        return '#4b5563';
+      })
+      .attr('stroke-opacity', d => d.linkType === 'company-topic' ? 0.75 : 0.45)
+      .attr('stroke-width', d => Math.min(6, Math.max(1.2, 1 + Math.sqrt(d.weight) * 0.9)))
       .attr('stroke-dasharray', d => d.hasActive ? '4,4' : null)
       .attr('x1', d => d.source.x)
       .attr('y1', d => d.source.y)
       .attr('x2', d => d.target.x)
       .attr('y2', d => d.target.y);
 
-    // Render Nodes Group with immediate transform
+    // Render Nodes Group
     const node = g.append('g')
       .attr('class', 'nodes-group')
       .selectAll('g')
@@ -303,44 +388,56 @@ class NetworkView {
 
     // Node Circles
     node.append('circle')
-      .attr('r', d => Math.min(26, 8 + Math.sqrt(d.val) * 2.2))
-      .attr('fill', d => colorScale[d.type] || '#9ca3af')
-      .attr('stroke', '#0f172a')
-      .attr('stroke-width', 2);
+      .attr('r', d => {
+        if (d.type === 'category') return 24;
+        return Math.min(22, 7 + Math.sqrt(d.val) * 1.8);
+      })
+      .attr('fill', d => d.color || colorScale[d.type] || '#9ca3af')
+      .attr('stroke', d => d.type === 'category' ? '#fef08a' : '#0f172a')
+      .attr('stroke-width', d => d.type === 'category' ? 3 : 2)
+      .style('filter', d => d.type === 'category' ? 'drop-shadow(0 0 8px rgba(245, 158, 11, 0.7))' : null);
+
+    // Node Category Center Icons
+    node.filter(d => d.type === 'category').append('text')
+      .attr('text-anchor', 'middle')
+      .attr('dominant-baseline', 'central')
+      .attr('font-size', '14px')
+      .attr('pointer-events', 'none')
+      .text(d => d.icon || '🔬');
 
     // Node Labels
     node.append('text')
       .attr('class', 'node-label')
-      .text(d => d.label.length > 20 ? d.label.slice(0, 18) + '...' : d.label)
-      .attr('x', d => Math.min(26, 8 + Math.sqrt(d.val) * 2.2) + 4)
+      .text(d => d.label.length > 22 ? d.label.slice(0, 20) + '…' : d.label)
+      .attr('x', d => (d.type === 'category' ? 28 : Math.min(22, 7 + Math.sqrt(d.val) * 1.8) + 4))
       .attr('y', 4)
-      .attr('fill', '#f1f5f9')
-      .attr('font-size', '10px')
-      .attr('font-weight', '600')
+      .attr('fill', d => d.type === 'category' ? '#fef08a' : '#f1f5f9')
+      .attr('font-size', d => d.type === 'category' ? '12px' : '10px')
+      .attr('font-weight', d => d.type === 'category' ? '800' : '600')
       .attr('font-family', 'sans-serif')
-      .style('display', d => d.val >= 5 ? 'block' : 'none')
+      .style('display', d => (d.type === 'category' || d.val >= 8) ? 'block' : 'none')
       .style('paint-order', 'stroke fill')
       .style('stroke', '#060910')
       .style('stroke-width', '3px')
       .style('stroke-linejoin', 'round')
       .attr('pointer-events', 'none');
 
-    // Single Click: Focus & Highlight Connected Nodes / Tone Down Others
+    // Single Click
     node.on('click', (event, d) => {
       event.stopPropagation();
       this.handleNodeClick(d);
     });
 
-    // Double Click: Open Project Modal if available
+    // Double Click
     node.on('dblclick', (event, d) => {
       event.stopPropagation();
       const filterType = d.type === 'university' ? 'university' : (d.type === 'company' ? 'company' : 'category');
       if (window.app && window.app.filterByAnalyticsItem) {
-        window.app.filterByAnalyticsItem(filterType, d.rawName || d.label);
+        window.app.filterByAnalyticsItem(filterType, d.fullLabel || d.rawName || d.label);
       }
     });
 
-    // Simulation Tick
+    // Tick Handler
     this.simulation.on('tick', () => {
       link
         .attr('x1', d => d.source.x)
@@ -357,7 +454,6 @@ class NetworkView {
 
   handleNodeClick(d) {
     if (this.selectedNodeId === d.id) {
-      // Toggle off if clicking the already selected node
       this.clearFocus();
       return;
     }
@@ -367,22 +463,18 @@ class NetworkView {
     const connectedSet = new Set(neighbors);
     connectedSet.add(d.id);
 
-    // Show highlight clear button
     const clearBtn = document.getElementById('btn-net-clear');
     if (clearBtn) clearBtn.style.display = 'flex';
 
-    // 1. Update Nodes Style (Highlight selected & neighbors, dim others)
     d3.selectAll('.network-node')
       .classed('node-dimmed', n => !connectedSet.has(n.id))
       .classed('node-selected', n => n.id === d.id)
       .classed('node-neighbor', n => n.id !== d.id && connectedSet.has(n.id));
 
-    // 2. Update Links Style (Highlight incident links, dim others)
     d3.selectAll('.network-link')
       .classed('link-dimmed', l => !(l.source.id === d.id || l.target.id === d.id))
       .classed('link-highlighted', l => (l.source.id === d.id || l.target.id === d.id));
 
-    // 3. Show Floating HUD Information Box
     this.showHud(d, neighbors);
   }
 
@@ -407,48 +499,117 @@ class NetworkView {
     const hud = document.getElementById('network-hud');
     if (!hud) return;
 
-    const typeIcons = {
-      company: '🏢 기업',
-      university: '🏛️ 대학교',
-      institute: '🌐 연구소/컨소시엄',
-      category: '🔬 핵심 연구분야'
+    const dynamicContent = document.getElementById('hud-dynamic-content');
+    if (!dynamicContent) return;
+    dynamicContent.innerHTML = '';
+
+    const typeLabels = {
+      category: '🔬 핵심 기술 도메인 / 연구 주제',
+      company: '🏢 참여 / 투자 반도체 기업',
+      university: '🏛️ 산학 연구 수주 대학교',
+      institute: '🌐 연구소 및 컨소시엄'
     };
 
-    document.getElementById('hud-name').textContent = node.label;
-    
-    let extraDesc = `${typeIcons[node.type] || '노드'} | 총 ${node.val || 1}건 연계 과제`;
-    if (node.professors && node.professors.size > 0) {
-      const profArr = Array.from(node.professors);
-      extraDesc += `<br/><span style="color: #fbbf24; font-size: 11px;">👨‍🏫 참여 교수: ${profArr.slice(0, 3).join(', ')}${profArr.length > 3 ? ` 외 ${profArr.length - 3}명` : ''}</span>`;
+    document.getElementById('hud-name').textContent = node.fullLabel || node.label;
+    document.getElementById('hud-type-desc').innerHTML = `
+      <span style="color: #60a5fa; font-weight: 700;">${typeLabels[node.type] || '노드'}</span> | 총 <strong>${node.val || 1}건</strong> R&D 과제 연계
+    `;
+
+    // 1. Topic Node HUD: Company interest rankings + Top universities
+    if (node.type === 'category') {
+      const topComps = Object.entries(node.compBreakdown || {}).sort((a, b) => b[1] - a[1]).slice(0, 6);
+      const maxCompVal = Math.max(...topComps.map(c => c[1]), 1);
+
+      let compHtml = `
+        <div style="font-size: 11px; font-weight: 700; color: #a78bfa; margin-top: 6px; margin-bottom: 4px;">🏢 최다 투자/관심 기업 TOP ${topComps.length}:</div>
+      `;
+      topComps.forEach(([comp, count]) => {
+        const pct = ((count / node.val) * 100).toFixed(1);
+        compHtml += `
+          <div class="hud-interest-item" style="cursor: pointer;" title="클릭: '${comp}' 필터링" onclick="window.app.filterByAnalyticsItem('company', '${comp}')">
+            <span class="hud-interest-label">${comp}</span>
+            <div class="hud-interest-bar-wrap">
+              <div class="hud-interest-bar" style="width: ${(count / maxCompVal) * 100}%; background: linear-gradient(90deg, #a78bfa, #818cf8);"></div>
+            </div>
+            <span class="hud-interest-count">${count}건 (${pct}%)</span>
+          </div>
+        `;
+      });
+
+      const topUnis = Object.entries(node.uniBreakdown || {}).sort((a, b) => b[1] - a[1]).slice(0, 8);
+      let uniTagsHtml = `
+        <div style="font-size: 11px; font-weight: 700; color: #38bdf8; margin-top: 8px; margin-bottom: 4px;">🏛️ 주요 연구 대학교:</div>
+        <div class="network-hud-collaborators">
+      `;
+      topUnis.forEach(([uni, count]) => {
+        uniTagsHtml += `<span class="hud-tag" style="cursor: pointer;" onclick="window.app.filterByAnalyticsItem('university', '${uni}')" title="${uni} (${count}건)">${uni} <strong>${count}</strong></span>`;
+      });
+      uniTagsHtml += `</div>`;
+
+      dynamicContent.innerHTML = compHtml + uniTagsHtml;
+
+    } else if (node.type === 'company') {
+      // 2. Company Node HUD: Topic interest portfolio breakdown
+      const topTopics = Object.entries(node.topicBreakdown || {}).sort((a, b) => b[1] - a[1]);
+      const maxTopicVal = Math.max(...topTopics.map(t => t[1]), 1);
+
+      let topicHtml = `
+        <div style="font-size: 11px; font-weight: 700; color: #f59e0b; margin-top: 6px; margin-bottom: 4px;">📊 연구 주제별 투자 포트폴리오:</div>
+      `;
+      topTopics.forEach(([topic, count]) => {
+        const pct = ((count / node.val) * 100).toFixed(1);
+        topicHtml += `
+          <div class="hud-interest-item" style="cursor: pointer;" title="클릭: '${topic}' 필터링" onclick="window.app.filterByAnalyticsItem('category', '${topic}')">
+            <span class="hud-interest-label" style="width: 120px;">${topic.split('(')[0].trim()}</span>
+            <div class="hud-interest-bar-wrap">
+              <div class="hud-interest-bar" style="width: ${(count / maxTopicVal) * 100}%; background: linear-gradient(90deg, #f59e0b, #06b6d4);"></div>
+            </div>
+            <span class="hud-interest-count">${count}건 (${pct}%)</span>
+          </div>
+        `;
+      });
+
+      const topUnis = Object.entries(node.uniBreakdown || {}).sort((a, b) => b[1] - a[1]).slice(0, 8);
+      let uniTagsHtml = `
+        <div style="font-size: 11px; font-weight: 700; color: #38bdf8; margin-top: 8px; margin-bottom: 4px;">🏛️ 주요 협력 파트너 대학:</div>
+        <div class="network-hud-collaborators">
+      `;
+      topUnis.forEach(([uni, count]) => {
+        uniTagsHtml += `<span class="hud-tag" style="cursor: pointer;" onclick="window.app.filterByAnalyticsItem('university', '${uni}')">${uni} <strong>${count}</strong></span>`;
+      });
+      uniTagsHtml += `</div>`;
+
+      dynamicContent.innerHTML = topicHtml + uniTagsHtml;
+
+    } else {
+      // 3. University Node HUD: Topics & Companies
+      const topTopics = Object.entries(node.topicBreakdown || {}).sort((a, b) => b[1] - a[1]).slice(0, 4);
+      let topicHtml = `
+        <div style="font-size: 11px; font-weight: 700; color: #f59e0b; margin-top: 6px; margin-bottom: 4px;">🔬 주요 연구 수주 분야:</div>
+      `;
+      topTopics.forEach(([topic, count]) => {
+        topicHtml += `
+          <div class="hud-interest-item">
+            <span class="hud-interest-label" style="width: 130px;">${topic.split('(')[0].trim()}</span>
+            <span class="hud-interest-count" style="color: #f59e0b;">${count}건</span>
+          </div>
+        `;
+      });
+
+      const topComps = Object.entries(node.compBreakdown || {}).sort((a, b) => b[1] - a[1]).slice(0, 8);
+      let compTagsHtml = `
+        <div style="font-size: 11px; font-weight: 700; color: #a78bfa; margin-top: 8px; margin-bottom: 4px;">🏢 주요 협력 기업:</div>
+        <div class="network-hud-collaborators">
+      `;
+      topComps.forEach(([comp, count]) => {
+        compTagsHtml += `<span class="hud-tag" style="cursor: pointer;" onclick="window.app.filterByAnalyticsItem('company', '${comp}')">${comp} <strong>${count}</strong></span>`;
+      });
+      compTagsHtml += `</div>`;
+
+      dynamicContent.innerHTML = topicHtml + compTagsHtml;
     }
-    document.getElementById('hud-type-desc').innerHTML = extraDesc;
-    document.getElementById('hud-conn-count').textContent = neighbors.size;
 
-    const colList = document.getElementById('hud-collaborators');
-    colList.innerHTML = '';
-
-    const neighborNodes = this.nodes.filter(n => neighbors.has(n.id));
-    neighborNodes.slice(0, 12).forEach(n => {
-      const tag = document.createElement('span');
-      tag.className = 'hud-tag';
-      tag.textContent = n.label;
-      tag.style.cursor = 'pointer';
-      tag.title = '클릭하여 해당 노드로 이동';
-      tag.onclick = (e) => {
-        e.stopPropagation();
-        this.handleNodeClick(n);
-      };
-      colList.appendChild(tag);
-    });
-
-    if (neighborNodes.length > 12) {
-      const moreTag = document.createElement('span');
-      moreTag.className = 'hud-tag';
-      moreTag.style.opacity = '0.6';
-      moreTag.textContent = `+ 외 ${neighborNodes.length - 12}개 파트너`;
-      colList.appendChild(moreTag);
-    }
-
+    // Featured representative projects
     if (node.projects && node.projects.length > 0) {
       const projContainer = document.createElement('div');
       projContainer.style.marginTop = '8px';
@@ -467,7 +628,7 @@ class NetworkView {
         item.style.justifyContent = 'space-between';
         item.style.alignItems = 'center';
         item.innerHTML = `
-          <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 210px;" title="${p.topic}">• ${p.topic}</span>
+          <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 230px;" title="${p.topic}">• ${p.topic}</span>
           <button style="background: #3b82f6; border: none; color: #fff; padding: 1px 5px; border-radius: 3px; font-size: 9px; cursor: pointer; flex-shrink: 0;">보기</button>
         `;
         item.querySelector('button').onclick = (e) => {
@@ -477,7 +638,7 @@ class NetworkView {
         projContainer.appendChild(item);
       });
 
-      colList.appendChild(projContainer);
+      dynamicContent.appendChild(projContainer);
     }
 
     hud.classList.add('active');

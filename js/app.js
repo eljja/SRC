@@ -428,6 +428,7 @@ class App {
     this.renderYearlyTrendChart();
     this.renderDomainDonutChart(rankings.categoryBreakdown);
     this.renderRegionalChart();
+    this.renderCompanyTopicMatrix();
 
     // Bind Top-N toggle if present
     const topNBtns = document.querySelectorAll('.analytics-topn-btn');
@@ -623,6 +624,74 @@ class App {
       .call(d3.axisLeft(y).tickSize(0))
       .selectAll('text').attr('fill', '#d1d5db').attr('font-size', '11px');
     svg.selectAll('.domain').remove();
+  }
+
+  renderCompanyTopicMatrix() {
+    const container = document.getElementById('chart-company-topic-matrix');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const matrixData = this.dataManager.getCompanyTopicMatrix(8);
+    if (!matrixData || !matrixData.companies || matrixData.companies.length === 0) {
+      container.innerHTML = '<div class="analytics-empty">데이터 없음</div>';
+      return;
+    }
+
+    const shortCatNames = {
+      'AI & Neuromorphic Computing': 'AI·NPU',
+      'Advanced Logic & Transistors (GAA/CFET/2D)': 'GAA·CFET',
+      'Power & Compound Semiconductors (GaN/SiC)': '전력·GaN',
+      'Lithography & Metrology (EUV/High-NA)': 'EUV 노광',
+      'Memory & Storage (HBM/PIM/3D NAND)': 'HBM·메모리',
+      'Advanced Packaging & Chiplets (3D/Hybrid Bonding)': '첨단패키징',
+      'Silicon Photonics & Optical I/O': '포토닉스'
+    };
+
+    let tableHtml = `
+      <div class="matrix-table-wrapper">
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th class="matrix-sticky-col">반도체 기업</th>
+              <th>총 산학 과제</th>
+              ${matrixData.categories.map(c => `<th title="${c}">${shortCatNames[c] || c}</th>`).join('')}
+            </tr>
+          </thead>
+          <tbody>
+    `;
+
+    matrixData.companies.forEach(row => {
+      tableHtml += `
+        <tr>
+          <td class="matrix-sticky-col">
+            <span class="matrix-comp-name" onclick="window.app.filterByAnalyticsItem('company', '${row.company}')" title="클릭: '${row.company}' 전체 과제 목록">${row.company}</span>
+          </td>
+          <td><strong style="color: #38bdf8;">${row.total}건</strong></td>
+          ${matrixData.categories.map(c => {
+            const count = row.categories[c] || 0;
+            const pct = row.total > 0 ? (count / row.total) * 100 : 0;
+            const intensity = count > 0 ? Math.min(0.85, 0.12 + (count / row.total) * 1.2) : 0;
+            const bg = count > 0 ? `rgba(59, 130, 246, ${intensity})` : 'rgba(255,255,255,0.02)';
+            return `
+              <td style="background: ${bg}; cursor: ${count > 0 ? 'pointer' : 'default'};" 
+                  onclick="${count > 0 ? `window.app.filterByAnalyticsItem('company', '${row.company}'); window.app.dataManager.setFilter('category', '${c}'); window.app.updateAllViews();` : ''}"
+                  title="${row.company} ➔ ${c}: ${count}건 (${pct.toFixed(1)}%)">
+                <span class="matrix-cell-val ${count > 0 ? 'has-data' : ''}">${count > 0 ? `${count}건` : '-'}</span>
+                ${count > 0 ? `<div class="matrix-mini-pct">${pct.toFixed(0)}%</div>` : ''}
+              </td>
+            `;
+          }).join('')}
+        </tr>
+      `;
+    });
+
+    tableHtml += `
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    container.innerHTML = tableHtml;
   }
 
   filterByAnalyticsItem(filterType, value) {

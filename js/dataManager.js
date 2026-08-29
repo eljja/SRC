@@ -285,6 +285,37 @@ class DataManager {
       .map(([region, count]) => ({ region, count }))
       .sort((a, b) => b.count - a.count);
   }
+
+  getCompanyTopicMatrix(topCompanyLimit = 8) {
+    const projects = this.filteredProjects.length > 0 ? this.filteredProjects : this.rawProjects;
+    const compMap = {};
+    const categories = this.categories;
+
+    projects.forEach(p => {
+      const comp = p.company || '기타';
+      const cat = p.category || '기타';
+      if (!compMap[comp]) {
+        compMap[comp] = { total: 0, categories: {} };
+        categories.forEach(c => compMap[comp].categories[c] = 0);
+      }
+      compMap[comp].total++;
+      compMap[comp].categories[cat] = (compMap[comp].categories[cat] || 0) + 1;
+    });
+
+    const topCompanies = Object.entries(compMap)
+      .sort((a, b) => b[1].total - a[1].total)
+      .slice(0, topCompanyLimit)
+      .map(([company, data]) => ({
+        company,
+        total: data.total,
+        categories: data.categories
+      }));
+
+    return {
+      categories,
+      companies: topCompanies
+    };
+  }
 }
 
 window.DataManager = DataManager;

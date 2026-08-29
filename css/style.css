@@ -703,12 +703,33 @@ header {
   align-items: center;
   gap: 0.3rem;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .network-btn:hover {
+  background: rgba(59, 130, 246, 0.2);
+  color: white;
+  border-color: var(--accent-blue);
+}
+
+.network-btn.active {
   background: var(--accent-blue);
   color: white;
   border-color: var(--accent-blue);
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
+}
+
+.network-mode-group {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.network-btn-separator {
+  width: 1px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.15);
+  margin: 0 4px;
+  align-self: center;
 }
 
 /* Network Node Focus & Tone-Down (Dimming) Styles */
@@ -837,6 +858,61 @@ header {
   background: rgba(30, 41, 59, 0.9);
   border: 1px solid var(--border-color);
   color: #cbd5e1;
+  transition: all 0.15s ease;
+}
+
+.hud-tag:hover {
+  background: var(--accent-blue);
+  color: white;
+  border-color: var(--accent-blue);
+}
+
+.hud-interest-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  margin-bottom: 0.3rem;
+  padding: 2px 4px;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s ease;
+}
+
+.hud-interest-item:hover {
+  background: rgba(59, 130, 246, 0.15);
+}
+
+.hud-interest-label {
+  width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-primary);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.hud-interest-bar-wrap {
+  flex: 1;
+  height: 6px;
+  background: rgba(55, 65, 81, 0.5);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.hud-interest-bar {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.hud-interest-count {
+  font-weight: 700;
+  color: var(--accent-cyan);
+  min-width: 32px;
+  text-align: right;
+  flex-shrink: 0;
+  font-size: 0.7rem;
 }
 
 /* Table Directory View */
@@ -1180,6 +1256,73 @@ header {
   margin-top: 6px;
   font-size: 0.75rem;
   color: var(--text-secondary);
+}
+
+/* Company vs Topic Focus Matrix Table */
+.matrix-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: rgba(10, 14, 23, 0.6);
+  margin-top: 0.25rem;
+}
+
+.matrix-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  text-align: center;
+}
+
+.matrix-table th,
+.matrix-table td {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid rgba(75, 85, 99, 0.25);
+  white-space: nowrap;
+}
+
+.matrix-table th {
+  background: rgba(17, 24, 39, 0.95);
+  color: var(--text-secondary);
+  font-weight: 700;
+  font-size: 0.72rem;
+}
+
+.matrix-sticky-col {
+  position: sticky;
+  left: 0;
+  background: rgba(17, 24, 39, 0.98);
+  font-weight: 700;
+  text-align: left;
+  z-index: 5;
+}
+
+.matrix-comp-name {
+  color: #a78bfa;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.matrix-comp-name:hover {
+  color: #38bdf8;
+  text-decoration: underline;
+}
+
+.matrix-cell-val {
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.matrix-cell-val.has-data {
+  color: #f1f5f9;
+}
+
+.matrix-mini-pct {
+  font-size: 0.65rem;
+  color: #93c5fd;
+  opacity: 0.85;
 }
 
 .analytics-toolbar-row {
