@@ -50,21 +50,24 @@ body {
 /* Header & Top Bar */
 header {
   height: var(--header-height);
-  background: rgba(10, 14, 23, 0.9);
+  background: rgba(10, 14, 23, 0.92);
   backdrop-filter: var(--glass-blur);
   border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 1.5rem;
+  gap: 1.25rem;
   z-index: 1000;
   position: relative;
+  overflow-x: auto;
 }
 
 .brand-section {
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-shrink: 0;
 }
 
 .brand-logo {
@@ -74,6 +77,7 @@ header {
   font-size: 1.25rem;
   font-weight: 800;
   letter-spacing: -0.025em;
+  white-space: nowrap;
   background: linear-gradient(135deg, #60a5fa, #a78bfa, #34d399);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -83,13 +87,7 @@ header {
   width: 28px;
   height: 28px;
   stroke: var(--accent-cyan);
-}
-
-.brand-tagline {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  border-left: 1px solid var(--border-color);
-  padding-left: 0.75rem;
+  flex-shrink: 0;
 }
 
 /* Freshness & Date Tracker Banner in Header */
@@ -97,6 +95,7 @@ header {
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-shrink: 0;
 }
 
 .freshness-tracker-badge {
@@ -108,7 +107,9 @@ header {
   padding: 0.35rem 0.85rem;
   border-radius: var(--radius-lg);
   font-size: 0.78rem;
+  white-space: nowrap;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
 }
 
 .freshness-indicator {
@@ -116,6 +117,7 @@ header {
   height: 8px;
   border-radius: 50%;
   position: relative;
+  flex-shrink: 0;
 }
 
 .freshness-indicator.fresh {
@@ -138,6 +140,7 @@ header {
   align-items: center;
   gap: 0.4rem;
   color: var(--text-secondary);
+  white-space: nowrap;
 }
 
 .meta-date-info strong {
@@ -149,27 +152,32 @@ header {
   display: flex;
   background: var(--bg-secondary);
   border-radius: var(--radius-md);
-  padding: 3px;
+  padding: 4px;
+  gap: 4px;
   border: 1px solid var(--border-color);
+  flex-shrink: 0;
 }
 
 .view-tab-btn {
   background: transparent;
   border: none;
   color: var(--text-secondary);
-  padding: 0.45rem 1rem;
-  font-size: 0.82rem;
+  padding: 0.5rem 1.15rem;
+  font-size: 0.86rem;
   font-weight: 600;
   border-radius: var(--radius-sm);
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
+  white-space: nowrap;
+  flex-shrink: 0;
   transition: all 0.2s ease;
 }
 
 .view-tab-btn:hover {
   color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .view-tab-btn.active {
@@ -178,18 +186,27 @@ header {
   box-shadow: 0 2px 10px rgba(59, 130, 246, 0.4);
 }
 
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-shrink: 0;
+}
+
 .header-action-btn {
   background: rgba(31, 41, 55, 0.8);
   border: 1px solid var(--border-color);
   color: var(--text-primary);
   padding: 0.45rem 0.9rem;
   border-radius: var(--radius-md);
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 500;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 0.4rem;
+  white-space: nowrap;
+  flex-shrink: 0;
   transition: all 0.2s ease;
 }
 
@@ -1728,12 +1745,15 @@ input:focus-visible {
   }
 }
 
+@media (max-width: 1050px) {
+  .header-meta-section {
+    display: none;
+  }
+}
+
 @media (max-width: 1024px) {
   :root {
     --sidebar-width: 320px;
-  }
-  .brand-tagline {
-    display: none;
   }
   .map-floating-toolbar {
     flex-wrap: wrap;
