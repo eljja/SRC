@@ -143,6 +143,9 @@ class App {
     document.getElementById('filter-category').addEventListener('change', (e) => {
       this.tableCurrentPage = 1;
       this.dataManager.setFilter('category', e.target.value);
+      if (e.target.value !== 'all' && this.networkView) {
+        this.networkView.selectedSubtopicCategory = e.target.value;
+      }
       this.updateAllViews();
     });
 
@@ -244,6 +247,9 @@ class App {
       setTimeout(() => this.mapView.resize(), 100);
       this.mapView.render(this.dataManager.filteredProjects);
     } else if (viewName === 'network') {
+      if (this.dataManager.filters.category && this.dataManager.filters.category !== 'all') {
+        this.networkView.selectedSubtopicCategory = this.dataManager.filters.category;
+      }
       this.networkView.render(this.dataManager.filteredProjects);
     } else if (viewName === 'table') {
       this.renderTableDirectory();

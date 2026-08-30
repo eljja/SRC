@@ -1,12 +1,13 @@
 /**
- * NetworkView Module (v7.3.0)
+ * NetworkView Module (v7.4.0)
  * Renders an interactive D3.js Force-Directed Graph connecting
- * Technology Domains/Topics, Companies, and Universities.
+ * Technology Domains, Granular Sub-topics, Companies, and Universities.
  * Supports:
- * - 🔬 주제·기업 관심도 중심망 (Topic & Company Interest Mode): Highlights which companies and universities invest in each domain
- * - 🌐 기관 협력망 (Institution Mode): Highlights corporate-academic partnerships
- * - Interactive Node Focus with Rich Domain & Company Breakdown HUD
- * - Core Hub LOD Filtering and Instant Settled Rendering (Pre-warmed simulation)
+ * - 🌐 1차: 7대 기술 도메인 총괄망 (Global 7-Domain Overview Mode)
+ * - 🔬 2차: 세부 주제별 심층망 (Deep-Dive Sub-Topic & Gap Analysis Mode)
+ * - 🏛️ 산학 기관 협력망 (Institution Collaboration Mode)
+ * - Interactive Focus with Focus vs Gap Analysis HUD
+ * - Core Hub LOD Filtering and Pre-warmed Instant Layout
  */
 class NetworkView {
   constructor(containerId, onProjectSelect) {
@@ -20,9 +21,10 @@ class NetworkView {
     this.selectedNodeId = null;
     this.nodes = [];
     this.links = [];
-    this.adjacency = new Map(); // nodeId -> Set of neighbor nodeIds
+    this.adjacency = new Map();
     this.lodMode = 'core'; // 'core' or 'all'
-    this.graphMode = 'topic'; // 'topic' (주제·기업 관심도 중심망) or 'institution' (기관 협력망)
+    this.graphMode = 'subtopic'; // 'topic' (1차 총괄망), 'subtopic' (2차 세부 심층망), 'institution' (기관망)
+    this.selectedSubtopicCategory = 'Advanced Logic & Transistors (GAA/CFET/2D)';
     this.lastProjects = [];
   }
 
@@ -35,9 +37,25 @@ class NetworkView {
       <svg id="network-svg"></svg>
       <div class="network-controls">
         <div class="network-mode-group">
-          <button class="network-btn ${this.graphMode === 'topic' ? 'active' : ''}" id="btn-net-mode-topic" title="7대 기술 도메인 중심 글로벌 기업 관심도 및 대학 연구 집중도 시각화">🔬 주제·기업 관심도 중심망</button>
-          <button class="network-btn ${this.graphMode === 'institution' ? 'active' : ''}" id="btn-net-mode-inst" title="기업-대학-연구소 간의 직접 산학 협력망">🌐 기관 협력망</button>
+          <button class="network-btn ${this.graphMode === 'subtopic' ? 'active' : ''}" id="btn-net-mode-subtopic" title="1개 기술 분야 선택 시 세부 기술 주제별 집중도 및 공백(Gap) 심층 분석">🔬 2차: 세부 주제별 심층망</button>
+          <button class="network-btn ${this.graphMode === 'topic' ? 'active' : ''}" id="btn-net-mode-topic" title="7대 기술 도메인 중심 글로벌 기업 관심도 및 대학 연구 집중도 총괄망">🌐 1차: 7대 도메인 총괄망</button>
+          <button class="network-btn ${this.graphMode === 'institution' ? 'active' : ''}" id="btn-net-mode-inst" title="기업-대학-연구소 간의 직접 산학 협력망">🏛️ 산학 기관망</button>
         </div>
+        
+        <!-- Domain selector for Sub-topic deep-dive mode -->
+        <div class="subtopic-selector-container" id="subtopic-selector-container" style="${this.graphMode === 'subtopic' ? 'display: flex;' : 'display: none;'}">
+          <span class="subtopic-selector-label">🎯 분석 분야:</span>
+          <select id="select-subtopic-category" class="subtopic-select" aria-label="세부 분석 기술 도메인 선택">
+            <option value="Advanced Logic & Transistors (GAA/CFET/2D)">⚡ GAA & CFET 차세대 로직 (GAA/CFET/2D)</option>
+            <option value="Memory & Storage (HBM/PIM/3D NAND)">💾 HBM & 3D 적층 메모리 (HBM/PIM/NAND)</option>
+            <option value="Advanced Packaging & Chiplets (3D/Hybrid Bonding)">📦 첨단 패키징 & 칩렛 (3D 본딩/유리기판)</option>
+            <option value="AI & Neuromorphic Computing">🧠 AI & NPU 뉴로모픽 (LLM/Edge AI)</option>
+            <option value="Lithography & Metrology (EUV/High-NA)">🔬 EUV & High-NA 리소그래피 (0.55 NA/MOR)</option>
+            <option value="Power & Compound Semiconductors (GaN/SiC)">🔋 전력·화합물 반도체 (GaN/SiC)</option>
+            <option value="Silicon Photonics & Optical I/O">💡 실리콘 포토닉스 (CPO/광반도체)</option>
+          </select>
+        </div>
+
         <div class="network-btn-separator"></div>
         <button class="network-btn" id="btn-network-lod" title="핵심 거점망 / 전체 연결망 토글">${this.lodMode === 'core' ? '⚡ 핵심 거점망' : '🌐 전체 연결망'}</button>
         <button class="network-btn" id="btn-net-fit" title="화면 맞춤">🎯 화면 맞춤</button>
@@ -57,19 +75,32 @@ class NetworkView {
     `;
 
     // Bind Network Controls
+    document.getElementById('btn-net-mode-subtopic').addEventListener('click', () => {
+      this.graphMode = 'subtopic';
+      this.updateModeButtons();
+      if (this.lastProjects) this.render(this.lastProjects);
+    });
+
     document.getElementById('btn-net-mode-topic').addEventListener('click', () => {
       this.graphMode = 'topic';
-      document.getElementById('btn-net-mode-topic').classList.add('active');
-      document.getElementById('btn-net-mode-inst').classList.remove('active');
+      this.updateModeButtons();
       if (this.lastProjects) this.render(this.lastProjects);
     });
 
     document.getElementById('btn-net-mode-inst').addEventListener('click', () => {
       this.graphMode = 'institution';
-      document.getElementById('btn-net-mode-inst').classList.add('active');
-      document.getElementById('btn-net-mode-topic').classList.remove('active');
+      this.updateModeButtons();
       if (this.lastProjects) this.render(this.lastProjects);
     });
+
+    const categorySelect = document.getElementById('select-subtopic-category');
+    if (categorySelect) {
+      categorySelect.value = this.selectedSubtopicCategory;
+      categorySelect.addEventListener('change', (e) => {
+        this.selectedSubtopicCategory = e.target.value;
+        if (this.lastProjects) this.render(this.lastProjects);
+      });
+    }
 
     document.getElementById('btn-network-lod').addEventListener('click', (e) => {
       this.lodMode = this.lodMode === 'core' ? 'all' : 'core';
@@ -110,9 +141,23 @@ class NetworkView {
     this.isInitialized = true;
   }
 
+  updateModeButtons() {
+    const btnSub = document.getElementById('btn-net-mode-subtopic');
+    const btnTop = document.getElementById('btn-net-mode-topic');
+    const btnInst = document.getElementById('btn-net-mode-inst');
+    const selContainer = document.getElementById('subtopic-selector-container');
+
+    if (btnSub) btnSub.classList.toggle('active', this.graphMode === 'subtopic');
+    if (btnTop) btnTop.classList.toggle('active', this.graphMode === 'topic');
+    if (btnInst) btnInst.classList.toggle('active', this.graphMode === 'institution');
+    if (selContainer) selContainer.style.display = this.graphMode === 'subtopic' ? 'flex' : 'none';
+  }
+
   render(projects) {
     this.lastProjects = projects;
     this.init();
+    this.updateModeButtons();
+
     const container = document.getElementById(this.containerId);
     const width = container.clientWidth || 900;
     const height = container.clientHeight || 600;
@@ -149,7 +194,11 @@ class NetworkView {
 
     const getNode = (id, label, type, extra = {}) => {
       if (!nodeMap.has(id)) {
-        nodeMap.set(id, { id, label, type, projects: [], val: 0, compBreakdown: {}, uniBreakdown: {}, topicBreakdown: {}, ...extra });
+        nodeMap.set(id, {
+          id, label, type, projects: [], val: 0,
+          compBreakdown: {}, uniBreakdown: {}, subtopicBreakdown: {}, topicBreakdown: {},
+          ...extra
+        });
       }
       return nodeMap.get(id);
     };
@@ -178,14 +227,84 @@ class NetworkView {
       addNeighbor(sourceId, targetId);
     };
 
-    if (this.graphMode === 'topic') {
-      // ===== Mode 1: Topic & Company Interest Network =====
+    if (this.graphMode === 'subtopic') {
+      // ===== Mode 2: 2차 세부 주제별 심층망 (Deep-Dive Sub-Topic Mode) =====
+      const targetCat = this.selectedSubtopicCategory || 'Advanced Logic & Transistors (GAA/CFET/2D)';
+      const catMeta = categoryInfo[targetCat] || { short: targetCat, color: '#10b981', icon: '⚡' };
+      
+      const catProjects = projects.filter(p => p.category === targetCat);
+      const activeProjects = catProjects.length > 0 ? catProjects : (window.app && window.app.dataManager ? window.app.dataManager.rawProjects.filter(p => p.category === targetCat) : []);
+
+      const subrules = (window.app && window.app.dataManager ? window.app.dataManager.getSubtopicRules()[targetCat] : []) || [];
+      
+      // 1. Initialize Sub-topic Hub Nodes
+      subrules.forEach(rule => {
+        const subId = `sub_${rule.name}`;
+        getNode(subId, rule.name, 'subtopic', {
+          fullLabel: rule.name,
+          category: targetCat,
+          color: catMeta.color,
+          icon: rule.icon || '🔬'
+        });
+      });
+
+      // 2. Map Projects to Subtopics, Companies, and Universities
+      const allCompaniesInCat = new Set();
+      activeProjects.forEach(p => {
+        const subName = window.app && window.app.dataManager ? window.app.dataManager.getSubtopic(p) : (p.topic || '기타 세부 연구');
+        const subId = `sub_${subName}`;
+        allCompaniesInCat.add(p.company);
+
+        // Subtopic node update
+        const subNode = getNode(subId, subName, 'subtopic', {
+          fullLabel: subName,
+          category: targetCat,
+          color: catMeta.color,
+          icon: catMeta.icon
+        });
+        subNode.val += 1;
+        subNode.projects.push(p);
+        subNode.compBreakdown[p.company] = (subNode.compBreakdown[p.company] || 0) + 1;
+        subNode.uniBreakdown[p.university] = (subNode.uniBreakdown[p.university] || 0) + 1;
+
+        // Company node
+        const compId = `comp_${p.company}`;
+        const compNode = getNode(compId, p.company, 'company', { rawName: p.company, targetCategory: targetCat });
+        compNode.val += 1;
+        compNode.projects.push(p);
+        compNode.subtopicBreakdown[subName] = (compNode.subtopicBreakdown[subName] || 0) + 1;
+        compNode.uniBreakdown[p.university] = (compNode.uniBreakdown[p.university] || 0) + 1;
+
+        // University node
+        const uniId = `uni_${p.university}`;
+        const uniNode = getNode(uniId, p.university, 'university', {
+          rawName: p.university,
+          city: p.university_city,
+          country: p.university_country,
+          targetCategory: targetCat
+        });
+        uniNode.val += 1;
+        uniNode.projects.push(p);
+        uniNode.subtopicBreakdown[subName] = (uniNode.subtopicBreakdown[subName] || 0) + 1;
+        uniNode.compBreakdown[p.company] = (uniNode.compBreakdown[p.company] || 0) + 1;
+
+        // Links
+        addLink(compId, subId, p, 'company-subtopic');
+        addLink(uniId, subId, p, 'uni-subtopic');
+      });
+
+      this.nodes = Array.from(nodeMap.values());
+      if (this.lodMode === 'core') {
+        this.nodes = this.nodes.filter(n => n.type === 'subtopic' || n.val >= 2);
+      }
+
+    } else if (this.graphMode === 'topic') {
+      // ===== Mode 1: 1차 7대 기술 도메인 총괄망 =====
       projects.forEach(p => {
         const cat = p.category || '기타';
         const catId = `cat_${cat}`;
         const catMeta = categoryInfo[cat] || { short: cat, color: '#f59e0b', icon: '🔬' };
         
-        // 1. Topic Node (Focal Hub)
         const catNode = getNode(catId, catMeta.short, 'category', {
           fullLabel: cat,
           color: catMeta.color,
@@ -196,7 +315,6 @@ class NetworkView {
         catNode.compBreakdown[p.company] = (catNode.compBreakdown[p.company] || 0) + 1;
         catNode.uniBreakdown[p.university] = (catNode.uniBreakdown[p.university] || 0) + 1;
 
-        // 2. Company Node
         const compId = `comp_${p.company}`;
         const compNode = getNode(compId, p.company, 'company', { rawName: p.company });
         compNode.val += 1;
@@ -204,7 +322,6 @@ class NetworkView {
         compNode.topicBreakdown[cat] = (compNode.topicBreakdown[cat] || 0) + 1;
         compNode.uniBreakdown[p.university] = (compNode.uniBreakdown[p.university] || 0) + 1;
 
-        // 3. University Node
         const uniId = `uni_${p.university}`;
         const uniNode = getNode(uniId, p.university, 'university', {
           rawName: p.university,
@@ -216,19 +333,17 @@ class NetworkView {
         uniNode.topicBreakdown[cat] = (uniNode.topicBreakdown[cat] || 0) + 1;
         uniNode.compBreakdown[p.company] = (uniNode.compBreakdown[p.company] || 0) + 1;
 
-        // Links: Company ➔ Topic (Primary Interest Link), University ➔ Topic (Research Focus Link)
         addLink(compId, catId, p, 'company-topic');
         addLink(uniId, catId, p, 'uni-topic');
       });
 
       this.nodes = Array.from(nodeMap.values());
       if (this.lodMode === 'core') {
-        // In core mode: keep all 7 topics, companies with >= 5 projects, and universities with >= 4 projects
         this.nodes = this.nodes.filter(n => n.type === 'category' || n.val >= 3);
       }
 
     } else {
-      // ===== Mode 2: Classic Institution Collaboration Network =====
+      // ===== Mode 3: 산학 기관망 =====
       projects.forEach(p => {
         const compId = `comp_${p.company}`;
         const compNode = getNode(compId, p.company, 'company', { rawName: p.company });
@@ -275,7 +390,8 @@ class NetworkView {
       company: '#a78bfa',     // Purple
       university: '#38bdf8',  // Cyan/Blue
       institute: '#34d399',   // Emerald
-      category: '#f59e0b'     // Amber/Gold for Topics
+      category: '#f59e0b',    // Amber for Category
+      subtopic: '#10b981'     // Emerald/Green for Subtopic
     };
 
     // Zoom container
@@ -289,7 +405,7 @@ class NetworkView {
         g.attr('transform', event.transform);
         const z = event.transform.k;
         g.selectAll('.node-label')
-          .style('display', d => (d.type === 'category' || d.val >= 8 || z > 1.6) ? 'block' : 'none');
+          .style('display', d => (d.type === 'category' || d.type === 'subtopic' || d.val >= 8 || z > 1.6) ? 'block' : 'none');
       });
 
     svg.call(this.zoom);
@@ -300,19 +416,19 @@ class NetworkView {
       }
     });
 
-    // Arrange Initial Positions in stable layout
+    // Arrange Initial Positions
     const centerRadius = Math.min(width, height) * 0.35;
-    const catNodes = this.nodes.filter(n => n.type === 'category');
-    catNodes.forEach((cn, i) => {
-      const angle = (i / Math.max(1, catNodes.length)) * 2 * Math.PI - Math.PI / 2;
+    const hubNodes = this.nodes.filter(n => n.type === 'category' || n.type === 'subtopic');
+    hubNodes.forEach((cn, i) => {
+      const angle = (i / Math.max(1, hubNodes.length)) * 2 * Math.PI - Math.PI / 2;
       cn.x = width / 2 + centerRadius * Math.cos(angle);
       cn.y = height / 2 + centerRadius * Math.sin(angle);
     });
 
-    const nonCatNodes = this.nodes.filter(n => n.type !== 'category');
-    nonCatNodes.forEach((n, i) => {
-      const angle = (i / Math.max(1, nonCatNodes.length)) * 2 * Math.PI;
-      const r = centerRadius * (0.2 + 0.9 * Math.random());
+    const nonHubNodes = this.nodes.filter(n => n.type !== 'category' && n.type !== 'subtopic');
+    nonHubNodes.forEach((n, i) => {
+      const angle = (i / Math.max(1, nonHubNodes.length)) * 2 * Math.PI;
+      const r = centerRadius * (0.25 + 0.85 * Math.random());
       n.x = width / 2 + r * Math.cos(angle);
       n.y = height / 2 + r * Math.sin(angle);
     });
@@ -322,15 +438,18 @@ class NetworkView {
       .alphaDecay(0.045)
       .velocityDecay(0.4)
       .force('link', d3.forceLink(this.links).id(d => d.id).distance(d => {
+        if (this.graphMode === 'subtopic') {
+          return d.linkType === 'company-subtopic' ? 60 : 75;
+        }
         if (this.graphMode === 'topic') {
           return d.linkType === 'company-topic' ? 65 : 80;
         }
         return 50 + Math.max(10, 80 - d.weight * 2);
       }))
-      .force('charge', d3.forceManyBody().strength(d => d.type === 'category' ? -350 : -140))
+      .force('charge', d3.forceManyBody().strength(d => (d.type === 'category' || d.type === 'subtopic') ? -320 : -140))
       .force('center', d3.forceCenter(width / 2, height / 2))
       .force('collision', d3.forceCollide().radius(d => {
-        if (d.type === 'category') return 34;
+        if (d.type === 'category' || d.type === 'subtopic') return 30;
         return 10 + Math.min(d.val * 0.6, 20);
       }));
 
@@ -349,11 +468,11 @@ class NetworkView {
       .attr('class', 'network-link')
       .attr('stroke', d => {
         if (d.hasActive) return '#06b6d4';
-        if (d.linkType === 'company-topic') return '#a78bfa';
-        if (d.linkType === 'uni-topic') return '#38bdf8';
+        if (d.linkType === 'company-topic' || d.linkType === 'company-subtopic') return '#a78bfa';
+        if (d.linkType === 'uni-topic' || d.linkType === 'uni-subtopic') return '#38bdf8';
         return '#4b5563';
       })
-      .attr('stroke-opacity', d => d.linkType === 'company-topic' ? 0.75 : 0.45)
+      .attr('stroke-opacity', d => (d.linkType === 'company-topic' || d.linkType === 'company-subtopic') ? 0.75 : 0.45)
       .attr('stroke-width', d => Math.min(6, Math.max(1.2, 1 + Math.sqrt(d.weight) * 0.9)))
       .attr('stroke-dasharray', d => d.hasActive ? '4,4' : null)
       .attr('x1', d => d.source.x)
@@ -389,33 +508,33 @@ class NetworkView {
     // Node Circles
     node.append('circle')
       .attr('r', d => {
-        if (d.type === 'category') return 24;
-        return Math.min(22, 7 + Math.sqrt(d.val) * 1.8);
+        if (d.type === 'category' || d.type === 'subtopic') return 22;
+        return Math.min(20, 7 + Math.sqrt(d.val) * 1.8);
       })
       .attr('fill', d => d.color || colorScale[d.type] || '#9ca3af')
-      .attr('stroke', d => d.type === 'category' ? '#fef08a' : '#0f172a')
-      .attr('stroke-width', d => d.type === 'category' ? 3 : 2)
-      .style('filter', d => d.type === 'category' ? 'drop-shadow(0 0 8px rgba(245, 158, 11, 0.7))' : null);
+      .attr('stroke', d => (d.type === 'category' || d.type === 'subtopic') ? '#fef08a' : '#0f172a')
+      .attr('stroke-width', d => (d.type === 'category' || d.type === 'subtopic') ? 3 : 2)
+      .style('filter', d => (d.type === 'category' || d.type === 'subtopic') ? 'drop-shadow(0 0 8px rgba(16, 185, 129, 0.7))' : null);
 
-    // Node Category Center Icons
-    node.filter(d => d.type === 'category').append('text')
+    // Node Category/Subtopic Center Icons
+    node.filter(d => d.type === 'category' || d.type === 'subtopic').append('text')
       .attr('text-anchor', 'middle')
       .attr('dominant-baseline', 'central')
-      .attr('font-size', '14px')
+      .attr('font-size', '13px')
       .attr('pointer-events', 'none')
       .text(d => d.icon || '🔬');
 
     // Node Labels
     node.append('text')
       .attr('class', 'node-label')
-      .text(d => d.label.length > 22 ? d.label.slice(0, 20) + '…' : d.label)
-      .attr('x', d => (d.type === 'category' ? 28 : Math.min(22, 7 + Math.sqrt(d.val) * 1.8) + 4))
+      .text(d => d.label.length > 24 ? d.label.slice(0, 22) + '…' : d.label)
+      .attr('x', d => ((d.type === 'category' || d.type === 'subtopic') ? 26 : Math.min(20, 7 + Math.sqrt(d.val) * 1.8) + 4))
       .attr('y', 4)
-      .attr('fill', d => d.type === 'category' ? '#fef08a' : '#f1f5f9')
-      .attr('font-size', d => d.type === 'category' ? '12px' : '10px')
-      .attr('font-weight', d => d.type === 'category' ? '800' : '600')
+      .attr('fill', d => (d.type === 'category' || d.type === 'subtopic') ? '#fef08a' : '#f1f5f9')
+      .attr('font-size', d => (d.type === 'category' || d.type === 'subtopic') ? '11.5px' : '10px')
+      .attr('font-weight', d => (d.type === 'category' || d.type === 'subtopic') ? '800' : '600')
       .attr('font-family', 'sans-serif')
-      .style('display', d => (d.type === 'category' || d.val >= 8) ? 'block' : 'none')
+      .style('display', d => (d.type === 'category' || d.type === 'subtopic' || d.val >= 8) ? 'block' : 'none')
       .style('paint-order', 'stroke fill')
       .style('stroke', '#060910')
       .style('stroke-width', '3px')
@@ -433,7 +552,7 @@ class NetworkView {
       event.stopPropagation();
       const filterType = d.type === 'university' ? 'university' : (d.type === 'company' ? 'company' : 'category');
       if (window.app && window.app.filterByAnalyticsItem) {
-        window.app.filterByAnalyticsItem(filterType, d.fullLabel || d.rawName || d.label);
+        window.app.filterByAnalyticsItem(filterType, d.category || d.fullLabel || d.rawName || d.label);
       }
     });
 
@@ -504,7 +623,8 @@ class NetworkView {
     dynamicContent.innerHTML = '';
 
     const typeLabels = {
-      category: '🔬 핵심 기술 도메인 / 연구 주제',
+      subtopic: '🔬 2차 세부 핵심 기술 분야 (Sub-topic)',
+      category: '🌐 1차 차세대 기술 도메인 (Category)',
       company: '🏢 참여 / 투자 반도체 기업',
       university: '🏛️ 산학 연구 수주 대학교',
       institute: '🌐 연구소 및 컨소시엄'
@@ -512,11 +632,126 @@ class NetworkView {
 
     document.getElementById('hud-name').textContent = node.fullLabel || node.label;
     document.getElementById('hud-type-desc').innerHTML = `
-      <span style="color: #60a5fa; font-weight: 700;">${typeLabels[node.type] || '노드'}</span> | 총 <strong>${node.val || 1}건</strong> R&D 과제 연계
+      <span style="color: #60a5fa; font-weight: 700;">${typeLabels[node.type] || '노드'}</span> | 총 <strong>${node.val || 1}건</strong> 과제 연계
     `;
 
-    // 1. Topic Node HUD: Company interest rankings + Top universities
-    if (node.type === 'category') {
+    // 1. Sub-topic Node HUD (세부 기술 분야 클릭 시: 집중 기업 TOP + Gap 공백 기업 분석)
+    if (node.type === 'subtopic') {
+      const topComps = Object.entries(node.compBreakdown || {}).sort((a, b) => b[1] - a[1]).slice(0, 6);
+      const maxCompVal = Math.max(...topComps.map(c => c[1]), 1);
+
+      let compHtml = `
+        <div style="font-size: 11px; font-weight: 700; color: #a78bfa; margin-top: 6px; margin-bottom: 4px;">🏆 세부 기술 집중 기업 TOP ${topComps.length}:</div>
+      `;
+      topComps.forEach(([comp, count]) => {
+        const pct = node.val > 0 ? ((count / node.val) * 100).toFixed(1) : 0;
+        compHtml += `
+          <div class="hud-interest-item" style="cursor: pointer;" title="클릭: '${comp}' 필터링" onclick="window.app.filterByAnalyticsItem('company', '${comp}')">
+            <span class="hud-interest-label">${comp}</span>
+            <div class="hud-interest-bar-wrap">
+              <div class="hud-interest-bar" style="width: ${(count / maxCompVal) * 100}%; background: linear-gradient(90deg, #a78bfa, #818cf8);"></div>
+            </div>
+            <span class="hud-interest-count">${count}건 (${pct}%)</span>
+          </div>
+        `;
+      });
+
+      // Gap Analysis: Companies in this domain with 0 projects in this subtopic
+      const activeCompSet = new Set(Object.keys(node.compBreakdown || {}));
+      const domainComps = this.nodes.filter(n => n.type === 'company').map(n => n.label);
+      const gapComps = domainComps.filter(c => !activeCompSet.has(c)).slice(0, 8);
+
+      let gapHtml = '';
+      if (gapComps.length > 0) {
+        gapHtml = `
+          <div style="font-size: 11px; font-weight: 700; color: #f87171; margin-top: 8px; margin-bottom: 4px;">⚠️ 미참여 / 연구 공백 기업 (Gap):</div>
+          <div class="network-hud-collaborators">
+            ${gapComps.map(gc => `<span class="hud-tag" style="border-color: rgba(248,113,113,0.4); color: #fca5a5;" title="해당 세부 분야 연구 과제 없음">${gc} (0건)</span>`).join('')}
+          </div>
+        `;
+      }
+
+      const topUnis = Object.entries(node.uniBreakdown || {}).sort((a, b) => b[1] - a[1]).slice(0, 8);
+      let uniTagsHtml = `
+        <div style="font-size: 11px; font-weight: 700; color: #38bdf8; margin-top: 8px; margin-bottom: 4px;">🏛️ 연구 주도 대학교:</div>
+        <div class="network-hud-collaborators">
+      `;
+      topUnis.forEach(([uni, count]) => {
+        uniTagsHtml += `<span class="hud-tag" style="cursor: pointer;" onclick="window.app.filterByAnalyticsItem('university', '${uni}')" title="${uni} (${count}건)">${uni} <strong>${count}</strong></span>`;
+      });
+      uniTagsHtml += `</div>`;
+
+      dynamicContent.innerHTML = compHtml + gapHtml + uniTagsHtml;
+
+    } else if (node.type === 'company') {
+      // 2. Company Node HUD in Subtopic or Topic Mode
+      if (this.graphMode === 'subtopic') {
+        const subrules = (window.app && window.app.dataManager ? window.app.dataManager.getSubtopicRules()[this.selectedSubtopicCategory] : []) || [];
+        const compSubMap = node.subtopicBreakdown || {};
+
+        let subHtml = `
+          <div style="font-size: 11px; font-weight: 700; color: #10b981; margin-top: 6px; margin-bottom: 4px;">🎯 세부 기술별 집중도 & Gap 진단:</div>
+        `;
+        subrules.forEach(rule => {
+          const count = compSubMap[rule.name] || 0;
+          const statusBadge = count >= 10 ? '<span style="color:#34d399;font-weight:700;">🟢 집중</span>' : (count >= 1 ? '<span style="color:#fbbf24;font-weight:700;">🟡 활성</span>' : '<span style="color:#9ca3af;">⚪ 공백(0)</span>');
+          subHtml += `
+            <div class="hud-interest-item">
+              <span class="hud-interest-label" style="width: 135px;" title="${rule.name}">${rule.name}</span>
+              <span class="hud-interest-count" style="color: ${count > 0 ? '#38bdf8' : '#6b7280'};">${count}건</span>
+              <span style="font-size: 10px; margin-left: 6px;">${statusBadge}</span>
+            </div>
+          `;
+        });
+
+        const topUnis = Object.entries(node.uniBreakdown || {}).sort((a, b) => b[1] - a[1]).slice(0, 8);
+        let uniTagsHtml = `
+          <div style="font-size: 11px; font-weight: 700; color: #38bdf8; margin-top: 8px; margin-bottom: 4px;">🏛️ 주요 협력 파트너 대학:</div>
+          <div class="network-hud-collaborators">
+        `;
+        topUnis.forEach(([uni, count]) => {
+          uniTagsHtml += `<span class="hud-tag" style="cursor: pointer;" onclick="window.app.filterByAnalyticsItem('university', '${uni}')">${uni} <strong>${count}</strong></span>`;
+        });
+        uniTagsHtml += `</div>`;
+
+        dynamicContent.innerHTML = subHtml + uniTagsHtml;
+
+      } else {
+        // Topic Mode Company HUD
+        const topTopics = Object.entries(node.topicBreakdown || {}).sort((a, b) => b[1] - a[1]);
+        const maxTopicVal = Math.max(...topTopics.map(t => t[1]), 1);
+
+        let topicHtml = `
+          <div style="font-size: 11px; font-weight: 700; color: #f59e0b; margin-top: 6px; margin-bottom: 4px;">📊 7대 기술 도메인별 투자 포트폴리오:</div>
+        `;
+        topTopics.forEach(([topic, count]) => {
+          const pct = node.val > 0 ? ((count / node.val) * 100).toFixed(1) : 0;
+          topicHtml += `
+            <div class="hud-interest-item" style="cursor: pointer;" title="클릭: '${topic}' 필터링" onclick="window.app.filterByAnalyticsItem('category', '${topic}')">
+              <span class="hud-interest-label" style="width: 120px;">${topic.split('(')[0].trim()}</span>
+              <div class="hud-interest-bar-wrap">
+                <div class="hud-interest-bar" style="width: ${(count / maxTopicVal) * 100}%; background: linear-gradient(90deg, #f59e0b, #06b6d4);"></div>
+              </div>
+              <span class="hud-interest-count">${count}건 (${pct}%)</span>
+            </div>
+          `;
+        });
+
+        const topUnis = Object.entries(node.uniBreakdown || {}).sort((a, b) => b[1] - a[1]).slice(0, 8);
+        let uniTagsHtml = `
+          <div style="font-size: 11px; font-weight: 700; color: #38bdf8; margin-top: 8px; margin-bottom: 4px;">🏛️ 주요 협력 파트너 대학:</div>
+          <div class="network-hud-collaborators">
+        `;
+        topUnis.forEach(([uni, count]) => {
+          uniTagsHtml += `<span class="hud-tag" style="cursor: pointer;" onclick="window.app.filterByAnalyticsItem('university', '${uni}')">${uni} <strong>${count}</strong></span>`;
+        });
+        uniTagsHtml += `</div>`;
+
+        dynamicContent.innerHTML = topicHtml + uniTagsHtml;
+      }
+
+    } else if (node.type === 'category') {
+      // 3. Category Mode Node HUD
       const topComps = Object.entries(node.compBreakdown || {}).sort((a, b) => b[1] - a[1]).slice(0, 6);
       const maxCompVal = Math.max(...topComps.map(c => c[1]), 1);
 
@@ -524,7 +759,7 @@ class NetworkView {
         <div style="font-size: 11px; font-weight: 700; color: #a78bfa; margin-top: 6px; margin-bottom: 4px;">🏢 최다 투자/관심 기업 TOP ${topComps.length}:</div>
       `;
       topComps.forEach(([comp, count]) => {
-        const pct = ((count / node.val) * 100).toFixed(1);
+        const pct = node.val > 0 ? ((count / node.val) * 100).toFixed(1) : 0;
         compHtml += `
           <div class="hud-interest-item" style="cursor: pointer;" title="클릭: '${comp}' 필터링" onclick="window.app.filterByAnalyticsItem('company', '${comp}')">
             <span class="hud-interest-label">${comp}</span>
@@ -548,49 +783,17 @@ class NetworkView {
 
       dynamicContent.innerHTML = compHtml + uniTagsHtml;
 
-    } else if (node.type === 'company') {
-      // 2. Company Node HUD: Topic interest portfolio breakdown
-      const topTopics = Object.entries(node.topicBreakdown || {}).sort((a, b) => b[1] - a[1]);
-      const maxTopicVal = Math.max(...topTopics.map(t => t[1]), 1);
-
-      let topicHtml = `
-        <div style="font-size: 11px; font-weight: 700; color: #f59e0b; margin-top: 6px; margin-bottom: 4px;">📊 연구 주제별 투자 포트폴리오:</div>
-      `;
-      topTopics.forEach(([topic, count]) => {
-        const pct = ((count / node.val) * 100).toFixed(1);
-        topicHtml += `
-          <div class="hud-interest-item" style="cursor: pointer;" title="클릭: '${topic}' 필터링" onclick="window.app.filterByAnalyticsItem('category', '${topic}')">
-            <span class="hud-interest-label" style="width: 120px;">${topic.split('(')[0].trim()}</span>
-            <div class="hud-interest-bar-wrap">
-              <div class="hud-interest-bar" style="width: ${(count / maxTopicVal) * 100}%; background: linear-gradient(90deg, #f59e0b, #06b6d4);"></div>
-            </div>
-            <span class="hud-interest-count">${count}건 (${pct}%)</span>
-          </div>
-        `;
-      });
-
-      const topUnis = Object.entries(node.uniBreakdown || {}).sort((a, b) => b[1] - a[1]).slice(0, 8);
-      let uniTagsHtml = `
-        <div style="font-size: 11px; font-weight: 700; color: #38bdf8; margin-top: 8px; margin-bottom: 4px;">🏛️ 주요 협력 파트너 대학:</div>
-        <div class="network-hud-collaborators">
-      `;
-      topUnis.forEach(([uni, count]) => {
-        uniTagsHtml += `<span class="hud-tag" style="cursor: pointer;" onclick="window.app.filterByAnalyticsItem('university', '${uni}')">${uni} <strong>${count}</strong></span>`;
-      });
-      uniTagsHtml += `</div>`;
-
-      dynamicContent.innerHTML = topicHtml + uniTagsHtml;
-
     } else {
-      // 3. University Node HUD: Topics & Companies
-      const topTopics = Object.entries(node.topicBreakdown || {}).sort((a, b) => b[1] - a[1]).slice(0, 4);
-      let topicHtml = `
+      // 4. University Node HUD
+      const subMap = node.subtopicBreakdown || node.topicBreakdown || {};
+      const topSubs = Object.entries(subMap).sort((a, b) => b[1] - a[1]).slice(0, 5);
+      let subHtml = `
         <div style="font-size: 11px; font-weight: 700; color: #f59e0b; margin-top: 6px; margin-bottom: 4px;">🔬 주요 연구 수주 분야:</div>
       `;
-      topTopics.forEach(([topic, count]) => {
-        topicHtml += `
+      topSubs.forEach(([item, count]) => {
+        subHtml += `
           <div class="hud-interest-item">
-            <span class="hud-interest-label" style="width: 130px;">${topic.split('(')[0].trim()}</span>
+            <span class="hud-interest-label" style="width: 140px;">${item.split('(')[0].trim()}</span>
             <span class="hud-interest-count" style="color: #f59e0b;">${count}건</span>
           </div>
         `;
@@ -606,7 +809,7 @@ class NetworkView {
       });
       compTagsHtml += `</div>`;
 
-      dynamicContent.innerHTML = topicHtml + compTagsHtml;
+      dynamicContent.innerHTML = subHtml + compTagsHtml;
     }
 
     // Featured representative projects
