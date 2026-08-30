@@ -103,13 +103,14 @@ class MapView {
     const container = document.getElementById(this.containerId);
     if (!container) return;
 
-    // Initialize Leaflet map with full gesture and drag support
+    // Initialize Leaflet map with full gesture, drag, and GPU Canvas acceleration
     this.map = L.map(this.containerId, {
       center: this.defaultCenter,
       zoom: this.defaultZoom,
       minZoom: 1.5,
       maxZoom: 16,
       worldCopyJump: true,
+      preferCanvas: true,
       zoomControl: false,
       dragging: true,
       scrollWheelZoom: true,
