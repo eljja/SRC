@@ -18,11 +18,36 @@ class App {
 
   async init() {
     console.log('Initializing SRC Global Semiconductor Observatory...');
+    const loadingOverlay = document.getElementById('global-loading-overlay');
+    const errorBanner = document.getElementById('global-error-banner');
+    
+    // Bind retry button once
+    const retryBtn = document.getElementById('btn-retry-load');
+    if (retryBtn && !retryBtn._bound) {
+      retryBtn._bound = true;
+      retryBtn.addEventListener('click', () => {
+        if (errorBanner) errorBanner.style.display = 'none';
+        if (loadingOverlay) {
+          loadingOverlay.classList.remove('fade-out');
+          loadingOverlay.style.display = 'flex';
+        }
+        this.init();
+      });
+    }
+
     const data = await this.dataManager.loadData();
     if (!data) {
-      alert('데이터를 불러오는데 실패했습니다.');
+      if (loadingOverlay) loadingOverlay.style.display = 'none';
+      if (errorBanner) errorBanner.style.display = 'flex';
       return;
     }
+
+    // Hide loading overlay smoothly
+    if (loadingOverlay) {
+      loadingOverlay.classList.add('fade-out');
+      setTimeout(() => { loadingOverlay.style.display = 'none'; }, 350);
+    }
+    if (errorBanner) errorBanner.style.display = 'none';
 
     // Initialize Tracker
     this.tracker = new Tracker(data.metadata);
@@ -111,6 +136,7 @@ class App {
     const clearSearchBtn = document.getElementById('btn-clear-search');
     if (clearSearchBtn) {
       clearSearchBtn.addEventListener('click', () => {
+        clearTimeout(this._searchDebounceTimer);
         searchInput.value = '';
         clearSearchBtn.classList.remove('visible');
         this.dataManager.setFilter('searchQuery', '');
@@ -175,6 +201,7 @@ class App {
 
     // Reset button
     document.getElementById('btn-reset-filters').addEventListener('click', () => {
+      clearTimeout(this._searchDebounceTimer);
       this.tableCurrentPage = 1;
       this.dataManager.resetFilters();
       searchInput.value = '';
@@ -232,6 +259,47 @@ class App {
     document.getElementById('btn-export-json').addEventListener('click', () => {
       this.exportDataJson();
     });
+
+    // Top-N toggle buttons (bind ONCE here, not in renderAnalytics)
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.analytics-topn-btn');
+      if (!btn) return;
+      document.querySelectorAll('.analytics-topn-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      this.analyticsTopN = btn.dataset.topn === 'all' ? 999 : parseInt(btn.dataset.topn);
+      this.renderAnalytics();
+    });
+
+    // Table Directory row click delegation (bind ONCE here)
+    const tbody = document.getElementById('table-directory-body');
+    if (tbody) {
+      tbody.addEventListener('click', (e) => {
+        const row = e.target.closest('.table-row-clickable');
+        if (row) {
+          const pid = row.getAttribute('data-project-id');
+          if (pid) this.showProjectModal(pid);
+        }
+      });
+    }
+
+    // Table Pagination delegation (bind ONCE here)
+    const paginationBar = document.getElementById('table-pagination-bar');
+    if (paginationBar) {
+      paginationBar.addEventListener('click', (e) => {
+        const btn = e.target.closest('.page-btn');
+        if (btn && !btn.disabled) {
+          const page = parseInt(btn.getAttribute('data-page'));
+          if (!isNaN(page)) this.setTablePage(page);
+        }
+      });
+      paginationBar.addEventListener('change', (e) => {
+        if (e.target.classList.contains('page-size-select')) {
+          this.tablePageSize = parseInt(e.target.value);
+          this.tableCurrentPage = 1;
+          this.renderTableDirectory();
+        }
+      });
+    }
   }
 
   switchView(viewName) {
@@ -321,13 +389,6 @@ class App {
       </tr>
     `).join('');
 
-    // Event delegation for table rows
-    tbody.querySelectorAll('.table-row-clickable').forEach(row => {
-      row.addEventListener('click', () => {
-        this.showProjectModal(row.getAttribute('data-project-id'));
-      });
-    });
-
     // Enhanced Pagination Bar with page numbers
     if (paginationBar) {
       const cp = this.tableCurrentPage;
@@ -362,24 +423,6 @@ class App {
           </select>
         </div>
       `;
-
-      // Bind page buttons via event delegation
-      paginationBar.querySelectorAll('.page-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const page = parseInt(btn.getAttribute('data-page'));
-          if (!isNaN(page) && page >= 1 && page <= totalPages) this.setTablePage(page);
-        });
-      });
-
-      // Bind page size selector
-      const pageSizeSelect = paginationBar.querySelector('.page-size-select');
-      if (pageSizeSelect) {
-        pageSizeSelect.addEventListener('change', (e) => {
-          this.tablePageSize = parseInt(e.target.value);
-          this.tableCurrentPage = 1;
-          this.renderTableDirectory();
-        });
-      }
     }
   }
 
@@ -401,7 +444,7 @@ class App {
       const maxVal = Math.max(...items.map(i => i[1]), 1);
 
       container.innerHTML = items.map(([name, count]) => {
-        const safeName = name.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+        const safeName = name.replace(/"/g, "&quot;").replace(/'/g, "&#39;");
         return `
           <div class="ranking-item" tabindex="0" role="button" data-filter-type="${filterType}" data-filter-value="${safeName}" title="클릭: '${name}' 과제 전체 목록">
             <span class="ranking-name">${name}</span>
@@ -437,15 +480,10 @@ class App {
     this.renderCompanyTopicMatrix();
 
     // Bind Top-N toggle if present
+    // Update Top-N button active state (listeners bound once in bindEventListeners)
     const topNBtns = document.querySelectorAll('.analytics-topn-btn');
     topNBtns.forEach(btn => {
       btn.classList.toggle('active', parseInt(btn.dataset.topn) === this.analyticsTopN || (btn.dataset.topn === 'all' && this.analyticsTopN >= 999));
-      btn.addEventListener('click', () => {
-        topNBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        this.analyticsTopN = btn.dataset.topn === 'all' ? 999 : parseInt(btn.dataset.topn);
-        this.renderAnalytics();
-      });
     });
   }
 
@@ -667,10 +705,11 @@ class App {
     `;
 
     matrixData.companies.forEach(row => {
+      const safeComp = row.company.replace(/"/g, '&quot;');
       tableHtml += `
         <tr>
           <td class="matrix-sticky-col">
-            <span class="matrix-comp-name" onclick="window.app.filterByAnalyticsItem('company', '${row.company}')" title="클릭: '${row.company}' 전체 과제 목록">${row.company}</span>
+            <span class="matrix-comp-name" data-filter-type="company" data-filter-value="${safeComp}" style="cursor:pointer;" title="클릭: '${row.company}' 전체 과제 목록">${row.company}</span>
           </td>
           <td><strong style="color: #38bdf8;">${row.total}건</strong></td>
           ${matrixData.categories.map(c => {
@@ -678,9 +717,10 @@ class App {
             const pct = row.total > 0 ? (count / row.total) * 100 : 0;
             const intensity = count > 0 ? Math.min(0.85, 0.12 + (count / row.total) * 1.2) : 0;
             const bg = count > 0 ? `rgba(59, 130, 246, ${intensity})` : 'rgba(255,255,255,0.02)';
+            const safeCat = c.replace(/"/g, '&quot;');
             return `
               <td style="background: ${bg}; cursor: ${count > 0 ? 'pointer' : 'default'};" 
-                  onclick="${count > 0 ? `window.app.filterByAnalyticsItem('company', '${row.company}'); window.app.dataManager.setFilter('category', '${c}'); window.app.updateAllViews();` : ''}"
+                  ${count > 0 ? `data-matrix-company="${safeComp}" data-matrix-category="${safeCat}"` : ''}
                   title="${row.company} ➔ ${c}: ${count}건 (${pct.toFixed(1)}%)">
                 <span class="matrix-cell-val ${count > 0 ? 'has-data' : ''}">${count > 0 ? `${count}건` : '-'}</span>
                 ${count > 0 ? `<div class="matrix-mini-pct">${pct.toFixed(0)}%</div>` : ''}
@@ -698,6 +738,21 @@ class App {
     `;
 
     container.innerHTML = tableHtml;
+
+    // Event delegation for matrix clicks (company name + category cells)
+    container.addEventListener('click', (e) => {
+      const compName = e.target.closest('[data-filter-type="company"]');
+      if (compName) {
+        this.filterByAnalyticsItem('company', compName.dataset.filterValue);
+        return;
+      }
+      const cell = e.target.closest('[data-matrix-company]');
+      if (cell) {
+        this.filterByAnalyticsItem('company', cell.dataset.matrixCompany);
+        this.dataManager.setFilter('category', cell.dataset.matrixCategory);
+        this.updateAllViews();
+      }
+    });
   }
 
   filterByAnalyticsItem(filterType, value) {
@@ -760,7 +815,7 @@ class App {
   }
 
   showProjectModal(projectId) {
-    const project = this.dataManager.rawProjects.find(p => p.id === projectId);
+    const project = (this.dataManager.idMap && this.dataManager.idMap.get(projectId)) || this.dataManager.rawProjects.find(p => p.id === projectId);
     if (!project) return;
 
     document.getElementById('modal-title').textContent = project.title || '과제 상세';

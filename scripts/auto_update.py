@@ -34,6 +34,19 @@ def save_data(data):
     with open(DATA_FILE, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
     print(f"Successfully saved updated dataset to {DATA_FILE}")
+    update_sitemap()
+
+def update_sitemap():
+    sitemap_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'sitemap.xml')
+    if not os.path.exists(sitemap_path):
+        return
+    today_str = datetime.datetime.now().strftime("%Y-%m-%d")
+    with open(sitemap_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    updated = re.sub(r'<lastmod>[\d-]+</lastmod>', f'<lastmod>{today_str}</lastmod>', content)
+    with open(sitemap_path, 'w', encoding='utf-8') as f:
+        f.write(updated)
+    print(f"Updated sitemap.xml lastmod to {today_str}")
 
 def update_statuses(data):
     current_year = datetime.datetime.now().year

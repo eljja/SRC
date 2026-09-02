@@ -155,6 +155,14 @@ class NetworkView {
 
   render(projects) {
     this.lastProjects = projects;
+
+    // Stop previous simulation to prevent CPU/memory leak
+    if (this.simulation) {
+      this.simulation.stop();
+      this.simulation.on('tick', null);
+      this.simulation = null;
+    }
+
     this.init();
     this.updateModeButtons();
 
@@ -233,7 +241,7 @@ class NetworkView {
       const catMeta = categoryInfo[targetCat] || { short: targetCat, color: '#10b981', icon: '⚡' };
       
       const catProjects = projects.filter(p => p.category === targetCat);
-      const activeProjects = catProjects.length > 0 ? catProjects : (window.app && window.app.dataManager ? window.app.dataManager.rawProjects.filter(p => p.category === targetCat) : []);
+      const activeProjects = catProjects;
 
       const subrules = (window.app && window.app.dataManager ? window.app.dataManager.getSubtopicRules()[targetCat] : []) || [];
       
@@ -646,7 +654,7 @@ class NetworkView {
       topComps.forEach(([comp, count]) => {
         const pct = node.val > 0 ? ((count / node.val) * 100).toFixed(1) : 0;
         compHtml += `
-          <div class="hud-interest-item" style="cursor: pointer;" title="클릭: '${comp}' 필터링" onclick="window.app.filterByAnalyticsItem('company', '${comp}')">
+          <div class="hud-interest-item" style="cursor: pointer;" title="클릭: '${comp}' 필터링" data-filter-type="company" data-filter-value="${comp.replace(/"/g, '&quot;')}">
             <span class="hud-interest-label">${comp}</span>
             <div class="hud-interest-bar-wrap">
               <div class="hud-interest-bar" style="width: ${(count / maxCompVal) * 100}%; background: linear-gradient(90deg, #a78bfa, #818cf8);"></div>
@@ -677,7 +685,7 @@ class NetworkView {
         <div class="network-hud-collaborators">
       `;
       topUnis.forEach(([uni, count]) => {
-        uniTagsHtml += `<span class="hud-tag" style="cursor: pointer;" onclick="window.app.filterByAnalyticsItem('university', '${uni}')" title="${uni} (${count}건)">${uni} <strong>${count}</strong></span>`;
+        uniTagsHtml += `<span class="hud-tag" style="cursor: pointer;" data-filter-type="university" data-filter-value="${uni.replace(/"/g, '&quot;')}" title="${uni} (${count}건)">${uni} <strong>${count}</strong></span>`;
       });
       uniTagsHtml += `</div>`;
 
@@ -710,7 +718,7 @@ class NetworkView {
           <div class="network-hud-collaborators">
         `;
         topUnis.forEach(([uni, count]) => {
-          uniTagsHtml += `<span class="hud-tag" style="cursor: pointer;" onclick="window.app.filterByAnalyticsItem('university', '${uni}')">${uni} <strong>${count}</strong></span>`;
+          uniTagsHtml += `<span class="hud-tag" style="cursor: pointer;" data-filter-type="university" data-filter-value="${uni.replace(/"/g, '&quot;')}">${uni} <strong>${count}</strong></span>`;
         });
         uniTagsHtml += `</div>`;
 
@@ -727,7 +735,7 @@ class NetworkView {
         topTopics.forEach(([topic, count]) => {
           const pct = node.val > 0 ? ((count / node.val) * 100).toFixed(1) : 0;
           topicHtml += `
-            <div class="hud-interest-item" style="cursor: pointer;" title="클릭: '${topic}' 필터링" onclick="window.app.filterByAnalyticsItem('category', '${topic}')">
+            <div class="hud-interest-item" style="cursor: pointer;" title="클릭: '${topic}' 필터링" data-filter-type="category" data-filter-value="${topic.replace(/"/g, '&quot;')}">
               <span class="hud-interest-label" style="width: 120px;">${topic.split('(')[0].trim()}</span>
               <div class="hud-interest-bar-wrap">
                 <div class="hud-interest-bar" style="width: ${(count / maxTopicVal) * 100}%; background: linear-gradient(90deg, #f59e0b, #06b6d4);"></div>
@@ -743,7 +751,7 @@ class NetworkView {
           <div class="network-hud-collaborators">
         `;
         topUnis.forEach(([uni, count]) => {
-          uniTagsHtml += `<span class="hud-tag" style="cursor: pointer;" onclick="window.app.filterByAnalyticsItem('university', '${uni}')">${uni} <strong>${count}</strong></span>`;
+          uniTagsHtml += `<span class="hud-tag" style="cursor: pointer;" data-filter-type="university" data-filter-value="${uni.replace(/"/g, '&quot;')}">${uni} <strong>${count}</strong></span>`;
         });
         uniTagsHtml += `</div>`;
 
@@ -761,7 +769,7 @@ class NetworkView {
       topComps.forEach(([comp, count]) => {
         const pct = node.val > 0 ? ((count / node.val) * 100).toFixed(1) : 0;
         compHtml += `
-          <div class="hud-interest-item" style="cursor: pointer;" title="클릭: '${comp}' 필터링" onclick="window.app.filterByAnalyticsItem('company', '${comp}')">
+          <div class="hud-interest-item" style="cursor: pointer;" title="클릭: '${comp}' 필터링" data-filter-type="company" data-filter-value="${comp.replace(/"/g, '&quot;')}">
             <span class="hud-interest-label">${comp}</span>
             <div class="hud-interest-bar-wrap">
               <div class="hud-interest-bar" style="width: ${(count / maxCompVal) * 100}%; background: linear-gradient(90deg, #a78bfa, #818cf8);"></div>
@@ -777,7 +785,7 @@ class NetworkView {
         <div class="network-hud-collaborators">
       `;
       topUnis.forEach(([uni, count]) => {
-        uniTagsHtml += `<span class="hud-tag" style="cursor: pointer;" onclick="window.app.filterByAnalyticsItem('university', '${uni}')" title="${uni} (${count}건)">${uni} <strong>${count}</strong></span>`;
+        uniTagsHtml += `<span class="hud-tag" style="cursor: pointer;" data-filter-type="university" data-filter-value="${uni.replace(/"/g, '&quot;')}" title="${uni} (${count}건)">${uni} <strong>${count}</strong></span>`;
       });
       uniTagsHtml += `</div>`;
 
@@ -805,7 +813,7 @@ class NetworkView {
         <div class="network-hud-collaborators">
       `;
       topComps.forEach(([comp, count]) => {
-        compTagsHtml += `<span class="hud-tag" style="cursor: pointer;" onclick="window.app.filterByAnalyticsItem('company', '${comp}')">${comp} <strong>${count}</strong></span>`;
+        compTagsHtml += `<span class="hud-tag" style="cursor: pointer;" data-filter-type="company" data-filter-value="${comp.replace(/"/g, '&quot;')}">${comp} <strong>${count}</strong></span>`;
       });
       compTagsHtml += `</div>`;
 
@@ -842,6 +850,15 @@ class NetworkView {
       });
 
       dynamicContent.appendChild(projContainer);
+    }
+
+    const hudContent = document.getElementById('hud-dynamic-content');
+    if (hudContent) {
+      hudContent.querySelectorAll('[data-filter-type]').forEach(el => {
+        el.addEventListener('click', () => {
+          if (window.app) window.app.filterByAnalyticsItem(el.dataset.filterType, el.dataset.filterValue);
+        });
+      });
     }
 
     hud.classList.add('active');

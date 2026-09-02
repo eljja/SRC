@@ -22,11 +22,7 @@ class DataManager {
 
   async loadData() {
     try {
-      const cacheBuster = `t=${Date.now()}`;
-      const response = await fetch(`data/collaborations.json?${cacheBuster}`, {
-        cache: 'no-store',
-        headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' }
-      });
+      const response = await fetch('data/collaborations.json');
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -45,6 +41,8 @@ class DataManager {
 
       this._analyticsCache = new Map();
       this.filteredProjects = [...this.rawProjects];
+      // O(1) project lookup by ID
+      this.idMap = new Map(this.rawProjects.map(p => [p.id, p]));
       return {
         metadata: this.metadata,
         categories: this.categories,
@@ -77,6 +75,10 @@ class DataManager {
     this.applyFilters();
   }
 
+  _filterHash() {
+    return JSON.stringify(this.filters);
+  }
+
   applyFilters() {
     let result = this.rawProjects;
 
@@ -91,22 +93,22 @@ class DataManager {
 
     // Company filter
     if (this.filters.company !== 'all') {
-      result = result.filter(p => p.company && p.company.includes(this.filters.company));
+      result = result.filter(p => p.company && p.company.split('/').map(c => c.trim()).includes(this.filters.company));
     }
 
     // University filter
     if (this.filters.university !== 'all') {
-      result = result.filter(p => p.university && p.university.includes(this.filters.university));
+      result = result.filter(p => p.university && p.university.split('/').map(c => c.trim()).includes(this.filters.university));
     }
 
     // Professor filter
     if (this.filters.professor !== 'all') {
-      result = result.filter(p => p.professor && p.professor.includes(this.filters.professor));
+      result = result.filter(p => p.professor && p.professor.trim() === this.filters.professor);
     }
 
     // Institute / Consortium filter
     if (this.filters.institute !== 'all') {
-      result = result.filter(p => p.institute_or_consortium && p.institute_or_consortium.includes(this.filters.institute));
+      result = result.filter(p => p.institute_or_consortium && p.institute_or_consortium.trim() === this.filters.institute);
     }
 
     // Category / Domain filter
@@ -202,7 +204,7 @@ class DataManager {
   }
 
   getAnalyticsRankings(topN = 8) {
-    const cacheKey = `rankings_${this.filteredProjects.length}_${topN}`;
+    const cacheKey = `rankings_${this._filterHash()}_${topN}`;
     if (this._analyticsCache && this._analyticsCache.has(cacheKey)) {
       return this._analyticsCache.get(cacheKey);
     }
@@ -261,12 +263,12 @@ class DataManager {
   }
 
   getYearlyTrend() {
-    const cacheKey = `yearly_${this.filteredProjects.length}`;
+    const cacheKey = `yearly_${this._filterHash()}`;
     if (this._analyticsCache && this._analyticsCache.has(cacheKey)) {
       return this._analyticsCache.get(cacheKey);
     }
 
-    const projects = this.filteredProjects.length > 0 ? this.filteredProjects : this.rawProjects;
+    const projects = this.filteredProjects;
     const yearMap = {};
     projects.forEach(p => {
       const year = p.start_year || 'Unknown';
@@ -285,12 +287,12 @@ class DataManager {
   }
 
   getRegionalDistribution() {
-    const cacheKey = `regional_${this.filteredProjects.length}`;
+    const cacheKey = `regional_${this._filterHash()}`;
     if (this._analyticsCache && this._analyticsCache.has(cacheKey)) {
       return this._analyticsCache.get(cacheKey);
     }
 
-    const projects = this.filteredProjects.length > 0 ? this.filteredProjects : this.rawProjects;
+    const projects = this.filteredProjects;
     const regionMap = {
       '한국 (South Korea)': 0,
       '미국 (USA)': 0,
@@ -320,7 +322,7 @@ class DataManager {
   }
 
   getCompanyTopicMatrix(topCompanyLimit = 8) {
-    const projects = this.filteredProjects.length > 0 ? this.filteredProjects : this.rawProjects;
+    const projects = this.filteredProjects;
     const compMap = {};
     const categories = this.categories;
 
@@ -351,7 +353,8 @@ class DataManager {
   }
 
   getSubtopicRules() {
-    return {
+    if (this._subtopicRulesCache) return this._subtopicRulesCache;
+    this._subtopicRulesCache = {
       'Advanced Logic & Transistors (GAA/CFET/2D)': [
         { name: 'CFET & 3D 적층 트랜지스터', icon: '⚡', keywords: ['cfet', 'complementary fet', '3d stacked', 'monolithic 3d', 'vertical fet', 'stacked'] },
         { name: 'GAA / MBCFET 나노시트 소자', icon: '⚡', keywords: ['gaa', 'gate-all-around', 'nanosheet', 'multi-bridge', 'mbcfet', 'ribbonfet', 'finfet', 'nanowire', 'spacer'] },
@@ -403,6 +406,7 @@ class DataManager {
         { name: 'AI 데이터센터 초고속 광 인터커넥트', icon: '💡', keywords: ['optical interconnect', 'multi-gpu', 'datacenter', 'low-loss', 'optical switch', 'interconnect'] }
       ]
     };
+    return this._subtopicRulesCache;
   }
 
   getSubtopic(project) {

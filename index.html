@@ -49,7 +49,7 @@
         "url": "https://eljja.github.io/SRC/",
         "applicationCategory": "Science, Technology, Research Analytics",
         "operatingSystem": "All",
-        "description": "글로벌 27개 반도체 기업과 1,061개 대학·연구소 간의 실존 R&D 공동 연구 및 논문 7,920건 인터랙티브 시각화 플랫폼",
+        "description": "글로벌 반도체 기업과 주요 대학·연구소 간의 실존 R&D 공동 연구 및 논문 12,492건 인터랙티브 시각화 플랫폼",
         "author": {
           "@type": "Organization",
           "name": "SRC Semi-Observatory"
@@ -59,7 +59,7 @@
         "@type": "Dataset",
         "@id": "https://eljja.github.io/SRC/#dataset",
         "name": "Global Semiconductor Industry-Academia Collaborative R&D Census (2020-2026)",
-        "description": "Crossref 및 Europe PMC 기반 전수 검증된 7,920건의 글로벌 반도체 기업-대학 공동 연구 데이터셋",
+        "description": "Crossref 및 Europe PMC 기반 전수 검증된 12,492건의 글로벌 반도체 기업-대학 공동 연구 데이터셋",
         "url": "https://eljja.github.io/SRC/",
         "keywords": ["Semiconductor", "R&D", "GAA", "HBM", "Packaging", "EUV", "Samsung", "TSMC", "Intel", "NVIDIA", "MIT", "SNU", "KAIST"],
         "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -70,20 +70,42 @@
   </script>
   
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=7.2.1">
-  <link rel="apple-touch-icon" href="favicon.svg?v=7.2.1">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=7.8.0">
+  <link rel="apple-touch-icon" href="favicon.svg?v=7.8.0">
   
   <!-- Leaflet Map CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   
   <!-- Custom App Styles -->
-  <link rel="stylesheet" href="css/style.css?v=7.2.1">
+  <link rel="stylesheet" href="css/style.css?v=7.8.0">
   
   <!-- D3.js v7 & Leaflet.js -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
+
+  <!-- NoScript Fallback -->
+  <noscript>
+    <div style="background: #1e1b4b; color: #f87171; padding: 1rem; text-align: center; font-weight: bold; border-bottom: 1px solid #ef4444;">
+      ⚠️ 본 대시보드는 인터랙티브 데이터 시각화를 위해 JavaScript 활성화가 필요합니다.
+    </div>
+  </noscript>
+
+  <!-- Global Loading Overlay -->
+  <div id="global-loading-overlay" class="global-loading-overlay">
+    <div class="loading-spinner-box">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">글로벌 반도체 산학 R&D 데이터셋 로딩 중...</div>
+      <div class="loading-sub">전수 검증 데이터 (2020~2026) 분석 중</div>
+    </div>
+  </div>
+
+  <!-- Global Error Fallback Banner -->
+  <div id="global-error-banner" class="global-error-banner" style="display: none;">
+    <span class="error-msg">⚠️ 데이터 로드에 실패했습니다.</span>
+    <button id="btn-retry-load" class="btn-retry">🔄 다시 시도</button>
+  </div>
 
   <!-- Top Header Bar -->
   <header>
@@ -103,16 +125,16 @@
 
     <!-- View Switch Tabs -->
     <div class="view-tabs" role="tablist" aria-label="뷰 선택">
-      <button class="view-tab-btn active" role="tab" aria-selected="true" data-view="map">
+      <button class="view-tab-btn active" id="tab-map" role="tab" aria-selected="true" aria-controls="map-view" data-view="map">
         <span>🗺️ 세계 지도</span>
       </button>
-      <button class="view-tab-btn" role="tab" aria-selected="false" data-view="network">
+      <button class="view-tab-btn" id="tab-network" role="tab" aria-selected="false" aria-controls="network-view" data-view="network">
         <span>🕸️ 관계망 그래프</span>
       </button>
-      <button class="view-tab-btn" role="tab" aria-selected="false" data-view="table">
+      <button class="view-tab-btn" id="tab-table" role="tab" aria-selected="false" aria-controls="table-view" data-view="table">
         <span>📋 전체 목록</span>
       </button>
-      <button class="view-tab-btn" role="tab" aria-selected="false" data-view="analytics">
+      <button class="view-tab-btn" id="tab-analytics" role="tab" aria-selected="false" aria-controls="analytics-view" data-view="analytics">
         <span>📊 통계·랭킹</span>
       </button>
     </div>
@@ -255,7 +277,7 @@
     <main class="content-area">
       
       <!-- 1. Map View Container -->
-      <div id="map-view" class="view-container active" role="tabpanel" aria-label="세계 지도">
+      <div id="map-view" class="view-container active" role="tabpanel" aria-labelledby="tab-map" aria-label="세계 지도">
         <div id="map-container"></div>
         
         <!-- Map Floating Visual Control Toolbar -->
@@ -306,12 +328,12 @@
       </div>
 
       <!-- 2. Network Graph View Container -->
-      <div id="network-view" class="view-container" role="tabpanel" aria-label="관계망 그래프">
+      <div id="network-view" class="view-container" role="tabpanel" aria-labelledby="tab-network" aria-label="관계망 그래프">
         <div id="network-container"></div>
       </div>
 
       <!-- 3. Table Directory View Container -->
-      <div id="table-view" class="view-container" role="tabpanel" aria-label="전체 과제 목록">
+      <div id="table-view" class="view-container" role="tabpanel" aria-labelledby="tab-table" aria-label="전체 과제 목록">
         <div class="table-header-row">
           <div class="table-title">글로벌 반도체 산학연 R&D 디렉토리</div>
           <div id="table-count-summary" style="font-size: 0.82rem; color: var(--text-secondary);">총 0개 과제</div>
@@ -320,13 +342,13 @@
           <table class="data-table">
             <thead>
               <tr>
-                <th>연구 주제 / 프로젝트</th>
-                <th>참여 기업</th>
-                <th>수행 대학교</th>
-                <th>담당 교수 (PI)</th>
-                <th>컨소시엄 / 연구소</th>
-                <th>펀딩 규모</th>
-                <th>진행 상태 / 기간</th>
+                <th scope="col">연구 주제 / 프로젝트</th>
+                <th scope="col">참여 기업</th>
+                <th scope="col">수행 대학교</th>
+                <th scope="col">담당 교수 (PI)</th>
+                <th scope="col">컨소시엄 / 연구소</th>
+                <th scope="col">펀딩 규모</th>
+                <th scope="col">진행 상태 / 기간</th>
               </tr>
             </thead>
             <tbody id="table-directory-body">
@@ -341,7 +363,7 @@
       </div>
 
       <!-- 4. Analytics & Stats View Container -->
-      <div id="analytics-view" class="view-container" role="tabpanel" aria-label="통계 및 랭킹 분석">
+      <div id="analytics-view" class="view-container" role="tabpanel" aria-labelledby="tab-analytics" aria-label="통계 및 랭킹 분석">
         
         <!-- Interactive Guide Banner -->
         <div class="analytics-guide-banner">
@@ -470,11 +492,11 @@
   </div>
 
   <!-- App Scripts -->
-  <script src="js/dataManager.js?v=7.3.0"></script>
-  <script src="js/tracker.js?v=7.3.0"></script>
-  <script src="js/map.js?v=7.3.0"></script>
-  <script src="js/network.js?v=7.3.0"></script>
-  <script src="js/app.js?v=7.3.0"></script>
+  <script src="js/dataManager.js?v=7.8.0"></script>
+  <script src="js/tracker.js?v=7.8.0"></script>
+  <script src="js/map.js?v=7.8.0"></script>
+  <script src="js/network.js?v=7.8.0"></script>
+  <script src="js/app.js?v=7.8.0"></script>
 
 </body>
 </html>

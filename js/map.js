@@ -110,7 +110,7 @@ class MapView {
       minZoom: 1.5,
       maxZoom: 16,
       worldCopyJump: true,
-      preferCanvas: true,
+      preferCanvas: false,
       zoomControl: false,
       dragging: true,
       scrollWheelZoom: true,
@@ -251,6 +251,12 @@ class MapView {
     this.currentProjects = projects || [];
     this.markersLayer.clearLayers();
     this.linesLayer.clearLayers();
+    
+    // Clear accumulated SVG gradient definitions to prevent memory leaks
+    if (this.svgDefs) {
+      this.svgDefs.innerHTML = '';
+    }
+
     this.nodeMarkerMap.clear();
     this.pairPolylineMap.clear();
     this.uniqueNodes.clear();
@@ -387,11 +393,17 @@ class MapView {
       }
     });
 
-    // Build Node Popup
+    marker.bindPopup(() => this.buildPopupHtml(node, node.projects), { maxWidth: 350, maxHeight: 300 });
+    this.markersLayer.addLayer(marker);
+    this.nodeMarkerMap.set(node.key, marker);
+  }
+
+  buildPopupHtml(node, projects) {
+    const isUni = node.type === 'university';
     const safeNodeName = node.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
     const filterType = isUni ? 'university' : 'company';
 
-    const projectListHtml = node.projects.map((p, idx) => `
+    const projectListHtml = projects.map((p, idx) => `
       <div class="map-popup-project-item" style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 11px; ${idx >= 4 ? 'display: none;' : ''}">
         <strong style="color: #60a5fa;">${p.topic}</strong><br/>
         <span style="color: #9ca3af;">${p.professor ? '👨‍🏫 ' + p.professor : ''} (${p.start_year}~${p.end_year})</span><br/>
@@ -400,11 +412,11 @@ class MapView {
       </div>
     `).join('');
 
-    const toggleMoreBtn = node.projects.length > 4 ? `
+    const toggleMoreBtn = projects.length > 4 ? `
       <div style="margin-top: 8px; text-align: center;">
         <button onclick="window.app.toggleMapPopupMore(this)" 
                 style="background: rgba(255,255,255,0.08); border: 1px dashed rgba(255,255,255,0.25); color: #93c5fd; padding: 4px 8px; border-radius: 4px; font-size: 10.5px; cursor: pointer; width: 100%; font-weight: 500;">
-          🔽 + 외 ${node.projects.length - 4}개 산학 과제 펼치기
+          🔽 + 외 ${projects.length - 4}개 산학 과제 펼치기
         </button>
       </div>
     ` : '';
@@ -415,18 +427,18 @@ class MapView {
                 style="background: rgba(59, 130, 246, 0.25); border: 1px solid #3b82f6; color: #60a5fa; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; width: 100%; transition: all 0.2s;"
                 onmouseover="this.style.background='rgba(59, 130, 246, 0.45)'"
                 onmouseout="this.style.background='rgba(59, 130, 246, 0.25)'">
-          📋 '${node.name}' 전체 과제 (${node.projects.length}건) 목록 필터링 ➔
+          📋 '${node.name}' 전체 과제 (${projects.length}건) 목록 필터링 ➔
         </button>
       </div>
     `;
 
-    const popupHtml = `
+    return `
       <div class="map-node-popup-content" style="min-width: 260px; max-width: 320px; max-height: 380px; overflow-y: auto; font-family: inherit; padding-right: 2px;">
         <div style="font-size: 13px; font-weight: 700; color: ${isUni ? '#38bdf8' : '#a78bfa'};">
           ${isUni ? '🏛️ ' : '🏢 '} ${node.name}
         </div>
         <div style="font-size: 11px; color: #9ca3af; margin-bottom: 4px;">
-          📍 ${node.city || ''}, ${node.country || ''} (총 ${node.projects.length}건 최근 산학 R&D 과제)
+          📍 ${node.city || ''}, ${node.country || ''} (총 ${projects.length}건 최근 산학 R&D 과제)
         </div>
         <div class="map-popup-projects-list">
           ${projectListHtml}
@@ -435,10 +447,6 @@ class MapView {
         ${filterButtonHtml}
       </div>
     `;
-
-    marker.bindPopup(popupHtml);
-    this.markersLayer.addLayer(marker);
-    this.nodeMarkerMap.set(node.key, marker);
   }
 
   drawBundledConnection(pair) {
