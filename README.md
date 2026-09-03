@@ -1,8 +1,8 @@
 # Global Semiconductor Industry-Academia-Institute R&D Observatory
-> **글로벌 반도체 산학연(産學研) R&D 협력 지도 및 상호 연결망 시각화 시스템 (v7.3.0)**
+> **글로벌 반도체 산학연(産學研) R&D 협력 지도 및 상호 연결망 시각화 시스템 (v7.8.0)**
 
 [![GitHub Pages Deployment](https://img.shields.io/badge/Hosted%20On-GitHub%20Pages-blue?logo=github)](https://eljja.github.io/SRC)
-[![Dataset Scale](https://img.shields.io/badge/Census%20Data-7%2C920%20Verified%20Projects-emerald?logo=semantic-web)](#)
+[![Dataset Scale](https://img.shields.io/badge/Census%20Data-13%2C691%20Verified%20Projects-emerald?logo=semantic-web)](#)
 [![Period Covered](https://img.shields.io/badge/Period-2020--2026%20(5%20Years)-amber)](#)
 [![Verification](https://img.shields.io/badge/Verification-100%25%20DOI%20%2F%20Peer--Reviewed-cyan)](#)
 [![Architecture](https://img.shields.io/badge/Architecture-100%25%20Static%20SPA-purple)](#)
@@ -13,7 +13,7 @@
 
 ## 📌 프로젝트 소개
 
-본 프로젝트는 **최근 5개년(2020~2026년)** 동안 전 세계 주요 반도체 기업(삼성전자, TSMC, Intel, SK하이닉스, NVIDIA, ASML, AMAT, Qualcomm, Micron 등), 연구 컨소시엄(IMEC, SRC, CEA-Leti, Albany NanoTech, ITRI 등), 그리고 글로벌 유수 대학교(교수 연구실) 간에 수행된 **7,920건의 실존 R&D 프로젝트 전수 조사(Full Census)** 데이터를 인터랙티브 세계 지도, 관계망 네트워크 그래프, D3 통계 대시보드, 디렉토리로 시각화한 단독 실행형 웹 플랫폼입니다.
+본 프로젝트는 **최근 5개년(2020~2026년)** 동안 전 세계 주요 반도체 기업(삼성전자, TSMC, Intel, SK하이닉스, NVIDIA, ASML, AMAT, Qualcomm, Micron 등), 연구 컨소시엄(IMEC, SRC, CEA-Leti, Albany NanoTech, ITRI 등), 그리고 글로벌 유수 대학교(교수 연구실) 간에 수행된 **13,691건의 실존 R&D 프로젝트 전수 조사(Full Census)** 데이터를 인터랙티브 세계 지도, 관계망 네트워크 그래프, D3 통계 대시보드, 디렉토리로 시각화한 단독 실행형 웹 플랫폼입니다.
 
 모든 데이터는 Crossref 및 Europe PMC 기반의 실제 DOI, 논문, 특허, 공식 과제 공시를 근거로 100% 검증된 실존 자료만을 수록하고 있습니다.
 
@@ -31,7 +31,7 @@
 - **컬러 모드 전환**: `🌈 기관 그라데이션` ↔ `🏷️ 7대 기술 도메인별 색상`
 
 ### 2. 🕸️ 최적화된 D3 Force Graph (Network View)
-- **⚡ 핵심 거점망 (Core Hub) LOD 모드**: 과제 2건 이상 핵심 허브 중심의 쾌적한 뷰와 전체 1,061개 노드 뷰 간 원클릭 토글.
+- **⚡ 핵심 거점망 (Core Hub) LOD 모드**: 과제 2건 이상 핵심 허브 중심의 쾌적한 뷰와 전체 2,662개 기관 노드 뷰 간 원클릭 토글.
 - **물리 엔진 최적화**: `alphaDecay(0.04)` 및 `velocityDecay(0.4)` 적용으로 2초 내 안정적인 레이아웃 안착.
 - **줌 적응형 라벨 & 더블클릭 연동**: 확대 레벨에 따른 점진적 라벨 노출 및 노드 더블클릭 시 해당 기관의 전체 과제 목록으로 즉시 전환.
 
@@ -42,7 +42,7 @@
 - **🔢 Top-N 동적 랭킹 선택기**: `[Top 5]` `[Top 10]` `[Top 20]` `[전체]` 버튼으로 최다 기업/대학/교수/연구소 표시 건수 조절.
 
 ### 4. 📋 고성능 과제 디렉토리 및 검색 (Table View)
-- **실시간 검색 디바운스(250ms)**: 7,920건 대규모 데이터셋에 대해 버벅거림 없는 타이핑 검색 및 복합 단어 토큰 검색 지원.
+- **실시간 검색 디바운스(250ms)**: 13,691건 대규모 데이터셋에 대해 버벅거림 없는 타이핑 검색 및 복합 단어 토큰 검색 지원.
 - **직접 페이지 번호 이동 & 페이지 크기 선택기**: `1, 2, 3...` 직접 클릭 네비게이션 및 `[20 / 40 / 100건씩 보기]` 지원.
 - **다차원 연쇄 필터**: 기업, 대학, 교수, 연구소, 기술도메인, 진행상태(진행중/완료) 즉시 필터링.
 
@@ -79,12 +79,12 @@ d:/Code/SRC/
 │   └── style.css                # 반응형 다크 테마, 글래스모피즘, 차트 스타일
 ├── js/
 │   ├── app.js                   # 메인 코디네이터, D3 차트 렌더러, 디바운스, 페이지네이션
-│   ├── dataManager.js           # 7,920건 필터링, 정렬, 연도별/권역별 통계 연산
+│   ├── dataManager.js           # 13,691건 필터링, 정렬, 연도별/권역별 통계 연산
 │   ├── map.js                   # Leaflet 세계 지도, 2색 그라데이션 아크, LOD 제어
 │   ├── network.js               # D3 Force Graph, 핵심 거점망(Hub) LOD, 시뮬레이션
 │   └── tracker.js               # 접속일자 비교, 데이터 신선도 뱃지
 ├── data/
-│   └── collaborations.json      # 최근 5개년 7,920건 실존 산학연 R&D 전수 데이터셋
+│   └── collaborations.json      # 최근 5개년 13,691건 실존 산학연 R&D 전수 데이터셋
 └── .github/
     └── workflows/
         └── deploy.yml           # GitHub Pages 자동 배포 CI/CD

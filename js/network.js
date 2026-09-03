@@ -304,6 +304,8 @@ class NetworkView {
       this.nodes = Array.from(nodeMap.values());
       if (this.lodMode === 'core') {
         this.nodes = this.nodes.filter(n => n.type === 'subtopic' || n.val >= 2);
+      } else if (this.nodes.length > 500) {
+        this.nodes = this.nodes.sort((a, b) => b.val - a.val).slice(0, 500);
       }
 
     } else if (this.graphMode === 'topic') {
@@ -348,6 +350,8 @@ class NetworkView {
       this.nodes = Array.from(nodeMap.values());
       if (this.lodMode === 'core') {
         this.nodes = this.nodes.filter(n => n.type === 'category' || n.val >= 3);
+      } else if (this.nodes.length > 500) {
+        this.nodes = this.nodes.sort((a, b) => b.val - a.val).slice(0, 500);
       }
 
     } else {
@@ -387,6 +391,8 @@ class NetworkView {
       this.nodes = Array.from(nodeMap.values());
       if (this.lodMode === 'core') {
         this.nodes = this.nodes.filter(n => n.val >= 2);
+      } else if (this.nodes.length > 500) {
+        this.nodes = this.nodes.sort((a, b) => b.val - a.val).slice(0, 500);
       }
     }
 

@@ -394,7 +394,7 @@ class MapView {
     });
 
     marker.bindPopup(() => this.buildPopupHtml(node, node.projects), { maxWidth: 350, maxHeight: 300 });
-    this.markersLayer.addLayer(marker);
+    marker.nodeData = node;
     this.nodeMarkerMap.set(node.key, marker);
   }
 
@@ -574,6 +574,7 @@ class MapView {
     if (!this.map) return;
     const zoom = this.map.getZoom();
 
+    // 1. Connection Arcs LOD
     this.pairPolylineMap.forEach((polyline, pairKey) => {
       const pair = polyline.pairData;
       if (!pair) return;
@@ -608,6 +609,41 @@ class MapView {
         }
       }
     });
+
+    // 2. Node Markers LOD (Cull 2,689 markers at low zoom to achieve buttery 60fps)
+    this.nodeMarkerMap.forEach((marker, nodeKey) => {
+      const node = marker.nodeData;
+      if (!node) return;
+      const count = node.projects.length;
+      const isCompany = node.type === 'company';
+
+      let isNodeVisible = true;
+
+      if (this.filterMode === 'focused') {
+        isNodeVisible = !this.focusedNodeKey || (node.key === this.focusedNodeKey || (this.uniqueNodes.get(this.focusedNodeKey)?.connectedKeys?.has(node.key)));
+      } else if (this.filterMode === 'major') {
+        isNodeVisible = isCompany || count >= 3;
+      } else {
+        // 'smart' Adaptive Mode & 'nodes_only'
+        if (zoom <= 2.8) {
+          isNodeVisible = isCompany || count >= 3;
+        } else if (zoom > 2.8 && zoom < 4.5) {
+          isNodeVisible = isCompany || count >= 2;
+        } else {
+          isNodeVisible = true;
+        }
+      }
+
+      if (isNodeVisible) {
+        if (!this.markersLayer.hasLayer(marker)) {
+          this.markersLayer.addLayer(marker);
+        }
+      } else {
+        if (this.markersLayer.hasLayer(marker)) {
+          this.markersLayer.removeLayer(marker);
+        }
+      }
+    });
   }
 
   highlightNodeNetwork(nodeKey) {
@@ -622,12 +658,20 @@ class MapView {
     document.querySelectorAll('.connection-arc.arc-focused').forEach(el => el.classList.remove('arc-focused'));
     document.querySelectorAll('.map-node-inner.node-focused').forEach(el => el.classList.remove('node-focused'));
 
-    // Highlight target node
+    // Ensure target marker is visible on map
+    const targetMarker = this.nodeMarkerMap.get(nodeKey);
+    if (targetMarker && !this.markersLayer.hasLayer(targetMarker)) {
+      this.markersLayer.addLayer(targetMarker);
+    }
     const targetInner = document.getElementById(`map-node-inner-${nodeKey}`);
     if (targetInner) targetInner.classList.add('node-focused');
 
-    // Highlight connected nodes
+    // Highlight connected nodes and ensure markers are attached
     node.connectedKeys.forEach(cKey => {
+      const cMarker = this.nodeMarkerMap.get(cKey);
+      if (cMarker && !this.markersLayer.hasLayer(cMarker)) {
+        this.markersLayer.addLayer(cMarker);
+      }
       const cInner = document.getElementById(`map-node-inner-${cKey}`);
       if (cInner) cInner.classList.add('node-focused');
     });

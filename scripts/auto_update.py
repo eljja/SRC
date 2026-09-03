@@ -196,7 +196,13 @@ def normalize_existing_start_years(projects):
                 normalized_cnt += 1
     print(f"Normalized start_year for {normalized_cnt} projects based on verified DOIs.")
 
-def fetch_openalex_2026_full_census(existing_dois, existing_titles, target_add=1100):
+def fetch_openalex_2026_full_census(existing_dois, existing_titles, target_add=1100, existing_ids=None):
+    start_id = 0
+    if existing_ids:
+        c_ids = [int(i.split('-')[-1]) for i in existing_ids if i.startswith('SEMI-2026-CENSUS-') and i.split('-')[-1].isdigit()]
+        if c_ids:
+            start_id = max(c_ids)
+
     target_queries = [
         ("samsung", "semiconductor Samsung"),
         ("tsmc", "semiconductor TSMC"),
@@ -234,7 +240,7 @@ def fetch_openalex_2026_full_census(existing_dois, existing_titles, target_add=1
     ]
 
     new_2026_projects = []
-    print(f"Fetching additional verified 2026 projects from OpenAlex (Target: ~{target_add})...")
+    print(f"Fetching additional verified 2026 projects from OpenAlex (Target: ~{target_add}, Starting ID: {start_id + 1})...")
 
     for comp_key, q_str in target_queries:
         if len(new_2026_projects) >= target_add:
@@ -323,7 +329,7 @@ def fetch_openalex_2026_full_census(existing_dois, existing_titles, target_add=1
                         f_amt = funding_amounts[(len(new_2026_projects) + len(title)) % len(funding_amounts)]
 
                         p_obj = {
-                            "id": f"SEMI-2026-CENSUS-{len(new_2026_projects) + 1:04d}",
+                            "id": f"SEMI-2026-CENSUS-{start_id + len(new_2026_projects) + 1:04d}",
                             "title": title,
                             "topic": title[:60] + ("..." if len(title) > 60 else ""),
                             "category": category,
@@ -362,7 +368,13 @@ def fetch_openalex_2026_full_census(existing_dois, existing_titles, target_add=1
     print(f"Newly collected 2026 projects: {len(new_2026_projects)}")
     return new_2026_projects
 
-def fetch_openalex_2025_full_census(existing_dois, existing_titles, target_add=1400):
+def fetch_openalex_2025_full_census(existing_dois, existing_titles, target_add=1400, existing_ids=None):
+    start_id = 0
+    if existing_ids:
+        c_ids = [int(i.split('-')[-1]) for i in existing_ids if i.startswith('SEMI-2025-CENSUS-') and i.split('-')[-1].isdigit()]
+        if c_ids:
+            start_id = max(c_ids)
+
     target_queries = [
         ("Samsung Electronics", "semiconductor \"Samsung\" 2025"),
         ("TSMC", "semiconductor \"TSMC\" 2025"),
@@ -400,7 +412,7 @@ def fetch_openalex_2025_full_census(existing_dois, existing_titles, target_add=1
     ]
 
     new_2025_projects = []
-    print(f"Starting Multi-Source 2025 Full Census Ingestion (Target: ~{target_add} verified projects)...")
+    print(f"Starting Multi-Source 2025 Full Census Ingestion (Target: ~{target_add}, Starting ID: {start_id + 1})...")
 
     # Source 1: Crossref Official DOI Registry (IEEE, Nature, SPIE, Elsevier, Wiley)
     print("Collecting 2025 works from Crossref API...")
@@ -454,7 +466,7 @@ def fetch_openalex_2025_full_census(existing_dois, existing_titles, target_add=1
                     f_amt = funding_amounts[(len(new_2025_projects) + len(title_list[0])) % len(funding_amounts)]
 
                     p_obj = {
-                        "id": f"SEMI-2025-CENSUS-{len(new_2025_projects) + 1:04d}",
+                        "id": f"SEMI-2025-CENSUS-{start_id + len(new_2025_projects) + 1:04d}",
                         "title": title_list[0],
                         "topic": title_list[0][:60] + ("..." if len(title_list[0]) > 60 else ""),
                         "category": category,
@@ -525,7 +537,7 @@ def fetch_openalex_2025_full_census(existing_dois, existing_titles, target_add=1
                         f_amt = funding_amounts[(len(new_2025_projects) + len(title)) % len(funding_amounts)]
 
                         p_obj = {
-                            "id": f"SEMI-2025-CENSUS-{len(new_2025_projects) + 1:04d}",
+                            "id": f"SEMI-2025-CENSUS-{start_id + len(new_2025_projects) + 1:04d}",
                             "title": title.rstrip('.'),
                             "topic": title[:60] + ("..." if len(title) > 60 else ""),
                             "category": category,
@@ -560,7 +572,13 @@ def fetch_openalex_2025_full_census(existing_dois, existing_titles, target_add=1
             except Exception as e:
                 print(f"Notice on Europe PMC {comp_label}:", e)
 
-def fetch_openalex_2024_full_census(existing_dois, existing_titles, target_add=800):
+def fetch_openalex_2024_full_census(existing_dois, existing_titles, target_add=800, existing_ids=None):
+    start_id = 0
+    if existing_ids:
+        c_ids = [int(i.split('-')[-1]) for i in existing_ids if i.startswith('SEMI-2024-CENSUS-') and i.split('-')[-1].isdigit()]
+        if c_ids:
+            start_id = max(c_ids)
+
     target_queries = [
         # Regional & Key Academic Hubs (2024 Focus)
         ("Samsung Electronics", "semiconductor \"Samsung\" \"Seoul National\" 2024"),
@@ -614,7 +632,7 @@ def fetch_openalex_2024_full_census(existing_dois, existing_titles, target_add=8
     ]
 
     new_2024_projects = []
-    print(f"Starting Multi-Source 2024 Full Census Ingestion (Target: ~{target_add} verified projects)...")
+    print(f"Starting Multi-Source 2024 Full Census Ingestion (Target: ~{target_add}, Starting ID: {start_id + 1})...")
 
     # Source 1: Crossref Official DOI Registry (2024)
     print("Collecting 2024 works from Crossref API...")
@@ -668,7 +686,7 @@ def fetch_openalex_2024_full_census(existing_dois, existing_titles, target_add=8
                     f_amt = funding_amounts[(len(new_2024_projects) + len(title_list[0])) % len(funding_amounts)]
 
                     p_obj = {
-                        "id": f"SEMI-2024-CENSUS-{len(new_2024_projects) + 1:04d}",
+                        "id": f"SEMI-2024-CENSUS-{start_id + len(new_2024_projects) + 1:04d}",
                         "title": title_list[0],
                         "topic": title_list[0][:60] + ("..." if len(title_list[0]) > 60 else ""),
                         "category": category,
@@ -739,7 +757,7 @@ def fetch_openalex_2024_full_census(existing_dois, existing_titles, target_add=8
                         f_amt = funding_amounts[(len(new_2024_projects) + len(title)) % len(funding_amounts)]
 
                         p_obj = {
-                            "id": f"SEMI-2024-CENSUS-{len(new_2024_projects) + 1:04d}",
+                            "id": f"SEMI-2024-CENSUS-{start_id + len(new_2024_projects) + 1:04d}",
                             "title": title.rstrip('.'),
                             "topic": title[:60] + ("..." if len(title) > 60 else ""),
                             "category": category,
@@ -788,10 +806,13 @@ def main():
     # 1. Normalize existing start years from evidence references
     normalize_existing_start_years(projects)
     
-    # 2. Extract existing DOIs and titles
+    # 2. Extract existing DOIs, titles, and IDs
     existing_dois = set()
     existing_titles = set()
+    existing_ids = set()
     for p in projects:
+        if p.get("id"):
+            existing_ids.add(p["id"])
         ev = p.get("evidence_ref", "")
         m_doi = re.search(r"https?://doi\.org/[^\s|]+", ev)
         if m_doi:
@@ -800,7 +821,7 @@ def main():
             existing_titles.add(p.get("title").lower().strip())
 
     # 3. Fetch 2024 full census
-    new_2024_projects = fetch_openalex_2024_full_census(existing_dois, existing_titles, target_add=800)
+    new_2024_projects = fetch_openalex_2024_full_census(existing_dois, existing_titles, target_add=800, existing_ids=existing_ids)
     
     # 4. Merge
     combined_projects = projects + new_2024_projects
