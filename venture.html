@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Google Search Console Verification -->
+  <meta name="google-site-verification" content="tQU4ms4HtuSSnlNO14YJO8OMyy59mqlFixqXl3Lhlbw" />
+  
+  <!-- Primary SEO Metadata -->
+  <title>Global Semiconductor Venture & CVC Observatory | 글로벌 반도체 벤처 투자(CVC) 지도 & 상호 연결망</title>
+  <meta name="description" content="글로벌 24개 주요 반도체 기업의 CVC(기업 벤처캐피털) 및 스타트업 직접 투자 97건 전수 인터랙티브 지도 및 네트워크 대시보드 (2021~2026). 삼성전자, TSMC, 인텔, 엔비디아, 퀄컴 등 글로벌 반도체 거인들의 딥테크 투자 현황을 시각화합니다." />
+  <meta name="keywords" content="반도체 벤처투자, CVC, 스타트업 투자, 삼성전자 벤처스, 인텔 캐피탈, 엔비디아 NVentures, 퀄컴 벤처스, TSMC, Tenstorrent, Celestial AI, Eliyan, Ayar Labs, Figure AI, 차세대 반도체, AI 반도체, 칩렛, 광반도체" />
+  <meta name="author" content="Global Semiconductor Venture Observatory" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="theme-color" content="#0b0f19" />
+  
+  <!-- Canonical & Sitemap Links -->
+  <link rel="canonical" href="https://eljja.github.io/SRC/venture.html" />
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="https://eljja.github.io/SRC/sitemap.xml" />
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://eljja.github.io/SRC/venture.html" />
+  <meta property="og:title" content="Global Semiconductor Venture & CVC Observatory | 글로벌 반도체 벤처 투자 지도" />
+  <meta property="og:description" content="글로벌 24개 반도체 기업의 CVC 및 스타트업 직접 투자 전수 인터랙티브 지도 및 투자 연결망 대시보드 (2021~2026)." />
+  <meta property="og:image" content="https://eljja.github.io/SRC/favicon.svg" />
+  <meta property="og:site_name" content="SRC Semi-Observatory" />
+  <meta property="og:locale" content="ko_KR" />
+  
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://eljja.github.io/SRC/venture.html" />
+  <meta name="twitter:title" content="Global Semiconductor Venture & CVC Observatory | 벤처 투자 지도" />
+  <meta name="twitter:description" content="글로벌 반도체 기업의 딥테크 스타트업 CVC 투자 시각화 대시보드" />
+  <meta name="twitter:image" content="https://eljja.github.io/SRC/favicon.svg" />
+  
+  <!-- Structured Data (JSON-LD / Schema.org) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "@id": "https://eljja.github.io/SRC/venture.html#webapp",
+        "name": "Global Semiconductor Venture & CVC Observatory",
+        "alternateName": "글로벌 반도체 벤처 투자(CVC) 지도 및 연결망",
+        "url": "https://eljja.github.io/SRC/venture.html",
+        "applicationCategory": "Finance, Investment Analytics, Semiconductor Technology",
+        "operatingSystem": "All",
+        "description": "글로벌 24개 반도체 기업의 CVC 투자 및 유망 스타트업 투자 현황 인터랙티브 시각화 플랫폼",
+        "author": {
+          "@type": "Organization",
+          "name": "SRC Semi-Observatory"
+        }
+      },
+      {
+        "@type": "Dataset",
+        "@id": "https://eljja.github.io/SRC/venture.html#dataset",
+        "name": "Global Semiconductor Corporate Venture Capital (CVC) Census (2021-2026)",
+        "description": "글로벌 반도체 기업의 CVC 및 전략적 직접 투자 전수 검증 데이터셋 (2021-2026)",
+        "url": "https://eljja.github.io/SRC/venture.html",
+        "keywords": ["Semiconductor", "CVC", "Venture Capital", "Startup", "AI Chips", "Photonics", "Chiplet", "Samsung", "Intel", "NVIDIA", "Qualcomm", "TSMC"],
+        "license": "https://creativecommons.org/licenses/by/4.0/",
+        "temporalCoverage": "2021/2026"
+      }
+    ]
+  }
+  </script>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=7.8.0">
+  <link rel="apple-touch-icon" href="favicon.svg?v=7.8.0">
+  
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  
+  <!-- Custom App Styles (Shares the exact same unified design system) -->
+  <link rel="stylesheet" href="css/style.css?v=7.8.0">
+  
+  <!-- D3.js v7 & Leaflet.js -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <!-- NoScript Fallback -->
+  <noscript>
+    <div style="background: #1e1b4b; color: #f87171; padding: 1rem; text-align: center; font-weight: bold; border-bottom: 1px solid #ef4444;">
+      ⚠️ 본 대시보드는 인터랙티브 데이터 시각화를 위해 JavaScript 활성화가 필요합니다.
+    </div>
+  </noscript>
+
+  <!-- Global Loading Overlay -->
+  <div id="global-loading-overlay" class="global-loading-overlay">
+    <div class="loading-spinner-box">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">글로벌 반도체 벤처 투자(CVC) 데이터셋 로딩 중...</div>
+      <div class="loading-sub">글로벌 24개 기업의 최근 5개년(2021~2026) 투자 분석 중</div>
+    </div>
+  </div>
+
+  <!-- Global Error Fallback Banner -->
+  <div id="global-error-banner" class="global-error-banner" style="display: none;">
+    <span class="error-msg">⚠️ 벤처 투자 데이터 로드에 실패했습니다.</span>
+    <button id="btn-retry-load" class="btn-retry">🔄 다시 시도</button>
+  </div>
+
+  <!-- Top Header Bar -->
+  <header>
+    <div class="brand-section">
+      <div class="brand-logo">
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 0 1-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12A14.98 14.98 0 0 0 9.631 8.41m5.96 5.96a14.926 14.926 0 0 1-5.841 2.58m-.119-8.54a6 6 0 0 0-7.381 5.84h4.8m2.58-5.84a14.927 14.927 0 0 0-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 0 1-2.448-2.448 14.9 14.9 0 0 1 .06-.312m-2.24 2.39a4.493 4.493 0 0 0-1.757 4.306 4.493 4.493 0 0 0 4.306-1.758M16.5 9a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
+        </svg>
+        <span>SRC Venture Observatory</span>
+        <span class="hud-tag" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); font-size: 11px; padding: 2px 8px; border-radius: 9999px;">🚀 CVC 벤처 투자</span>
+      </div>
+    </div>
+
+    <!-- Freshness Tracker & Live Date Badge -->
+    <div class="header-meta-section" id="header-freshness-badge-container">
+      <!-- Injected by js/tracker.js -->
+    </div>
+
+    <!-- View Switch Tabs -->
+    <div class="view-tabs" role="tablist" aria-label="뷰 선택">
+      <button class="view-tab-btn active" id="tab-map" role="tab" aria-selected="true" aria-controls="map-view" data-view="map">
+        <span>🗺️ 세계 지도</span>
+      </button>
+      <button class="view-tab-btn" id="tab-network" role="tab" aria-selected="false" aria-controls="network-view" data-view="network">
+        <span>🕸️ 투자 관계망</span>
+      </button>
+      <button class="view-tab-btn" id="tab-table" role="tab" aria-selected="false" aria-controls="table-view" data-view="table">
+        <span>📋 전체 목록</span>
+      </button>
+      <button class="view-tab-btn" id="tab-analytics" role="tab" aria-selected="false" aria-controls="analytics-view" data-view="analytics">
+        <span>📊 통계·랭킹</span>
+      </button>
+    </div>
+
+    <!-- Actions & Cross-navigation -->
+    <div class="header-actions">
+      <!-- Cross-Link to Academic R&D Observatory -->
+      <a href="index.html" class="header-action-btn" title="반도체 산학협력(R&D) 대시보드로 이동" style="background: rgba(99, 102, 241, 0.25); border-color: rgba(99, 102, 241, 0.5); color: #a5b4fc;">
+        <span>🎓 산학 협력 R&D</span>
+      </a>
+      <button class="mobile-menu-btn" id="btn-toggle-sidebar" aria-label="필터 메뉴 열기">☰</button>
+      <button class="header-action-btn" id="btn-export-json" title="벤처 투자 데이터셋 JSON 다운로드" aria-label="벤처 투자 데이터셋 JSON 다운로드">
+        <span>📥 JSON</span>
+      </button>
+      <a href="https://github.com/eljja/SRC" target="_blank" rel="noopener noreferrer" class="header-action-btn" title="GitHub 저장소 바로가기" aria-label="GitHub 저장소 바로가기">
+        <span>📂 GitHub</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- App Main Container -->
+  <div class="app-container">
+    
+    <!-- Mobile Sidebar Backdrop -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+    
+    <!-- Sidebar Control Panel -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <!-- Global Search Box -->
+        <div class="search-box search-wrapper">
+          <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+          </svg>
+          <input type="text" id="global-search-input" placeholder="투자기업, 스타트업, 섹터, 국가 검색..." aria-label="글로벌 벤처 투자 및 스타트업 검색">
+          <button id="btn-clear-search" class="search-clear-btn" type="button" aria-label="검색어 지우기">&times;</button>
+        </div>
+
+        <!-- Real-time Summary Stat Chips -->
+        <div class="stats-summary-bar">
+          <div class="stat-chip">
+            <div class="stat-chip-number" id="stat-total-count">0</div>
+            <div class="stat-chip-label">조사 투자건수</div>
+          </div>
+          <div class="stat-chip">
+            <div class="stat-chip-number" id="stat-active-count" style="color: #34d399;">0</div>
+            <div class="stat-chip-label">진행중 포트폴리오</div>
+          </div>
+          <div class="stat-chip">
+            <div class="stat-chip-number" id="stat-funding-total" style="color: #fbbf24;">$0M</div>
+            <div class="stat-chip-label">총 투자 라운드규모</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Sections -->
+      <div class="filter-accordion">
+        
+        <!-- Status Filter Pills -->
+        <div class="filter-group">
+          <div class="filter-title">
+            <label>투자 포트폴리오 상태</label>
+            <span style="font-size: 10px; color: var(--text-muted);">2021~2026 5개년</span>
+          </div>
+          <div class="status-pill-group" role="radiogroup" aria-label="투자 포트폴리오 상태 선택">
+            <button type="button" class="status-pill active" data-status="all" role="radio" aria-checked="true">전체</button>
+            <button type="button" class="status-pill" data-status="active" role="radio" aria-checked="false">🟢 진행중</button>
+            <button type="button" class="status-pill" data-status="completed" role="radio" aria-checked="false">⚪ 회수/완료</button>
+          </div>
+        </div>
+
+        <!-- Investor Company Filter -->
+        <div class="filter-group">
+          <div class="filter-title">
+            <label for="filter-company">참여 / 투자 기업 (Corporate Investor)</label>
+          </div>
+          <select id="filter-company" class="filter-select">
+            <option value="all">전체 반도체 기업 (All Investors)</option>
+          </select>
+        </div>
+
+        <!-- Startup Filter -->
+        <div class="filter-group">
+          <div class="filter-title">
+            <label for="filter-startup">피투자 스타트업 (Startup)</label>
+          </div>
+          <select id="filter-startup" class="filter-select">
+            <option value="all">전체 스타트업 (All Startups)</option>
+          </select>
+        </div>
+
+        <!-- Technology Sector Category Filter -->
+        <div class="filter-group">
+          <div class="filter-title">
+            <label for="filter-category">기술 섹터 분야 (Technology Sector)</label>
+          </div>
+          <select id="filter-category" class="filter-select">
+            <option value="all">전체 기술 섹터 (All Sectors)</option>
+          </select>
+        </div>
+
+        <!-- Investment Round Filter -->
+        <div class="filter-group">
+          <div class="filter-title">
+            <label for="filter-round">투자 단계 / 라운드 (Investment Round)</label>
+          </div>
+          <select id="filter-round" class="filter-select">
+            <option value="all">전체 투자 라운드 (All Rounds)</option>
+          </select>
+        </div>
+
+        <!-- Investment Year Filter -->
+        <div class="filter-group">
+          <div class="filter-title">
+            <label for="filter-year">투자 연도 (Investment Year)</label>
+          </div>
+          <select id="filter-year" class="filter-select">
+            <option value="all">전체 연도 (All Years)</option>
+          </select>
+        </div>
+
+        <!-- Sort By -->
+        <div class="filter-group">
+          <div class="filter-title">
+            <label>정렬 기준 (Sort By)</label>
+          </div>
+          <div class="sort-btn-group" role="group" aria-label="정렬 기준">
+            <button type="button" class="sort-btn active" data-sort="year_desc">최신 연도순</button>
+            <button type="button" class="sort-btn" data-sort="amount_desc">투자 규모순</button>
+            <button type="button" class="sort-btn" data-sort="company">투자사순</button>
+            <button type="button" class="sort-btn" data-sort="startup">스타트업순</button>
+          </div>
+        </div>
+
+        <!-- Reset Button -->
+        <button id="btn-reset-filters" type="button" class="header-action-btn" style="width: 100%; justify-content: center; margin-top: 0.5rem; background: rgba(55, 65, 81, 0.4);">
+          <span>🔄 필터 초기화</span>
+        </button>
+
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="content-area">
+      
+      <!-- 1. Map View Container -->
+      <div id="map-view" class="view-container active" role="tabpanel" aria-labelledby="tab-map" aria-label="세계 지도">
+        <div id="map-container"></div>
+        
+        <!-- Map Floating Visual Control Toolbar -->
+        <div class="map-floating-toolbar">
+          <div class="toolbar-group">
+            <span class="toolbar-label">연결선 모드</span>
+            <div class="toolbar-btns">
+              <button class="map-mode-btn active" data-mode="smart" title="줌 레벨에 맞춰 최적화된 핵심 축선 자동 표시">⚡ 스마트 자동</button>
+              <button class="map-mode-btn" data-mode="focused" title="마커 호버/클릭 시 해당 기관 선만 집중 표시">🎯 선택 집중</button>
+              <button class="map-mode-btn" data-mode="major" title="투자 건수 다수 주요 투자 축선만 표시">🌟 주요 투자</button>
+              <button class="map-mode-btn" data-mode="nodes_only" title="연결선 없이 거점 마커만 표시">📍 마커만</button>
+            </div>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <span class="toolbar-label">컬러링</span>
+            <div class="toolbar-btns">
+              <button class="map-color-btn active" data-color="gradient" title="투자 기업 브랜드색 ➔ 스타트업 권역색 2색 그라데이션">🌈 기업-스타트업 그라데이션</button>
+              <button class="map-color-btn" data-color="category" title="기술 섹터별 색상">🏷️ 기술 섹터별</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Map Legend -->
+        <div class="map-legend">
+          <div style="font-weight: 700; color: #fff; margin-bottom: 2px;">CVC 벤처 투자 컬러 범례</div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: #3b82f6; box-shadow: 0 0 6px #3b82f6;"></div>
+            <span>글로벌 반도체 기업 (삼성, TSMC, Intel, NVIDIA 등)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: #f59e0b; box-shadow: 0 0 6px #f59e0b;"></div>
+            <span>북미 딥테크 스타트업 (실리콘밸리, 보스턴 등)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: #10b981; box-shadow: 0 0 6px #10b981;"></div>
+            <span>한국 유망 스타트업 (리벨리온, 파두, 파네시아 등)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: #8b5cf6; box-shadow: 0 0 6px #8b5cf6;"></div>
+            <span>유럽 딥테크 스타트업 (영국, 프랑스, 네덜란드 등)</span>
+          </div>
+          <div class="legend-item">
+            <div style="width: 18px; height: 3px; background: linear-gradient(90deg, #3b82f6, #f59e0b); border-radius: 2px;"></div>
+            <span>기업 본사 ➔ 피투자 스타트업 2색 그라데이션 투자 회랑</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Network Graph View Container -->
+      <div id="network-view" class="view-container" role="tabpanel" aria-labelledby="tab-network" aria-label="관계망 그래프">
+        <div id="network-container"></div>
+      </div>
+
+      <!-- 3. Table Directory View Container -->
+      <div id="table-view" class="view-container" role="tabpanel" aria-labelledby="tab-table" aria-label="전체 투자 목록">
+        <div class="table-header-row">
+          <div class="table-title">글로벌 반도체 기업 CVC & 스타트업 투자 디렉토리</div>
+          <div id="table-count-summary" style="font-size: 0.82rem; color: var(--text-secondary);">총 0건 투자</div>
+        </div>
+        <div class="table-scroll-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">피투자 스타트업 (Startup)</th>
+                <th scope="col">투자 기업 (Corporate Investor)</th>
+                <th scope="col">CVC 전담 부서</th>
+                <th scope="col">기술 섹터 (Sector)</th>
+                <th scope="col">투자 라운드</th>
+                <th scope="col">투자 규모 (Amount)</th>
+                <th scope="col">투자 시기 / 상태</th>
+              </tr>
+            </thead>
+            <tbody id="table-directory-body">
+              <!-- Rendered by js/ventureApp.js -->
+            </tbody>
+          </table>
+        </div>
+        <!-- Table Pagination Bar -->
+        <div class="table-pagination-bar" id="table-pagination-bar">
+          <!-- Rendered dynamically by js/ventureApp.js -->
+        </div>
+      </div>
+
+      <!-- 4. Analytics & Stats View Container -->
+      <div id="analytics-view" class="view-container" role="tabpanel" aria-labelledby="tab-analytics" aria-label="통계 및 랭킹 분석">
+        
+        <!-- Interactive Guide Banner -->
+        <div class="analytics-guide-banner">
+          <span class="guide-icon">💡</span>
+          <span class="guide-text"><strong>인터랙티브 분석</strong>: 차트나 랭킹 항목(기업, 스타트업, 기술섹터, 라운드)을 클릭하면 조건에 맞는 <strong>투자 전체 목록</strong>으로 즉시 전환됩니다.</span>
+        </div>
+
+        <!-- 3 D3 Visual Analytics Charts Section -->
+        <div class="analytics-card card-span-2">
+          <div class="card-title">📈 연도별 반도체 CVC 벤처 투자 추이 (2021~2026)</div>
+          <div id="chart-yearly-trend" class="analytics-chart-box"></div>
+        </div>
+
+        <div class="analytics-card">
+          <div class="card-title">🔬 11대 핵심 기술 섹터 비중 (Sector Distribution)</div>
+          <div id="chart-domain-donut" class="analytics-donut-box"></div>
+        </div>
+
+        <div class="analytics-card card-span-2">
+          <div class="card-title">🌍 피투자 스타트업 국가 및 권역별 분포 (Regional Distribution)</div>
+          <div id="chart-regional-dist" class="analytics-chart-box"></div>
+        </div>
+
+        <!-- Corporate vs Sector Investment Matrix Card -->
+        <div class="analytics-card card-span-full">
+          <div class="card-title">🏢 주요 글로벌 반도체 기업별 기술 섹터 벤처 투자 매트릭스 (Corporate Investor vs Sector Matrix)</div>
+          <div id="chart-company-topic-matrix"></div>
+        </div>
+
+        <!-- Top-N Controls & Rankings Header -->
+        <div class="analytics-toolbar-row card-span-full">
+          <div class="analytics-section-title">📊 부문별 핵심 랭킹 & 점유율</div>
+          <div class="analytics-topn-control">
+            <span class="topn-label">표시 건수:</span>
+            <div class="topn-btn-group">
+              <button type="button" class="analytics-topn-btn" data-topn="5">Top 5</button>
+              <button type="button" class="analytics-topn-btn active" data-topn="10">Top 10</button>
+              <button type="button" class="analytics-topn-btn" data-topn="20">Top 20</button>
+              <button type="button" class="analytics-topn-btn" data-topn="all">전체</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Interactive Ranking Cards -->
+        <div class="analytics-card">
+          <div class="card-title">🏢 최다 벤처 투자 반도체 기업 (Top Corporate Investors)</div>
+          <div class="ranking-list" id="analytics-companies-list"></div>
+        </div>
+        <div class="analytics-card">
+          <div class="card-title">🚀 주요 피투자 딥테크 스타트업 (Top Startups)</div>
+          <div class="ranking-list" id="analytics-startups-list"></div>
+        </div>
+        <div class="analytics-card">
+          <div class="card-title">🔬 기술 섹터별 투자 비중 (Sector Breakdown)</div>
+          <div class="ranking-list" id="analytics-categories-list"></div>
+        </div>
+        <div class="analytics-card">
+          <div class="card-title">💰 투자 단계 / 라운드별 분포 (Round Breakdown)</div>
+          <div class="ranking-list" id="analytics-rounds-list"></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Detailed Investment Modal Overlay -->
+  <div class="detail-modal-overlay" id="project-detail-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="detail-modal">
+      <button class="modal-close-btn" id="modal-close-btn" aria-label="닫기">&times;</button>
+      
+      <div class="modal-header">
+        <div class="modal-title" id="modal-title">스타트업 명칭</div>
+        <div class="modal-badge-row" id="modal-status"></div>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-field">
+          <div class="field-label">기술 섹터 (Domain / Sector)</div>
+          <div class="field-value" id="modal-topic" style="color: #60a5fa;">-</div>
+        </div>
+        <div class="modal-field">
+          <div class="field-label">투자 기업 및 CVC 전담 조직</div>
+          <div class="field-value" id="modal-company" style="color: #a78bfa;">-</div>
+        </div>
+        <div class="modal-field">
+          <div class="field-label">스타트업 본사 위치</div>
+          <div class="field-value" id="modal-university" style="color: #38bdf8;">-</div>
+        </div>
+        <div class="modal-field">
+          <div class="field-label">투자 라운드 (Round)</div>
+          <div class="field-value" id="modal-professor" style="color: #fbbf24;">-</div>
+        </div>
+        <div class="modal-field">
+          <div class="field-label">투자 펀드 / CVC 부서</div>
+          <div class="field-value" id="modal-institute" style="color: #34d399;">-</div>
+        </div>
+        <div class="modal-field">
+          <div class="field-label">투자 규모 (Funding Amount)</div>
+          <div class="field-value" id="modal-funding">-</div>
+        </div>
+        <div class="modal-field">
+          <div class="field-label">투자 집행 시기</div>
+          <div class="field-value" id="modal-period">-</div>
+        </div>
+        <div class="modal-field">
+          <div class="field-label">근거 데이터 / 출처 링크</div>
+          <div class="field-value" id="modal-evidence" style="font-size: 11px;">-</div>
+        </div>
+        
+        <div class="modal-full-field" id="modal-phases-container" style="display: none;"></div>
+
+        <div class="modal-full-field">
+          <div class="field-label">스타트업 핵심 기술 및 사업 개요</div>
+          <div class="field-value" id="modal-summary" style="font-weight: normal; line-height: 1.6; color: #d1d5db;">-</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- App Scripts -->
+  <script src="js/ventureDataManager.js?v=7.8.0"></script>
+  <script src="js/tracker.js?v=7.8.0"></script>
+  <script src="js/map.js?v=7.8.0"></script>
+  <script src="js/network.js?v=7.8.0"></script>
+  <script src="js/ventureApp.js?v=7.8.0"></script>
+
+</body>
+</html>
