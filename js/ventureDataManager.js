@@ -41,6 +41,8 @@ class VentureDataManager {
           inv.investor_company,
           inv.cvc_arm,
           inv.startup_name,
+          inv.startup_tagline,
+          inv.startup_tech_tag,
           inv.sector,
           inv.investment_round,
           inv.investment_amount_display,

@@ -101,9 +101,11 @@ class VentureApp {
     }
 
     // Initialize Network View
-    if (window.NetworkView) {
+    if (window.VentureNetworkView) {
+      this.networkView = new VentureNetworkView('network-container', (id) => this.showInvestmentModal(id));
+      this.networkView.init();
+    } else if (window.NetworkView) {
       this.networkView = new NetworkView('network-container', (id) => this.showInvestmentModal(id));
-      this.networkView.graphMode = 'institution'; // default to corporate-startup investor network
       this.networkView.init();
     }
 
@@ -130,6 +132,11 @@ class VentureApp {
       id: inv.id,
       title: `${inv.startup_name} (${inv.investment_round} ${inv.investment_amount_display})`,
       topic: inv.startup_name,
+      startup_name: inv.startup_name,
+      startup_tagline: inv.startup_tagline || '',
+      startup_tech_tag: inv.startup_tech_tag || '',
+      syndicate_partners: inv.syndicate_partners || [],
+      cvc_arm: inv.cvc_arm || '',
       company: inv.investor_company,
       company_city: compInfo.city,
       company_country: compInfo.country,
@@ -141,6 +148,7 @@ class VentureApp {
       university_lat: inv.startup_lat,
       university_lng: inv.startup_lon, // Leaflet needs lng
       category: inv.sector,
+      sector: inv.sector,
       status: inv.status || 'active',
       status_detail: `${inv.investment_round} • ${inv.cvc_arm || 'CVC'}`,
       funding_display: inv.investment_amount_display,
@@ -149,7 +157,8 @@ class VentureApp {
       end_year: inv.investment_year,
       summary: inv.startup_description,
       evidence_type: 'CVC 투자 공시',
-      evidence_ref: inv.source_url
+      evidence_ref: inv.source_url,
+      rawInvestment: inv
     };
   }
 
@@ -473,8 +482,12 @@ class VentureApp {
     tbody.innerHTML = pageItems.map(inv => `
       <tr class="table-row-clickable" data-project-id="${inv.id}">
         <td>
-          <strong class="table-topic-text">${inv.startup_name}</strong><br/>
-          <span class="table-title-sub">${inv.startup_hq_city || ''}, ${inv.startup_hq_country || ''}</span>
+          <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+            <strong class="table-topic-text">${inv.startup_name}</strong>
+            ${inv.startup_tech_tag ? `<span class="hud-tag" style="background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); font-size: 10px; padding: 1px 6px;">${inv.startup_tech_tag}</span>` : ''}
+          </div>
+          ${inv.startup_tagline ? `<div style="font-size: 11px; color: #93c5fd; margin-top: 3px; font-weight: 500; line-height: 1.35;">💡 ${inv.startup_tagline}</div>` : ''}
+          <span class="table-title-sub" style="display: block; margin-top: 2px;">${inv.startup_hq_city || ''}, ${inv.startup_hq_country || ''}</span>
         </td>
         <td><span class="table-company-text">${inv.investor_company}</span></td>
         <td><span class="table-inst-text">${inv.cvc_arm || '-'}</span></td>
@@ -945,7 +958,44 @@ class VentureApp {
     }
 
     const phasesContainer = document.getElementById('modal-phases-container');
-    if (phasesContainer) phasesContainer.style.display = 'none';
+    if (phasesContainer) {
+      if (inv.startup_tagline || (inv.syndicate_partners && inv.syndicate_partners.length > 0) || inv.startup_tech_tag) {
+        phasesContainer.style.display = 'block';
+        const syndicateChips = (inv.syndicate_partners || []).map(p => `
+          <span class="hud-tag" style="background: rgba(139, 92, 246, 0.2); color: #c4b5fd; border: 1px solid rgba(139, 92, 246, 0.4); font-size: 11px;">
+            ${p}
+          </span>
+        `).join('');
+
+        phasesContainer.innerHTML = `
+          <div class="field-label">스타트업 기술 분류 & 공동 투자 신디케이트</div>
+          <div style="margin-top: 6px; background: rgba(15, 23, 42, 0.6); border-radius: 6px; padding: 10px; border-left: 3px solid #38bdf8;">
+            ${inv.startup_tagline ? `
+              <div style="font-size: 13px; color: #38bdf8; font-weight: 700; margin-bottom: 6px;">
+                💡 ${inv.startup_tagline}
+              </div>
+            ` : ''}
+            ${inv.startup_tech_tag ? `
+              <div style="margin-bottom: 8px;">
+                <span class="hud-tag" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); font-weight: 600;">
+                  🏷️ ${inv.startup_tech_tag}
+                </span>
+              </div>
+            ` : ''}
+            ${syndicateChips ? `
+              <div style="font-size: 11px; color: #9ca3af; margin-bottom: 4px; font-weight: 600;">
+                🤝 주요 공동 투자 파트너 (Syndicate):
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+                ${syndicateChips}
+              </div>
+            ` : ''}
+          </div>
+        `;
+      } else {
+        phasesContainer.style.display = 'none';
+      }
+    }
 
     const overlay = document.getElementById('project-detail-modal-overlay');
     if (overlay) overlay.classList.add('active');
