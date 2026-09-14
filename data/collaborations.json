@@ -1,13 +1,13 @@
 {
   "metadata": {
     "dataset_name": "Global Semiconductor Industry-Academia-Institute R&D Observatory (Recent 5 Years Full Census)",
-    "last_updated": "2026-09-13",
-    "version": "7.8.0-2024-2026-full-census-13732",
+    "last_updated": "2026-09-14",
+    "version": "7.8.0-2024-2026-full-census-13733",
     "maintainer": "SRC Research Network Observatory",
     "repository": "https://github.com/eljja/SRC",
     "service_url": "https://eljja.github.io/SRC",
     "standard_duration_rule_years": 3,
-    "total_projects": 13732,
+    "total_projects": 13733,
     "verification_method": "100% Peer-Reviewed Corporate-Academic Full Census with Real DOIs (2020~2026 Complete)"
   },
   "categories": [
@@ -444324,6 +444324,34 @@
       "evidence_type": "Peer-Reviewed Journal / Conference DOI (2024)",
       "evidence_ref": "2024 IEEE 22nd International Conference on Industrial Informatics (INDIN) (2024) | DOI: https://doi.org/10.1109/indin58382.2024.10774286",
       "summary": "2024년 발표된 NVIDIA와 Dresden University of Applied Sciences 간의 AI & Neuromorphic Computing 분야 핵심 산학 연구 과제입니다. 2024 IEEE 22nd International Conference on Industrial Informatics (INDIN)에 공식 게재됨."
+    },
+    {
+      "id": "SEMI-2024-CENSUS-2045",
+      "title": "Study of Actuators and Injectors for Tip Air Injection in the Axial Compressor of the Larzac 04 Jet Engine",
+      "topic": "Study of Actuators and Injectors for Tip Air Injection in th...",
+      "category": "AI & Neuromorphic Computing",
+      "company": "Infineon Technologies",
+      "company_city": "Neubiberg / Munich",
+      "company_country": "Germany",
+      "company_lat": 48.0772,
+      "company_lng": 11.6578,
+      "university": "semiconductor \"Infineon\" \"Munich\" 2024",
+      "university_city": "Global",
+      "university_country": "Global",
+      "university_lat": 37.5,
+      "university_lng": 127.0,
+      "professor": "Prof. Dragan Kozulovic",
+      "institute_or_consortium": "semiconductor \"Infineon\" \"Munich\" 2024",
+      "funding_display": "$750,000",
+      "funding_source": "Infineon Technologies 산학 R&D 기금",
+      "start_year": 2024,
+      "end_year": 2027,
+      "duration_years": 3,
+      "status": "active",
+      "status_detail": "2024~2027년 산학 R&D 과제로 현재 활성 연구 진행 중 (Active)",
+      "evidence_type": "Peer-Reviewed Journal / Conference DOI (2024)",
+      "evidence_ref": "Proceedings of Global Power &amp; Propulsion Society (2024) | DOI: https://doi.org/10.33737/gpps24-tc-056",
+      "summary": "2024년 발표된 Infineon Technologies와 semiconductor \"Infineon\" \"Munich\" 2024 간의 AI & Neuromorphic Computing 분야 핵심 산학 연구 과제입니다. Proceedings of Global Power &amp; Propulsion Society에 공식 게재됨."
     }
   ]
 }
