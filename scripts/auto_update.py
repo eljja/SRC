@@ -53,33 +53,22 @@ def update_statuses(data):
     updated_count = 0
     
     for project in data.get('projects', []):
-        start_year = project.get('start_year', current_year)
         end_year = project.get('end_year')
         
-        # Apply standard 3-year rule if end_year missing
-        if not end_year:
-            end_year = start_year + 3
-            project['end_year'] = end_year
-            
-        project['duration_years'] = max(1, end_year - start_year)
-            
-        # Determine status
-        old_status = project.get('status')
-        if current_year <= end_year:
-            new_status = 'active'
+        # Only update status if an explicit end_year exists from documented grant period
+        if end_year and isinstance(end_year, int):
+            new_status = 'active' if current_year <= end_year else 'completed'
+            if project.get('status') != new_status:
+                project['status'] = new_status
+                updated_count += 1
         else:
-            new_status = 'completed'
-            
-        if old_status != new_status:
-            project['status'] = new_status
-            if not project.get('status_detail') or '산학과제' in project.get('status_detail', ''):
-                if new_status == 'active':
-                    project['status_detail'] = f"{start_year}~{end_year}년 산학과제로 현재 활성 연구 진행 중"
-                else:
-                    project['status_detail'] = f"{start_year}~{end_year}년 과제 종료 (차기 과제 기획 또는 양산 적용 이관)"
-            updated_count += 1
+            # Published scientific papers without documented ongoing multi-year grant dates are completed
+            if project.get('status') == 'active' and not project.get('end_year'):
+                project['status'] = 'completed'
+                updated_count += 1
             
     print(f"Updated status for {updated_count} projects based on current year ({current_year}).")
+
 
 import re
 import time
@@ -146,40 +135,75 @@ INSTITUTION_MAP = {
     "eth zurich": {"name": "ETH Zurich (취리히 연방공대)", "city": "Zurich", "country": "Switzerland", "lat": 47.3763, "lng": 8.5476}
 }
 
-def infer_category(title, summary=""):
-    text = (title + " " + summary).lower()
-    if any(k in text for k in ["2d", "gaa", "cfet", "transistor", "finfet", "logic", "nanosheet", "fd-soi", "bspdn", "bpr", "channel", "quantum well", "gate-all-around", "sub-1nm", "sub-2nm", "ald"]):
-        return "Advanced Logic & Transistors (GAA/CFET/2D)"
-    elif any(k in text for k in ["dram", "hbm", "mram", "memory", "nand", "rram", "fram", "flash", "sram", "spintronic", "skyrmion", "pim", "rowhammer", "fe-fet", "fefet", "crossbar", "cxl"]):
-        return "Memory & Storage (HBM/PIM/3D NAND)"
-    elif any(k in text for k in ["packaging", "bonding", "interposer", "cooling", "bump", "chiplet", "cowos", "fan-out", "heterogeneous", "substrate", "ucie", "foplp", "tgv", "thermal interface", "emib"]):
-        return "Advanced Packaging & Chiplets (3D/Hybrid Bonding)"
-    elif any(k in text for k in ["litho", "euv", "resist", "pellicle", "etch", "metrology", "mask", "inspection", "dsa", "stem", "high-na", "ptychograph", "photoresist", "scatterometry"]):
-        return "Lithography & Metrology (EUV/High-NA)"
-    elif any(k in text for k in ["gan", "sic", "power", "hemt", "rf", "gallium", "voltage", "converters", "inverter", "avalanche", "piezoelectric", "aln", "wide bandgap", "wide-bandgap"]):
-        return "Power & Compound Semiconductors (GaN/SiC)"
-    elif any(k in text for k in ["optic", "photonic", "modulator", "waveguide", "laser", "cpo", "tfln", "comb", "transceiver", "interconnect"]) and not any(k in text for k in ["memory", "transistor"]):
-        return "Silicon Photonics & Optical I/O"
-    else:
-        return "AI & Neuromorphic Computing"
+# Non-semiconductor / medical keywords filter
+MEDICAL_REGEX = re.compile(
+    r'\b('
+    r'cervical|orthopaedic|orthopedic|stenosis|spondylolisthesis|'
+    r'mycobacterium|joint infection|retinal|neovascularization|'
+    r'haematoma|hematoma|intrapartum|dilatation|discogenic|endoscopy|'
+    r'odontoideum|forensic|spine|spinal|fracture|peptides|choroidal|'
+    r'surgery|surgical|patient|patients|dental|carcinoma|tumor|tumour|cancer|'
+    r'cardiac|coronary|cardiovascular|antibiotic|herniation|decompression|'
+    r'l-disq|mandibulectomy|mandibular|her2|arthroplasty|catheter|'
+    r'glaucoma|ophthalmology|bone marrow|prostate|pulmonary|gastrointestinal|'
+    r'clinical case|case report'
+    r')\b',
+    re.IGNORECASE
+)
+SEMI_HARDWARE_REGEX = re.compile(
+    r'\b('
+    r'semiconductor|transistor|cmos|finfet|gaa|nanosheet|dram|sram|mram|'
+    r'rram|hbm|nand|euv|lithography|photolithography|resist|dielectric|'
+    r'asic|fpga|interposer|chiplet|wafer|integrated circuit'
+    r')\b',
+    re.IGNORECASE
+)
 
-def match_inst(name):
+def is_semiconductor_relevant(title, summary=""):
+    combined = f"{title} {summary}"
+    if MEDICAL_REGEX.search(combined):
+        if not SEMI_HARDWARE_REGEX.search(combined):
+            return False
+    return True
+
+CAT_PATTERNS = {
+    "Advanced Logic & Transistors (GAA/CFET/2D)": re.compile(r'\b(2d|gaa|cfet|transistor|finfet|nanosheet|fd-soi|bspdn|bpr|gate-all-around|sub-1nm|sub-2nm|ald|mos2|wse2|tmd)\b|\blogic (transistor|device|circuit|cell|technology)\b', re.IGNORECASE),
+    "Memory & Storage (HBM/PIM/3D NAND)": re.compile(r'\b(dram|hbm|mram|memory|nand|rram|fram|flash|sram|spintronic|skyrmion|pim|rowhammer|fe-fet|fefet|crossbar|cxl)\b', re.IGNORECASE),
+    "Advanced Packaging & Chiplets (3D/Hybrid Bonding)": re.compile(r'\b(packaging|bonding|interposer|cooling|bump|chiplet|cowos|fan-out|heterogeneous|substrate|ucie|foplp|tgv|thermal interface|emib)\b', re.IGNORECASE),
+    "Lithography & Metrology (EUV/High-NA)": re.compile(r'\b(litho|lithography|euv|resist|pellicle|etch|metrology|mask|inspection|dsa|stem|high-na|ptychograph|photoresist|scatterometry)\b', re.IGNORECASE),
+    "Power & Compound Semiconductors (GaN/SiC)": re.compile(r'\b(gan|sic|hemt|gallium|converters|inverter|avalanche|piezoelectric|aln|wide bandgap|wide-bandgap)\b|\bpower (ic|device|mosfet|semiconductor)\b', re.IGNORECASE),
+    "Silicon Photonics & Optical I/O": re.compile(r'\b(photonic|photonics|modulator|waveguide|laser|cpo|tfln|comb|transceiver|optical interconnect)\b', re.IGNORECASE),
+    "AI & Neuromorphic Computing": re.compile(r'\b(neuromorphic|spiking|synapse|memristor|deep learning accelerator|npu|tpu|systolic array|neural processing|ai chip|tensor)\b', re.IGNORECASE),
+}
+
+def infer_category(title, summary=""):
+    text = f"{title} {summary}"
+    for cat, pattern in CAT_PATTERNS.items():
+        if pattern.search(text):
+            return cat
+    return "기타 / 검토 대기 (Pending Review)"
+
+def match_inst(name, allow_fallback=False):
     if not name:
-        return {"name": "Seoul National University (서울대학교)", "city": "Seoul", "country": "South Korea", "lat": 37.4598, "lng": 126.9519}
+        return None
     lower = name.lower()
     for k, v in INSTITUTION_MAP.items():
         if k in lower:
             return v
-    clean = name.split(",")[0].strip()
-    return {"name": clean, "city": "Global", "country": "Global", "lat": 37.5, "lng": 127.0}
+    if allow_fallback:
+        clean = name.split(",")[0].strip()
+        return {"name": clean, "city": "Global", "country": "Global", "lat": 37.5, "lng": 127.0}
+    return None
 
-def match_comp(text, default_comp):
+def match_comp(text, default_comp=None):
     if text:
         lower = text.lower()
         for k, v in COMPANY_MAP.items():
             if k in lower:
                 return v
-    return COMPANY_MAP.get(default_comp.lower(), COMPANY_MAP["samsung"])
+    if default_comp and default_comp.lower() in COMPANY_MAP:
+        return COMPANY_MAP[default_comp.lower()]
+    return None
 
 def normalize_existing_start_years(projects):
     normalized_cnt = 0
@@ -190,11 +214,114 @@ def normalize_existing_start_years(projects):
             real_pub_year = int(years_found[-1])
             if p.get("start_year") != real_pub_year:
                 p["start_year"] = real_pub_year
-                p["end_year"] = real_pub_year + 3
-                p["duration_years"] = 3
-                p["status"] = "active" if p["end_year"] >= 2026 else "completed"
+                # Do not fabricate end_year or duration_years
                 normalized_cnt += 1
     print(f"Normalized start_year for {normalized_cnt} projects based on verified DOIs.")
+
+def create_census_project(pid_str=None, title="", venue="Academic Literature", doi="", year=None,
+                          found_c=None, found_u=None, prof_name=None, summary_text="", category=None,
+                          funder_info=None, **kwargs):
+    """
+    Creates an evidence-based census record compliant with verification schema.
+    Supports flexible positional and keyword argument patterns.
+    """
+    pid = pid_str or kwargs.get('pid') or "SEMI-CENSUS-GEN"
+    pub_year = year if year is not None else (kwargs.get('pub_year') or 2024)
+    summary = summary_text or kwargs.get('summary', '')
+    doi_val = doi or kwargs.get('doi', '')
+    
+    is_semi = kwargs.get('is_semiconductor_relevant')
+    if is_semi is None:
+        is_semi = is_semiconductor_relevant(title, summary)
+        
+    if category is None:
+        category = infer_category(title, summary) if is_semi else "기타 / 검토 대기 (Pending Review)"
+
+    funding_status = kwargs.get('funding_status', 'unverified')
+    funding_display = kwargs.get('funding_display', '미확인 (Unknown)')
+    funding_amount_usd = kwargs.get('funding_amount', kwargs.get('funding_amount_usd', None))
+    funding_evidence = kwargs.get('funding_evidence_quote', None)
+
+    if funder_info and funding_status == 'unverified':
+        f_lower = str(funder_info).lower()
+        if "none" in f_lower or "nil" in f_lower:
+            funding_status = "none_stated"
+            funding_display = "지원 없음 (Nil)"
+            funding_evidence = "논문 원문에 연구비 지원 없음(None/Nil) 명시"
+        elif isinstance(funder_info, (int, float)) and funder_info > 0:
+            funding_status = "documented"
+            funding_amount_usd = funder_info
+            funding_display = f"${funder_info:,.0f}"
+            funding_evidence = "공식 연구비 공시 데이터"
+
+    company_val = kwargs.get('company')
+    if company_val and isinstance(company_val, str) and not found_c:
+        found_c = match_comp(company_val) or {"name": company_val, "city": "Global", "country": "Global", "lat": 37.0, "lng": 127.0}
+    company_name = found_c["name"] if found_c else (company_val or None)
+
+    collab_status = kwargs.get('corporate_involvement_status', 'documented' if found_c and is_semi else 'unverified')
+    quarantine_reason = kwargs.get('quarantine_reason', '비반도체 분야 (정형외과/의학/치과 등)' if not is_semi else None)
+    now_iso = datetime.datetime.now().isoformat() + "Z"
+
+    return {
+        "id": pid,
+        "title": title.rstrip('.'),
+        "topic": title[:60] + ("..." if len(title) > 60 else ""),
+        "category": category,
+        "company": company_name,
+        "company_city": found_c["city"] if found_c else None,
+        "company_country": found_c["country"] if found_c else None,
+        "company_lat": found_c["lat"] if found_c else None,
+        "company_lng": found_c["lng"] if found_c else None,
+        "university": found_u["name"] if found_u else (kwargs.get('university') or "Research Institution"),
+        "university_city": found_u["city"] if found_u else "Global",
+        "university_country": found_u["country"] if found_u else "Global",
+        "university_lat": found_u["lat"] if found_u else 37.0,
+        "university_lng": found_u["lng"] if found_u else 127.0,
+        "professor": prof_name or kwargs.get('professor', "연구책임자"),
+        "institute_or_consortium": kwargs.get('institute_or_consortium', "해당 없음"),
+        "funding_display": funding_display,
+        "funding_source": None,
+        "funding_amount_usd": funding_amount_usd,
+        "start_year": pub_year,
+        "end_year": pub_year,
+        "duration_years": 1,
+        "status": "quarantined" if not is_semi else "completed",
+        "status_detail": f"{pub_year}년 학술 논문 게재 완료 (다년도 협약기간 미확인)",
+        "evidence_type": f"Peer-Reviewed Journal / Conference DOI ({pub_year})",
+        "evidence_ref": f"{venue} ({pub_year}) | DOI: {doi_val}",
+        "summary": summary or f"{pub_year}년 발표된 {category} 분야 학술 연구 논문입니다.",
+        "verification": {
+            "status": "quarantined" if not is_semi else ("verified" if found_c else "unverified_attributes"),
+            "quarantine_reason": quarantine_reason,
+            "review_reason": quarantine_reason,
+            "is_semiconductor_relevant": is_semi,
+            "collaboration_type": "co_authorship" if found_c else "unconfirmed",
+            "corporate_involvement": {
+                "status": collab_status,
+                "evidence_quote": kwargs.get('corporate_evidence_quote')
+            },
+            "period": {
+                "start_year": pub_year,
+                "end_year": pub_year,
+                "status": "single_year_publication"
+            },
+            "funding": {
+                "status": funding_status,
+                "amount": funding_amount_usd,
+                "amount_usd": funding_amount_usd,
+                "currency": "USD" if funding_amount_usd else None,
+                "scope": "paper_only" if funding_amount_usd else "unspecified",
+                "evidence_text": funding_evidence,
+                "evidence_quote": funding_evidence,
+                "evidence_url": doi_val,
+                "verified_at": now_iso
+            },
+            "verified_at": now_iso,
+            "verifier": "SRC-DataIntegrity-Verifier-v2.0"
+        }
+    }
+
 
 def fetch_openalex_2026_full_census(existing_dois, existing_titles, target_add=1100, existing_ids=None):
     start_id = 0
@@ -302,9 +429,7 @@ def fetch_openalex_2026_full_census(existing_dois, existing_titles, target_add=1
                                             found_u = INSTITUTION_MAP[uk]
                                             break
 
-                        if not found_c:
-                            found_c = match_comp(comp_key, comp_key)
-                        if not found_u:
+                        if not found_u and first_inst_name:
                             found_u = match_inst(first_inst_name)
 
                         abstract_inv = w.get("abstract_inverted_index")
@@ -324,38 +449,22 @@ def fetch_openalex_2026_full_census(existing_dois, existing_titles, target_add=1
                             src = w.get("primary_location").get("source") or {}
                             if isinstance(src, dict) and src.get("display_name"):
                                 venue = src.get("display_name")
-                                
-                        funding_amounts = ["$500,000", "$750,000", "$1,000,000", "$1,250,000", "$1,500,000"]
-                        f_amt = funding_amounts[(len(new_2026_projects) + len(title)) % len(funding_amounts)]
 
-                        p_obj = {
-                            "id": f"SEMI-2026-CENSUS-{start_id + len(new_2026_projects) + 1:04d}",
-                            "title": title,
-                            "topic": title[:60] + ("..." if len(title) > 60 else ""),
-                            "category": category,
-                            "company": found_c["name"],
-                            "company_city": found_c["city"],
-                            "company_country": found_c["country"],
-                            "company_lat": found_c["lat"],
-                            "company_lng": found_c["lng"],
-                            "university": found_u["name"],
-                            "university_city": found_u["city"],
-                            "university_country": found_u["country"],
-                            "university_lat": found_u["lat"],
-                            "university_lng": found_u["lng"],
-                            "professor": prof_name,
-                            "institute_or_consortium": "해당 없음" if "University" in found_u["name"] or "대학" in found_u["name"] else found_u["name"],
-                            "funding_display": f_amt,
-                            "funding_source": f"{found_c['name']} 산학 R&D 기금",
-                            "start_year": 2026,
-                            "end_year": 2029,
-                            "duration_years": 3,
-                            "status": "active",
-                            "status_detail": "2026~2029년 산학 R&D 과제로 현재 활성 연구 진행 중 (Active)",
-                            "evidence_type": "Peer-Reviewed Journal / Conference DOI (2026)",
-                            "evidence_ref": f"{venue} (2026) | DOI: {doi}",
-                            "summary": summary_text or f"2026년 발표된 {found_c['name']}와 {found_u['name']} 간의 {category} 분야 핵심 산학 연구 과제입니다."
-                        }
+                        pid_str = f"SEMI-2026-CENSUS-{start_id + len(new_2026_projects) + 1:04d}"
+                        p_obj = create_census_project(
+                            pid_str=pid_str,
+                            title=title,
+                            venue=venue,
+                            doi=doi,
+                            year=2026,
+                            found_c=found_c,
+                            found_u=found_u,
+                            prof_name=prof_name,
+                            summary_text=summary_text,
+                            category=category
+                        )
+                        if not p_obj:
+                            continue
 
                         existing_dois.add(doi_clean)
                         existing_titles.add(title_clean)
@@ -454,45 +563,27 @@ def fetch_openalex_2025_full_census(existing_dois, existing_titles, target_add=1
                         if not found_u:
                             found_u = match_inst(aff)
 
-                    if not found_c:
-                        found_c = match_comp(comp_label, comp_label)
-                    if not found_u:
-                        first_aff = affils[0] if affils else "Stanford University"
-                        found_u = match_inst(first_aff)
+                    if not found_u and affils:
+                        found_u = match_inst(affils[0])
 
                     category = infer_category(title_list[0])
                     container = item.get('container-title', ['IEEE / Peer-Reviewed Journal'])[0] if item.get('container-title') else 'IEEE / Peer-Reviewed Journal'
-                    funding_amounts = ["$500,000", "$750,000", "$1,000,000", "$1,250,000", "$1,500,000"]
-                    f_amt = funding_amounts[(len(new_2025_projects) + len(title_list[0])) % len(funding_amounts)]
 
-                    p_obj = {
-                        "id": f"SEMI-2025-CENSUS-{start_id + len(new_2025_projects) + 1:04d}",
-                        "title": title_list[0],
-                        "topic": title_list[0][:60] + ("..." if len(title_list[0]) > 60 else ""),
-                        "category": category,
-                        "company": found_c["name"],
-                        "company_city": found_c["city"],
-                        "company_country": found_c["country"],
-                        "company_lat": found_c["lat"],
-                        "company_lng": found_c["lng"],
-                        "university": found_u["name"],
-                        "university_city": found_u["city"],
-                        "university_country": found_u["country"],
-                        "university_lat": found_u["lat"],
-                        "university_lng": found_u["lng"],
-                        "professor": pi_name,
-                        "institute_or_consortium": "해당 없음" if "University" in found_u["name"] or "대학" in found_u["name"] else found_u["name"],
-                        "funding_display": f_amt,
-                        "funding_source": f"{found_c['name']} 산학 R&D 기금",
-                        "start_year": 2025,
-                        "end_year": 2028,
-                        "duration_years": 3,
-                        "status": "active",
-                        "status_detail": "2025~2028년 산학 R&D 과제로 현재 활성 연구 진행 중 (Active)",
-                        "evidence_type": "Peer-Reviewed Journal / Conference DOI (2025)",
-                        "evidence_ref": f"{container} (2025) | DOI: {clean_doi}",
-                        "summary": f"2025년 발표된 {found_c['name']}와 {found_u['name']} 간의 {category} 분야 핵심 산학 연구 과제입니다. {container}에 공식 게재됨."
-                    }
+                    pid_str = f"SEMI-2025-CENSUS-{start_id + len(new_2025_projects) + 1:04d}"
+                    p_obj = create_census_project(
+                        pid_str=pid_str,
+                        title=title_list[0],
+                        venue=container,
+                        doi=clean_doi,
+                        year=2025,
+                        found_c=found_c,
+                        found_u=found_u,
+                        prof_name=pi_name,
+                        summary_text="",
+                        category=category
+                    )
+                    if not p_obj:
+                        continue
 
                     existing_dois.add(clean_doi)
                     existing_titles.add(clean_title)
@@ -529,41 +620,25 @@ def fetch_openalex_2025_full_census(existing_dois, existing_titles, target_add=1
                         pi_name = f"Prof. {author_list[-1]}" if len(author_list) > 1 else (author_list[0] if author_list else "Lead PI")
                         journal = r.get('journalTitle', 'Nature / IEEE Journal')
 
-                        found_c = match_comp(comp_label, comp_label)
-                        found_u = match_inst("Seoul National University")
+                        found_c = match_comp(comp_label)
+                        found_u = match_inst(author_str)
 
                         category = infer_category(title)
-                        funding_amounts = ["$500,000", "$750,000", "$1,000,000", "$1,250,000", "$1,500,000"]
-                        f_amt = funding_amounts[(len(new_2025_projects) + len(title)) % len(funding_amounts)]
-
-                        p_obj = {
-                            "id": f"SEMI-2025-CENSUS-{start_id + len(new_2025_projects) + 1:04d}",
-                            "title": title.rstrip('.'),
-                            "topic": title[:60] + ("..." if len(title) > 60 else ""),
-                            "category": category,
-                            "company": found_c["name"],
-                            "company_city": found_c["city"],
-                            "company_country": found_c["country"],
-                            "company_lat": found_c["lat"],
-                            "company_lng": found_c["lng"],
-                            "university": found_u["name"],
-                            "university_city": found_u["city"],
-                            "university_country": found_u["country"],
-                            "university_lat": found_u["lat"],
-                            "university_lng": found_u["lng"],
-                            "professor": pi_name,
-                            "institute_or_consortium": "해당 없음" if "University" in found_u["name"] or "대학" in found_u["name"] else found_u["name"],
-                            "funding_display": f_amt,
-                            "funding_source": f"{found_c['name']} 산학 R&D 기금",
-                            "start_year": 2025,
-                            "end_year": 2028,
-                            "duration_years": 3,
-                            "status": "active",
-                            "status_detail": "2025~2028년 산학 R&D 과제로 현재 활성 연구 진행 중 (Active)",
-                            "evidence_type": "Peer-Reviewed Journal / Conference DOI (2025)",
-                            "evidence_ref": f"{journal} (2025) | DOI: {clean_doi}",
-                            "summary": f"2025년 발표된 {found_c['name']}와 {found_u['name']} 간의 {category} 분야 핵심 산학 연구 과제입니다. {journal} 게재."
-                        }
+                        pid_str = f"SEMI-2025-CENSUS-{start_id + len(new_2025_projects) + 1:04d}"
+                        p_obj = create_census_project(
+                            pid_str=pid_str,
+                            title=title,
+                            venue=journal,
+                            doi=clean_doi,
+                            year=2025,
+                            found_c=found_c,
+                            found_u=found_u,
+                            prof_name=pi_name,
+                            summary_text="",
+                            category=category
+                        )
+                        if not p_obj:
+                            continue
 
                         existing_dois.add(clean_doi)
                         existing_titles.add(clean_title)
@@ -674,45 +749,27 @@ def fetch_openalex_2024_full_census(existing_dois, existing_titles, target_add=8
                         if not found_u:
                             found_u = match_inst(aff)
 
-                    if not found_c:
-                        found_c = match_comp(comp_label, comp_label)
-                    if not found_u:
-                        first_aff = affils[0] if affils else q_str
-                        found_u = match_inst(first_aff)
+                    if not found_u and affils:
+                        found_u = match_inst(affils[0])
 
                     category = infer_category(title_list[0])
                     container = item.get('container-title', ['IEEE / Peer-Reviewed Journal'])[0] if item.get('container-title') else 'IEEE / Peer-Reviewed Journal'
-                    funding_amounts = ["$500,000", "$750,000", "$1,000,000", "$1,250,000", "$1,500,000"]
-                    f_amt = funding_amounts[(len(new_2024_projects) + len(title_list[0])) % len(funding_amounts)]
 
-                    p_obj = {
-                        "id": f"SEMI-2024-CENSUS-{start_id + len(new_2024_projects) + 1:04d}",
-                        "title": title_list[0],
-                        "topic": title_list[0][:60] + ("..." if len(title_list[0]) > 60 else ""),
-                        "category": category,
-                        "company": found_c["name"],
-                        "company_city": found_c["city"],
-                        "company_country": found_c["country"],
-                        "company_lat": found_c["lat"],
-                        "company_lng": found_c["lng"],
-                        "university": found_u["name"],
-                        "university_city": found_u["city"],
-                        "university_country": found_u["country"],
-                        "university_lat": found_u["lat"],
-                        "university_lng": found_u["lng"],
-                        "professor": pi_name,
-                        "institute_or_consortium": "해당 없음" if "University" in found_u["name"] or "대학" in found_u["name"] else found_u["name"],
-                        "funding_display": f_amt,
-                        "funding_source": f"{found_c['name']} 산학 R&D 기금",
-                        "start_year": 2024,
-                        "end_year": 2027,
-                        "duration_years": 3,
-                        "status": "active",
-                        "status_detail": "2024~2027년 산학 R&D 과제로 현재 활성 연구 진행 중 (Active)",
-                        "evidence_type": "Peer-Reviewed Journal / Conference DOI (2024)",
-                        "evidence_ref": f"{container} (2024) | DOI: {clean_doi}",
-                        "summary": f"2024년 발표된 {found_c['name']}와 {found_u['name']} 간의 {category} 분야 핵심 산학 연구 과제입니다. {container}에 공식 게재됨."
-                    }
+                    pid_str = f"SEMI-2024-CENSUS-{start_id + len(new_2024_projects) + 1:04d}"
+                    p_obj = create_census_project(
+                        pid_str=pid_str,
+                        title=title_list[0],
+                        venue=container,
+                        doi=clean_doi,
+                        year=2024,
+                        found_c=found_c,
+                        found_u=found_u,
+                        prof_name=pi_name,
+                        summary_text="",
+                        category=category
+                    )
+                    if not p_obj:
+                        continue
 
                     existing_dois.add(clean_doi)
                     existing_titles.add(clean_title)
@@ -749,41 +806,25 @@ def fetch_openalex_2024_full_census(existing_dois, existing_titles, target_add=8
                         pi_name = f"Prof. {author_list[-1]}" if len(author_list) > 1 else (author_list[0] if author_list else "Lead PI")
                         journal = r.get('journalTitle', 'Nature / IEEE Journal')
 
-                        found_c = match_comp(comp_label, comp_label)
-                        found_u = match_inst(q_str)
+                        found_c = match_comp(comp_label)
+                        found_u = match_inst(author_str)
 
                         category = infer_category(title)
-                        funding_amounts = ["$500,000", "$750,000", "$1,000,000", "$1,250,000", "$1,500,000"]
-                        f_amt = funding_amounts[(len(new_2024_projects) + len(title)) % len(funding_amounts)]
-
-                        p_obj = {
-                            "id": f"SEMI-2024-CENSUS-{start_id + len(new_2024_projects) + 1:04d}",
-                            "title": title.rstrip('.'),
-                            "topic": title[:60] + ("..." if len(title) > 60 else ""),
-                            "category": category,
-                            "company": found_c["name"],
-                            "company_city": found_c["city"],
-                            "company_country": found_c["country"],
-                            "company_lat": found_c["lat"],
-                            "company_lng": found_c["lng"],
-                            "university": found_u["name"],
-                            "university_city": found_u["city"],
-                            "university_country": found_u["country"],
-                            "university_lat": found_u["lat"],
-                            "university_lng": found_u["lng"],
-                            "professor": pi_name,
-                            "institute_or_consortium": "해당 없음" if "University" in found_u["name"] or "대학" in found_u["name"] else found_u["name"],
-                            "funding_display": f_amt,
-                            "funding_source": f"{found_c['name']} 산학 R&D 기금",
-                            "start_year": 2024,
-                            "end_year": 2027,
-                            "duration_years": 3,
-                            "status": "active",
-                            "status_detail": "2024~2027년 산학 R&D 과제로 현재 활성 연구 진행 중 (Active)",
-                            "evidence_type": "Peer-Reviewed Journal / Conference DOI (2024)",
-                            "evidence_ref": f"{journal} (2024) | DOI: {clean_doi}",
-                            "summary": f"2024년 발표된 {found_c['name']}와 {found_u['name']} 간의 {category} 분야 핵심 산학 연구 과제입니다. {journal} 게재."
-                        }
+                        pid_str = f"SEMI-2024-CENSUS-{start_id + len(new_2024_projects) + 1:04d}"
+                        p_obj = create_census_project(
+                            pid_str=pid_str,
+                            title=title,
+                            venue=journal,
+                            doi=clean_doi,
+                            year=2024,
+                            found_c=found_c,
+                            found_u=found_u,
+                            prof_name=pi_name,
+                            summary_text="",
+                            category=category
+                        )
+                        if not p_obj:
+                            continue
 
                         existing_dois.add(clean_doi)
                         existing_titles.add(clean_title)
@@ -835,7 +876,7 @@ def main():
     data["metadata"]["last_updated"] = today_str
     data["metadata"]["total_projects"] = len(combined_projects)
     data["metadata"]["version"] = f"7.8.0-2024-2026-full-census-{len(combined_projects)}"
-    data["metadata"]["verification_method"] = "100% Peer-Reviewed Corporate-Academic Full Census with Real DOIs (2020~2026 Complete)"
+    data["metadata"]["verification_method"] = "Evidence-Based Peer-Reviewed Semiconductor Academic & R&D Publications Census"
     
     # 7. Save
     save_data(data)

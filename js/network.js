@@ -179,6 +179,10 @@ class NetworkView {
 
     if (!projects || projects.length === 0) return;
 
+    // Filter out quarantined records
+    projects = projects.filter(p => !p.verification || p.verification.status !== 'quarantined');
+    if (projects.length === 0) return;
+
     const categoryInfo = {
       'AI & Neuromorphic Computing': { short: 'AI & NPU 뉴로모픽', color: '#3b82f6', icon: '🧠' },
       'Advanced Logic & Transistors (GAA/CFET/2D)': { short: 'GAA & CFET 차세대 로직', color: '#10b981', icon: '⚡' },
@@ -257,11 +261,12 @@ class NetworkView {
       });
 
       // 2. Map Projects to Subtopics, Companies, and Universities
-      const allCompaniesInCat = new Set();
       activeProjects.forEach(p => {
         const subName = window.app && window.app.dataManager ? window.app.dataManager.getSubtopic(p) : (p.topic || '기타 세부 연구');
         const subId = `sub_${subName}`;
-        allCompaniesInCat.add(p.company);
+
+        const hasConfirmedCorp = p.company && p.company !== '-' && p.company !== '미지정' &&
+          (!p.verification || !p.verification.corporate_involvement || p.verification.corporate_involvement.status === 'documented');
 
         // Subtopic node update
         const subNode = getNode(subId, subName, 'subtopic', {
@@ -272,33 +277,35 @@ class NetworkView {
         });
         subNode.val += 1;
         subNode.projects.push(p);
-        subNode.compBreakdown[p.company] = (subNode.compBreakdown[p.company] || 0) + 1;
-        subNode.uniBreakdown[p.university] = (subNode.uniBreakdown[p.university] || 0) + 1;
+        if (hasConfirmedCorp) subNode.compBreakdown[p.company] = (subNode.compBreakdown[p.company] || 0) + 1;
+        if (p.university) subNode.uniBreakdown[p.university] = (subNode.uniBreakdown[p.university] || 0) + 1;
 
-        // Company node
-        const compId = `comp_${p.company}`;
-        const compNode = getNode(compId, p.company, 'company', { rawName: p.company, targetCategory: targetCat });
-        compNode.val += 1;
-        compNode.projects.push(p);
-        compNode.subtopicBreakdown[subName] = (compNode.subtopicBreakdown[subName] || 0) + 1;
-        compNode.uniBreakdown[p.university] = (compNode.uniBreakdown[p.university] || 0) + 1;
+        // Company node (only if confirmed)
+        if (hasConfirmedCorp) {
+          const compId = `comp_${p.company}`;
+          const compNode = getNode(compId, p.company, 'company', { rawName: p.company, targetCategory: targetCat });
+          compNode.val += 1;
+          compNode.projects.push(p);
+          compNode.subtopicBreakdown[subName] = (compNode.subtopicBreakdown[subName] || 0) + 1;
+          if (p.university) compNode.uniBreakdown[p.university] = (compNode.uniBreakdown[p.university] || 0) + 1;
+          addLink(compId, subId, p, 'company-subtopic');
+        }
 
         // University node
-        const uniId = `uni_${p.university}`;
-        const uniNode = getNode(uniId, p.university, 'university', {
-          rawName: p.university,
-          city: p.university_city,
-          country: p.university_country,
-          targetCategory: targetCat
-        });
-        uniNode.val += 1;
-        uniNode.projects.push(p);
-        uniNode.subtopicBreakdown[subName] = (uniNode.subtopicBreakdown[subName] || 0) + 1;
-        uniNode.compBreakdown[p.company] = (uniNode.compBreakdown[p.company] || 0) + 1;
-
-        // Links
-        addLink(compId, subId, p, 'company-subtopic');
-        addLink(uniId, subId, p, 'uni-subtopic');
+        if (p.university) {
+          const uniId = `uni_${p.university}`;
+          const uniNode = getNode(uniId, p.university, 'university', {
+            rawName: p.university,
+            city: p.university_city,
+            country: p.university_country,
+            targetCategory: targetCat
+          });
+          uniNode.val += 1;
+          uniNode.projects.push(p);
+          uniNode.subtopicBreakdown[subName] = (uniNode.subtopicBreakdown[subName] || 0) + 1;
+          if (hasConfirmedCorp) uniNode.compBreakdown[p.company] = (uniNode.compBreakdown[p.company] || 0) + 1;
+          addLink(uniId, subId, p, 'uni-subtopic');
+        }
       });
 
       this.nodes = Array.from(nodeMap.values());
@@ -315,6 +322,9 @@ class NetworkView {
         const catId = `cat_${cat}`;
         const catMeta = categoryInfo[cat] || { short: cat, color: '#f59e0b', icon: '🔬' };
         
+        const hasConfirmedCorp = p.company && p.company !== '-' && p.company !== '미지정' &&
+          (!p.verification || !p.verification.corporate_involvement || p.verification.corporate_involvement.status === 'documented');
+
         const catNode = getNode(catId, catMeta.short, 'category', {
           fullLabel: cat,
           color: catMeta.color,
@@ -322,29 +332,32 @@ class NetworkView {
         });
         catNode.val += 1;
         catNode.projects.push(p);
-        catNode.compBreakdown[p.company] = (catNode.compBreakdown[p.company] || 0) + 1;
-        catNode.uniBreakdown[p.university] = (catNode.uniBreakdown[p.university] || 0) + 1;
+        if (hasConfirmedCorp) catNode.compBreakdown[p.company] = (catNode.compBreakdown[p.company] || 0) + 1;
+        if (p.university) catNode.uniBreakdown[p.university] = (catNode.uniBreakdown[p.university] || 0) + 1;
 
-        const compId = `comp_${p.company}`;
-        const compNode = getNode(compId, p.company, 'company', { rawName: p.company });
-        compNode.val += 1;
-        compNode.projects.push(p);
-        compNode.topicBreakdown[cat] = (compNode.topicBreakdown[cat] || 0) + 1;
-        compNode.uniBreakdown[p.university] = (compNode.uniBreakdown[p.university] || 0) + 1;
+        if (hasConfirmedCorp) {
+          const compId = `comp_${p.company}`;
+          const compNode = getNode(compId, p.company, 'company', { rawName: p.company });
+          compNode.val += 1;
+          compNode.projects.push(p);
+          compNode.topicBreakdown[cat] = (compNode.topicBreakdown[cat] || 0) + 1;
+          if (p.university) compNode.uniBreakdown[p.university] = (compNode.uniBreakdown[p.university] || 0) + 1;
+          addLink(compId, catId, p, 'company-topic');
+        }
 
-        const uniId = `uni_${p.university}`;
-        const uniNode = getNode(uniId, p.university, 'university', {
-          rawName: p.university,
-          city: p.university_city,
-          country: p.university_country
-        });
-        uniNode.val += 1;
-        uniNode.projects.push(p);
-        uniNode.topicBreakdown[cat] = (uniNode.topicBreakdown[cat] || 0) + 1;
-        uniNode.compBreakdown[p.company] = (uniNode.compBreakdown[p.company] || 0) + 1;
-
-        addLink(compId, catId, p, 'company-topic');
-        addLink(uniId, catId, p, 'uni-topic');
+        if (p.university) {
+          const uniId = `uni_${p.university}`;
+          const uniNode = getNode(uniId, p.university, 'university', {
+            rawName: p.university,
+            city: p.university_city,
+            country: p.university_country
+          });
+          uniNode.val += 1;
+          uniNode.projects.push(p);
+          uniNode.topicBreakdown[cat] = (uniNode.topicBreakdown[cat] || 0) + 1;
+          if (hasConfirmedCorp) uniNode.compBreakdown[p.company] = (uniNode.compBreakdown[p.company] || 0) + 1;
+          addLink(uniId, catId, p, 'uni-topic');
+        }
       });
 
       this.nodes = Array.from(nodeMap.values());
@@ -357,15 +370,24 @@ class NetworkView {
     } else {
       // ===== Mode 3: 산학 기관망 =====
       projects.forEach(p => {
-        const compId = `comp_${p.company}`;
-        const compNode = getNode(compId, p.company, 'company', { rawName: p.company });
-        compNode.val += 1;
-        compNode.projects.push(p);
+        const hasConfirmedCorp = p.company && p.company !== '-' && p.company !== '미지정' &&
+          (!p.verification || !p.verification.corporate_involvement || p.verification.corporate_involvement.status === 'documented');
 
-        const uniId = `uni_${p.university}`;
-        const uniNode = getNode(uniId, p.university, 'university', { rawName: p.university, city: p.university_city, country: p.university_country });
-        uniNode.val += 1;
-        uniNode.projects.push(p);
+        let compId = null;
+        if (hasConfirmedCorp) {
+          compId = `comp_${p.company}`;
+          const compNode = getNode(compId, p.company, 'company', { rawName: p.company });
+          compNode.val += 1;
+          compNode.projects.push(p);
+        }
+
+        let uniId = null;
+        if (p.university) {
+          uniId = `uni_${p.university}`;
+          const uniNode = getNode(uniId, p.university, 'university', { rawName: p.university, city: p.university_city, country: p.university_country });
+          uniNode.val += 1;
+          uniNode.projects.push(p);
+        }
 
         const catId = `cat_${p.category || '기타'}`;
         const catNode = getNode(catId, p.category || '기타', 'category', { rawName: p.category });
@@ -380,12 +402,10 @@ class NetworkView {
           instNode.projects.push(p);
         }
 
-        addLink(compId, uniId, p, 'industry-acad');
-        addLink(uniId, catId, p, 'research-domain');
-        if (instId) {
-          addLink(compId, instId, p, 'consortium');
-          addLink(instId, uniId, p, 'consortium');
-        }
+        if (compId && uniId) addLink(compId, uniId, p, 'industry-acad');
+        if (uniId) addLink(uniId, catId, p, 'research-domain');
+        if (instId && uniId) addLink(instId, uniId, p, 'consortium');
+        if (compId && instId) addLink(compId, instId, p, 'consortium');
       });
 
       this.nodes = Array.from(nodeMap.values());

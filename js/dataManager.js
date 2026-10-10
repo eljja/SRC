@@ -82,6 +82,13 @@ class DataManager {
   applyFilters() {
     let result = this.rawProjects;
 
+    // Default: exclude quarantined records unless specifically selected
+    if (this.filters.status !== 'quarantined') {
+      result = result.filter(p => !p.verification || p.verification.status !== 'quarantined');
+    } else {
+      result = result.filter(p => p.verification && p.verification.status === 'quarantined');
+    }
+
     // Search query filter with pre-computed search string (0.5ms execution across 10,000+ items)
     if (this.filters.searchQuery) {
       const terms = this.filters.searchQuery.toLowerCase().split(/\s+/).filter(t => t.length > 0);
@@ -116,8 +123,8 @@ class DataManager {
       result = result.filter(p => p.category === this.filters.category);
     }
 
-    // Status filter
-    if (this.filters.status !== 'all') {
+    // Status filter (active | completed)
+    if (this.filters.status !== 'all' && this.filters.status !== 'quarantined') {
       result = result.filter(p => p.status === this.filters.status);
     }
 
@@ -189,17 +196,47 @@ class DataManager {
   }
 
   getSummaryStats() {
-    const total = this.filteredProjects.length;
-    const active = this.filteredProjects.filter(p => p.status === 'active').length;
-    const completed = this.filteredProjects.filter(p => p.status === 'completed').length;
-    const totalFunding = this.filteredProjects.reduce((sum, p) => sum + (p.funding_amount_usd || 0), 0);
+    const list = this.filteredProjects;
+    const total = list.length;
+    const active = list.filter(p => p.status === 'active').length;
+    const completed = list.filter(p => p.status === 'completed').length;
+    
+    // Only count funding when verified/documented with an explicit dollar amount
+    let verifiedFundingUsd = 0;
+    let verifiedFundingCount = 0;
+    let noneStatedFundingCount = 0;
+    let unverifiedFundingCount = 0;
+
+    list.forEach(p => {
+      const fundStatus = (p.verification && p.verification.funding && p.verification.funding.status) || p.funding_status;
+      if (fundStatus === 'documented' && typeof p.funding_amount_usd === 'number' && p.funding_amount_usd > 0) {
+        verifiedFundingUsd += p.funding_amount_usd;
+        verifiedFundingCount++;
+      } else if (fundStatus === 'none_stated') {
+        noneStatedFundingCount++;
+      } else {
+        unverifiedFundingCount++;
+      }
+    });
+
+    const unverifiedRate = total > 0 ? ((unverifiedFundingCount / total) * 100).toFixed(1) : '0.0';
+    let totalFundingFormatted;
+    if (verifiedFundingCount === 0) {
+      totalFundingFormatted = total > 0 ? `검증 금액 없음 (${unverifiedRate}% 미확인)` : '$0M';
+    } else {
+      totalFundingFormatted = `$${(verifiedFundingUsd / 1000000).toFixed(1)}M (${unverifiedRate}% 미확인)`;
+    }
 
     return {
       total,
       active,
       completed,
-      totalFundingUsd: totalFunding,
-      totalFundingFormatted: '$' + (totalFunding / 1000000).toFixed(1) + 'M'
+      verifiedFundingCount,
+      noneStatedFundingCount,
+      unverifiedFundingCount,
+      unverifiedRate,
+      totalFundingUsd: verifiedFundingUsd,
+      totalFundingFormatted
     };
   }
 
@@ -223,13 +260,15 @@ class DataManager {
     const projectsToCount = this.filteredProjects;
 
     projectsToCount.forEach(p => {
-      if (p.company) {
+      // Only count company if corporate involvement is confirmed or valid
+      const corpStatus = p.verification && p.verification.corporate_involvement && p.verification.corporate_involvement.status;
+      if (p.company && p.company !== '-' && p.company !== '미지정' && corpStatus !== 'none') {
         p.company.split('/').forEach(c => {
           const item = c.trim();
           if (item) companyCount[item] = (companyCount[item] || 0) + 1;
         });
       }
-      if (p.university) {
+      if (p.university && p.university !== '-' && p.university !== '미지정') {
         p.university.split('/').forEach(u => {
           const item = u.trim();
           if (item) uniCount[item] = (uniCount[item] || 0) + 1;
@@ -327,7 +366,9 @@ class DataManager {
     const categories = this.categories;
 
     projects.forEach(p => {
-      const comp = p.company || '기타';
+      const corpStatus = p.verification && p.verification.corporate_involvement && p.verification.corporate_involvement.status;
+      if (!p.company || p.company === '-' || p.company === '미지정' || corpStatus === 'none') return;
+      const comp = p.company;
       const cat = p.category || '기타';
       if (!compMap[comp]) {
         compMap[comp] = { total: 0, categories: {} };

@@ -256,9 +256,20 @@ class App {
     }
 
     // Export Data JSON
-    document.getElementById('btn-export-json').addEventListener('click', () => {
-      this.exportDataJson();
-    });
+    const exportJsonBtn = document.getElementById('btn-export-json');
+    if (exportJsonBtn) {
+      exportJsonBtn.addEventListener('click', () => {
+        this.exportDataJson();
+      });
+    }
+
+    // Export Data CSV
+    const exportCsvBtn = document.getElementById('btn-export-csv');
+    if (exportCsvBtn) {
+      exportCsvBtn.addEventListener('click', () => {
+        this.exportDataCsv();
+      });
+    }
 
     // Top-N toggle buttons (bind ONCE here, not in renderAnalytics)
     document.addEventListener('click', (e) => {
@@ -328,9 +339,12 @@ class App {
 
   updateAllViews() {
     const stats = this.dataManager.getSummaryStats();
-    document.getElementById('stat-total-count').textContent = stats.total;
-    document.getElementById('stat-active-count').textContent = stats.active;
-    document.getElementById('stat-funding-total').textContent = stats.totalFundingFormatted;
+    const totalCountEl = document.getElementById('stat-total-count');
+    const activeCountEl = document.getElementById('stat-active-count');
+    const fundingTotalEl = document.getElementById('stat-funding-total');
+    if (totalCountEl) totalCountEl.textContent = stats.total.toLocaleString();
+    if (activeCountEl) activeCountEl.textContent = stats.active.toLocaleString();
+    if (fundingTotalEl) fundingTotalEl.textContent = stats.totalFundingFormatted;
 
     if (this.currentView === 'map') {
       this.mapView.render(this.dataManager.filteredProjects);
@@ -351,7 +365,7 @@ class App {
 
     const list = this.dataManager.filteredProjects;
     if (countSummary) {
-      countSummary.textContent = `총 ${list.length}개 과제`;
+      countSummary.textContent = `총 ${list.length.toLocaleString()}개 과제`;
     }
 
     if (list.length === 0) {
@@ -368,26 +382,64 @@ class App {
     const startIndex = (this.tableCurrentPage - 1) * pageSize;
     const pageItems = list.slice(startIndex, startIndex + pageSize);
 
-    tbody.innerHTML = pageItems.map(p => `
-      <tr class="table-row-clickable" data-project-id="${p.id}">
-        <td>
-          <strong class="table-topic-text">${p.topic}</strong><br/>
-          <span class="table-title-sub">${p.title}</span>
-          ${p.phases && p.phases.length > 1 ? `<span class="hud-tag phase-tag">${p.phases.length}단계 연계</span>` : ''}
-        </td>
-        <td><span class="table-company-text">${p.company}</span></td>
-        <td><strong class="table-uni-text">${p.university}</strong></td>
-        <td><span class="table-prof-text">${p.professor || '-'}</span></td>
-        <td><span class="table-inst-text">${p.institute_or_consortium || '-'}</span></td>
-        <td><span class="table-funding-text">${p.funding_display || '-'}</span></td>
-        <td>
-          <span class="badge-status ${p.status === 'active' ? 'badge-active' : (p.status === 'completed' ? 'badge-completed' : 'badge-uncertain')}">
-            ${p.status === 'active' ? '진행중' : (p.status === 'completed' ? '완료' : '추정')}
-          </span>
-          <span class="table-period-text">(${p.start_year}~${p.end_year})</span>
-        </td>
-      </tr>
-    `).join('');
+    tbody.innerHTML = pageItems.map(p => {
+      const fundStatus = (p.verification && p.verification.funding && p.verification.funding.status) || p.funding_status || (p.funding_amount_usd != null ? 'documented' : 'unverified');
+      let fundingBadge;
+      if (fundStatus === 'none_stated') {
+        fundingBadge = '<span class="badge-status badge-funding-none" title="출처 문헌에 지원 없음 명시">지원 없음 (Nil)</span>';
+      } else if (fundStatus === 'documented' && p.funding_amount_usd != null && p.funding_amount_usd > 0) {
+        fundingBadge = `<span class="badge-status badge-funding-documented" style="color: #34d399; font-weight: 600;">${p.funding_display || ('$' + p.funding_amount_usd)}</span>`;
+      } else {
+        fundingBadge = '<span class="badge-status badge-funding-unverified" style="color: #9ca3af;">미확인 (Unknown)</span>';
+      }
+
+      const corpStatus = (p.verification && p.verification.corporate_involvement && p.verification.corporate_involvement.status);
+      let companyHtml;
+      if (!p.company || p.company === '-' || p.company === '미지정' || corpStatus === 'none') {
+        companyHtml = '<span style="color: #6b7280;">미지정 (학술연구)</span>';
+      } else if (corpStatus === 'unverified') {
+        companyHtml = `<span class="table-company-text">${p.company}</span> <span class="badge-status badge-uncertain" style="font-size: 9px; padding: 1px 4px;" title="저자 소속 기반 (공식 지원 미확인)">소속기반</span>`;
+      } else {
+        companyHtml = `<span class="table-company-text">${p.company}</span>`;
+      }
+
+      let periodHtml;
+      if (p.start_year && p.end_year && p.start_year !== p.end_year) {
+        periodHtml = `(${p.start_year}~${p.end_year})`;
+      } else if (p.start_year) {
+        periodHtml = `(${p.start_year} 게재)`;
+      } else {
+        periodHtml = '(-)';
+      }
+
+      let statusBadge;
+      if (p.verification && p.verification.status === 'quarantined') {
+        statusBadge = '<span class="badge-status badge-quarantined">검토대기</span>';
+      } else if (p.status === 'active') {
+        statusBadge = '<span class="badge-status badge-active">진행중</span>';
+      } else {
+        statusBadge = '<span class="badge-status badge-completed">완료</span>';
+      }
+
+      return `
+        <tr class="table-row-clickable" data-project-id="${p.id}">
+          <td>
+            <strong class="table-topic-text">${p.topic || '-'}</strong><br/>
+            <span class="table-title-sub">${p.title || '-'}</span>
+            ${p.phases && p.phases.length > 1 ? `<span class="hud-tag phase-tag">${p.phases.length}단계 연계</span>` : ''}
+          </td>
+          <td>${companyHtml}</td>
+          <td><strong class="table-uni-text">${p.university || '-'}</strong></td>
+          <td><span class="table-prof-text">${p.professor || '-'}</span></td>
+          <td><span class="table-inst-text">${p.institute_or_consortium || '-'}</span></td>
+          <td>${fundingBadge}</td>
+          <td>
+            ${statusBadge}
+            <span class="table-period-text">${periodHtml}</span>
+          </td>
+        </tr>
+      `;
+    }).join('');
 
     // Enhanced Pagination Bar with page numbers
     if (paginationBar) {
@@ -820,21 +872,64 @@ class App {
 
     document.getElementById('modal-title').textContent = project.title || '과제 상세';
     document.getElementById('modal-topic').textContent = project.topic || '-';
-    document.getElementById('modal-company').textContent = project.company || '-';
+
+    const corpStatus = (project.verification && project.verification.corporate_involvement && project.verification.corporate_involvement.status);
+    let compDisplay = project.company || '미지정 (독립 학술연구)';
+    if (corpStatus === 'unverified') {
+      compDisplay += ' (저자 소속 기반 / 공식 산학지원 미확인)';
+    } else if (corpStatus === 'none') {
+      compDisplay = '해당 없음 (독립 학술연구)';
+    }
+    document.getElementById('modal-company').textContent = compDisplay;
+
     document.getElementById('modal-university').textContent = `${project.university || '-'} (${project.university_city || ''}, ${project.university_country || ''})`;
     document.getElementById('modal-professor').textContent = project.professor || '미지정';
     document.getElementById('modal-institute').textContent = project.institute_or_consortium || '해당 없음';
-    document.getElementById('modal-funding').textContent = `${project.funding_display || '-'} (지원처: ${project.funding_source || '-'})`;
-    document.getElementById('modal-period').textContent = `${project.start_year || '-'}년 ~ ${project.end_year || '-'}년 (${project.duration_years || 3}개년)`;
-    document.getElementById('modal-status').innerHTML = `
-      <span class="badge-status ${project.status === 'active' ? 'badge-active' : (project.status === 'completed' ? 'badge-completed' : 'badge-uncertain')}">
-        ${project.status === 'active' ? '진행중 (Active)' : (project.status === 'completed' ? '완료 (Completed)' : '불확실/추정 (Uncertain)')}
-      </span>
-      <span style="font-size: 12px; color: #9ca3af; margin-left: 6px;">${project.status_detail || ''}</span>
-    `;
-    document.getElementById('modal-evidence').innerHTML = `
-      <strong style="color: #60a5fa;">[${project.evidence_type || '참고문헌'}]</strong> ${project.evidence_ref || '-'}
-    `;
+
+    // Funding status display
+    const fundStatus = (project.verification && project.verification.funding && project.verification.funding.status) || project.funding_status;
+    let fundingText = '';
+    if (fundStatus === 'none_stated') {
+      fundingText = '지원 없음 (출처 문헌에 Source of Support: Nil/None 명시)';
+    } else if (fundStatus === 'documented' && project.funding_amount_usd != null && project.funding_amount_usd > 0) {
+      fundingText = `${project.funding_display || ('$' + project.funding_amount_usd)} (공식 지원금액 검증)`;
+    } else {
+      fundingText = '미확인 (문헌/공시에 명시된 연구비 금액 없음 - 임의 추정 금지)';
+    }
+    document.getElementById('modal-funding').textContent = fundingText;
+
+    // Period display
+    let periodText = '';
+    if (project.start_year && project.end_year && project.start_year !== project.end_year) {
+      periodText = `${project.start_year}년 ~ ${project.end_year}년 (${project.duration_years || (project.end_year - project.start_year)}개년)`;
+    } else if (project.start_year) {
+      periodText = `${project.start_year}년 게재 (단일 연도 / 진행기간 미확인)`;
+    } else {
+      periodText = '기간 미확인';
+    }
+    document.getElementById('modal-period').textContent = periodText;
+
+    // Status display
+    const isQuarantined = project.verification && project.verification.status === 'quarantined';
+    let statusBadgeHtml = '';
+    if (isQuarantined) {
+      statusBadgeHtml = `<span class="badge-status badge-quarantined">검토대기 (Quarantined)</span>
+        <span style="font-size: 12px; color: #f87171; margin-left: 6px;">사유: ${project.verification.quarantine_reason || '반도체 연관성 불명'}</span>`;
+    } else if (project.status === 'active') {
+      statusBadgeHtml = `<span class="badge-status badge-active">진행중 (Active)</span>`;
+    } else {
+      statusBadgeHtml = `<span class="badge-status badge-completed">완료 (Completed / Published)</span>`;
+    }
+    document.getElementById('modal-status').innerHTML = statusBadgeHtml;
+
+    // Evidence link
+    let evidenceHtml = `<strong style="color: #60a5fa;">[${project.evidence_type || '참고문헌'}]</strong> `;
+    if (project.evidence_ref && (project.evidence_ref.startsWith('http://') || project.evidence_ref.startsWith('https://'))) {
+      evidenceHtml += `<a href="${project.evidence_ref}" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; text-decoration: underline;">${project.evidence_ref}</a>`;
+    } else {
+      evidenceHtml += project.evidence_ref || '-';
+    }
+    document.getElementById('modal-evidence').innerHTML = evidenceHtml;
     document.getElementById('modal-summary').textContent = project.summary || '프로젝트 상세 정보가 없습니다.';
 
     // Render Phases if available
@@ -878,6 +973,80 @@ class App {
       URL.revokeObjectURL(url);
     } catch (err) {
       console.error('Failed to export JSON:', err);
+    }
+  }
+
+  exportDataCsv() {
+    try {
+      const projects = this.dataManager.rawProjects;
+      const headers = [
+        'ID',
+        'Title',
+        'Topic',
+        'Category',
+        'Company',
+        'Corporate_Involvement_Status',
+        'University',
+        'University_Country',
+        'Professor',
+        'Institute_or_Consortium',
+        'Start_Year',
+        'End_Year',
+        'Status',
+        'Funding_Amount_USD',
+        'Funding_Display',
+        'Funding_Status',
+        'Evidence_Type',
+        'Evidence_Ref',
+        'Verification_Status',
+        'Quarantine_Reason'
+      ];
+
+      const escapeCsv = (val) => {
+        if (val === null || val === undefined) return '';
+        const str = String(val).replace(/"/g, '""');
+        return `"${str}"`;
+      };
+
+      const rows = projects.map(p => {
+        const v = p.verification || {};
+        return [
+          escapeCsv(p.id),
+          escapeCsv(p.title),
+          escapeCsv(p.topic),
+          escapeCsv(p.category),
+          escapeCsv(p.company),
+          escapeCsv(v.corporate_involvement ? v.corporate_involvement.status : 'unverified'),
+          escapeCsv(p.university),
+          escapeCsv(p.university_country),
+          escapeCsv(p.professor),
+          escapeCsv(p.institute_or_consortium),
+          escapeCsv(p.start_year),
+          escapeCsv(p.end_year),
+          escapeCsv(p.status),
+          escapeCsv(p.funding_amount_usd),
+          escapeCsv(p.funding_display),
+          escapeCsv(v.funding ? v.funding.status : p.funding_status || 'unverified'),
+          escapeCsv(p.evidence_type),
+          escapeCsv(p.evidence_ref),
+          escapeCsv(v.status || 'unverified'),
+          escapeCsv(v.quarantine_reason || '')
+        ].join(',');
+      });
+
+      const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\r\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const dateStr = this.tracker ? this.tracker.formatDate(new Date()) : new Date().toISOString().split('T')[0];
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `semiconductor_rd_census_${dateStr}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Failed to export CSV:', err);
     }
   }
 

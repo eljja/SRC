@@ -266,8 +266,14 @@ class MapView {
 
     // 1. Aggregate unique nodes & connection pairs
     projects.forEach(p => {
+      // Exclude quarantined records
+      if (p.verification && p.verification.status === 'quarantined') return;
+
+      const hasConfirmedCorp = p.company && p.company !== '-' && p.company !== '미지정' &&
+        (!p.verification || !p.verification.corporate_involvement || p.verification.corporate_involvement.status === 'documented');
+
       // University Node
-      if (p.university_lat && p.university_lng) {
+      if (p.university && p.university_lat && p.university_lng) {
         const uniKey = `uni_${p.university}`;
         if (!this.uniqueNodes.has(uniKey)) {
           this.uniqueNodes.set(uniKey, {
@@ -284,14 +290,14 @@ class MapView {
           });
         }
         this.uniqueNodes.get(uniKey).projects.push(p);
-        if (p.company) {
+        if (hasConfirmedCorp) {
           this.uniqueNodes.get(uniKey).connectedKeys.add(`comp_${p.company}`);
           this.uniqueNodes.get(uniKey).pairKeys.add(`pair_${p.company}__${p.university}`);
         }
       }
 
-      // Company Node
-      if (p.company_lat && p.company_lng) {
+      // Company Node - only for verified corporate relationships
+      if (hasConfirmedCorp && p.company_lat && p.company_lng) {
         const compKey = `comp_${p.company}`;
         if (!this.uniqueNodes.has(compKey)) {
           this.uniqueNodes.set(compKey, {
@@ -314,8 +320,8 @@ class MapView {
         }
       }
 
-      // Aggregate Connection Pair
-      if (p.university_lat && p.university_lng && p.company_lat && p.company_lng) {
+      // Aggregate Connection Pair - only for verified corporate relationships
+      if (hasConfirmedCorp && p.university_lat && p.university_lng && p.company_lat && p.company_lng) {
         const pairKey = `pair_${p.company}__${p.university}`;
         if (!this.connectionPairs.has(pairKey)) {
           this.connectionPairs.set(pairKey, {

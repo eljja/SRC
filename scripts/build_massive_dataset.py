@@ -158,8 +158,41 @@ def infer_category(title, summary=""):
         return "Power & Compound Semiconductors (GaN/SiC)"
     elif any(k in text for k in ["optic", "photonic", "modulator", "waveguide", "laser", "cpo", "tfln", "comb", "transceiver", "interconnect"]) and not any(k in text for k in ["memory", "transistor"]):
         return "Silicon Photonics & Optical I/O"
-    else:
+    elif any(k in text for k in ["neuromorphic", "spiking", "synapse", "memristor", "deep learning accelerator", "npu", "tpu", "systolic array", "neural processing", "ai chip", "tensor"]):
         return "AI & Neuromorphic Computing"
+    else:
+        return "기타 / 검토 대기 (Pending Review)"
+
+MEDICAL_REGEX = re.compile(
+    r'\b('
+    r'cervical|orthopaedic|orthopedic|stenosis|spondylolisthesis|'
+    r'mycobacterium|joint infection|retinal|neovascularization|'
+    r'haematoma|hematoma|intrapartum|dilatation|discogenic|endoscopy|'
+    r'odontoideum|forensic|spine|spinal|fracture|peptides|choroidal|'
+    r'surgery|surgical|patient|patients|dental|carcinoma|tumor|tumour|cancer|'
+    r'cardiac|coronary|cardiovascular|antibiotic|herniation|decompression|'
+    r'l-disq|mandibulectomy|mandibular|her2|arthroplasty|catheter|'
+    r'glaucoma|ophthalmology|bone marrow|prostate|pulmonary|gastrointestinal|'
+    r'clinical case|case report'
+    r')\b',
+    re.IGNORECASE
+)
+SEMI_HARDWARE_REGEX = re.compile(
+    r'\b('
+    r'semiconductor|transistor|cmos|finfet|gaa|nanosheet|dram|sram|mram|'
+    r'rram|hbm|nand|euv|lithography|photolithography|resist|dielectric|'
+    r'asic|fpga|interposer|chiplet|wafer|integrated circuit'
+    r')\b',
+    re.IGNORECASE
+)
+
+def is_semiconductor_relevant(title, summary=""):
+    combined = f"{title} {summary}"
+    if MEDICAL_REGEX.search(combined):
+        if not SEMI_HARDWARE_REGEX.search(combined):
+            return False
+    return True
+
 
 def match_institution(inst_name):
     if not inst_name:
@@ -446,9 +479,13 @@ def fetch_academic_works():
 
 def convert_work_to_project(comp_label, w, pid):
     title = w.get('title')
+    if not title:
+        return None
+    if not is_semiconductor_relevant(title):
+        return None
+
     doi = w.get('doi')
     year = w.get('publication_year', 2022)
-    cited_by = w.get('cited_by_count', 0)
     venue = "IEEE / Nature / Science / SPIE"
     if w.get('primary_location') and w.get('primary_location').get('source'):
         venue = w.get('primary_location').get('source').get('display_name', venue)
@@ -483,10 +520,7 @@ def convert_work_to_project(comp_label, w, pid):
 
     # Match corporate fallback from query label
     if not corporate_inst:
-        corporate_inst = match_company(comp_label) or match_company(title)
-        
-    if not corporate_inst:
-        corporate_inst = COMPANY_MAP["samsung"] # fallback
+        corporate_inst = match_company(comp_label)
 
     if not academic_inst and authorships:
         inst_list = authorships[0].get('institutions', [])
@@ -494,36 +528,28 @@ def convert_work_to_project(comp_label, w, pid):
             raw_inst_name = inst_list[0].get('display_name', 'Research Institute')
             academic_inst = {"name": raw_inst_name, "city": "Global", "country": "Global", "lat": 37.0, "lng": 127.0}
             prof_name = authorships[0].get('author', {}).get('display_name', '연구책임자')
-        else:
-            academic_inst = INSTITUTION_COORDS["stanford"]
-            prof_name = authorships[0].get('author', {}).get('display_name', '연구책임자')
+
+    if not academic_inst:
+        academic_inst = {"name": "Research Institution", "city": "Global", "country": "Global", "lat": 37.0, "lng": 127.0}
 
     if not prof_name:
         prof_name = "연구책임자 (Lead Author)"
 
     cat = infer_category(title)
-    
-    # Recent 5 years timeline: start >= 2020
-    sy = max(2020, year - 2)
-    ey = min(2027, year + 1)
-    current_year = datetime.datetime.now().year
-    st = "active" if ey >= current_year else "completed"
-    
-    base_funding = 1500000 + min(5000000, cited_by * 30000)
-    fdisplay = f"${base_funding/1000000:.1f}M" if base_funding >= 1000000 else f"${base_funding/1000:.0f}K"
-    
-    summary_text = f"{academic_inst['name']} {prof_name} 연구팀과 {corporate_inst['name']}가 최근 공동 개발한 차세대 핵심 연구 과제임. {venue}에 발표되어 학계 및 산업계에서 총 {cited_by}회 공식 인용됨."
+    collab_type = "co_authorship" if corporate_inst else "unconfirmed"
+    company_name = corporate_inst['name'] if corporate_inst else None
+    now_iso = datetime.datetime.now().isoformat() + "Z"
 
     project = {
         "id": f"SEMI-VERIFIED-{pid:04d}",
         "title": title,
         "topic": title[:50] + "..." if len(title) > 50 else title,
         "category": cat,
-        "company": corporate_inst['name'],
-        "company_city": corporate_inst['city'],
-        "company_country": corporate_inst['country'],
-        "company_lat": corporate_inst['lat'],
-        "company_lng": corporate_inst['lng'],
+        "company": company_name,
+        "company_city": corporate_inst['city'] if corporate_inst else None,
+        "company_country": corporate_inst['country'] if corporate_inst else None,
+        "company_lat": corporate_inst['lat'] if corporate_inst else None,
+        "company_lng": corporate_inst['lng'] if corporate_inst else None,
         "university": academic_inst['name'],
         "university_city": academic_inst['city'],
         "university_country": academic_inst['country'],
@@ -531,23 +557,53 @@ def convert_work_to_project(comp_label, w, pid):
         "university_lng": academic_inst['lng'],
         "professor": prof_name,
         "co_pis": co_pis[:3],
-        "institute_or_consortium": f"{corporate_inst['name']} 산학공동 R&D / {venue}",
-        "funding_source": f"{corporate_inst['name']} / 산학기금",
-        "funding_amount_usd": base_funding,
-        "funding_display": fdisplay,
-        "start_year": sy,
-        "end_year": ey,
-        "duration_years": max(1, ey - sy),
-        "status": st,
-        "status_detail": f"{sy}~{ey}년 최신 산학 R&D ({'현재 활발히 연구 진행 중' if st == 'active' else '과제 성공적 완료 및 논문/특허 공표'})",
-        "phases": [
-            f"Phase I: 최신 원천 소자 설계 및 재료 시뮬레이션 ({sy}-{sy+1})",
-            f"Phase II: 단위 공정 최적화 및 300mm 웨이퍼 파일럿 실증 ({sy+1}-{ey})",
-            f"Phase III: 양산 신뢰성 평가 및 학술 논문/특허 공표 ({ey})"
-        ],
+        "institute_or_consortium": "해당 없음",
+        "funding_source": None,
+        "funding_amount_usd": None,
+        "funding_display": "미확인 (Unknown)",
+        "start_year": year,
+        "end_year": None,
+        "duration_years": None,
+        "status": "completed",
+        "status_detail": f"{year}년 학술 논문 게재 완료",
+        "phases": None,
         "evidence_type": "Verified Paper / DOI",
         "evidence_ref": f"{venue} | DOI: {doi}",
-        "summary": summary_text
+        "summary": f"{academic_inst['name']} {prof_name} 연구팀의 {cat} 분야 학술 연구 과제. {venue} 발표.",
+        "verification": {
+            "status": "verified" if corporate_inst else "unverified_attributes",
+            "review_reason": None,
+            "is_semiconductor_relevant": True,
+            "collaboration_type": collab_type,
+            "funding": {
+                "status": "unverified",
+                "amount": None,
+                "currency": None,
+                "scope": "unspecified",
+                "evidence_text": None,
+                "evidence_url": None,
+                "verified_at": now_iso
+            },
+            "fields": {
+                "company": {
+                    "value": company_name,
+                    "verification_status": "verified" if corporate_inst else "unverified",
+                    "evidence_text": f"{venue} | DOI: {doi}"
+                },
+                "category": {
+                    "value": cat,
+                    "verification_status": "keyword_matched" if cat != "기타 / 검토 대기 (Pending Review)" else "unverified_fallback",
+                    "evidence_text": None
+                },
+                "duration": {
+                    "start_year": year,
+                    "end_year": None,
+                    "verification_status": "paper_pub_year_only"
+                }
+            },
+            "verified_at": now_iso,
+            "verifier": "SRC-DataIntegrity-Verifier-v2.0"
+        }
     }
     return project
 
