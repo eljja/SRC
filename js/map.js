@@ -140,9 +140,9 @@ class MapView {
     });
     this.map.addControl(new ResetControl());
 
-    // Dark Matter CartoDB Basemap
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://carto.com/">CARTO</a> | SRC Observatory',
+    // Dark Matter CartoDB Basemap (with official API key)
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png?key=cb1_4fx7_1_90b4020701de4739f2fa31c5', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a> | SRC Observatory',
       subdomains: 'abcd',
       maxZoom: 19
     }).addTo(this.map);
