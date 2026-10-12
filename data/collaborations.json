@@ -1,13 +1,13 @@
 {
   "metadata": {
     "dataset_name": "Global Semiconductor Industry-Academia-Institute R&D Observatory (Recent 5 Years Full Census)",
-    "last_updated": "2026-10-10",
-    "version": "7.8.0-2024-2026-full-census-13765",
+    "last_updated": "2026-10-12",
+    "version": "7.8.0-2024-2026-full-census-13767",
     "maintainer": "SRC Research Network Observatory",
     "repository": "https://github.com/eljja/SRC",
     "service_url": "https://eljja.github.io/SRC",
     "standard_duration_rule_years": 3,
-    "total_projects": 13765,
+    "total_projects": 13767,
     "verification_method": "Evidence-Based Peer-Reviewed Semiconductor Academic & R&D Publications Census",
     "data_integrity_version": "2.0.0-remediated",
     "verified_funding_total_usd": 0,
@@ -1375048,6 +1375048,122 @@
           "verified_at": "2026-10-10T02:24:22.590998Z"
         },
         "verified_at": "2026-10-10T02:24:22.590998Z",
+        "verifier": "SRC-DataIntegrity-Verifier-v2.0"
+      }
+    },
+    {
+      "id": "SEMI-2024-CENSUS-2078",
+      "title": "We need to act now to ensure global food security, and reduce agricultural greenhouse gas emissions",
+      "topic": "We need to act now to ensure global food security, and reduc...",
+      "category": "기타 / 검토 대기 (Pending Review)",
+      "company": null,
+      "company_city": null,
+      "company_country": null,
+      "company_lat": null,
+      "company_lng": null,
+      "university": "Research Institution",
+      "university_city": "Global",
+      "university_country": "Global",
+      "university_lat": 37.0,
+      "university_lng": 127.0,
+      "professor": "Prof. Pamela C. Ronald",
+      "institute_or_consortium": "해당 없음",
+      "funding_display": "미확인 (Unknown)",
+      "funding_source": null,
+      "funding_amount_usd": null,
+      "start_year": 2024,
+      "end_year": 2024,
+      "duration_years": 1,
+      "status": "completed",
+      "status_detail": "2024년 학술 논문 게재 완료 (다년도 협약기간 미확인)",
+      "evidence_type": "Peer-Reviewed Journal / Conference DOI (2024)",
+      "evidence_ref": "Bulletin of the Atomic Scientists (2024) | DOI: https://doi.org/10.1080/00963402.2024.2339081",
+      "summary": "2024년 발표된 기타 / 검토 대기 (Pending Review) 분야 학술 연구 논문입니다.",
+      "verification": {
+        "status": "unverified_attributes",
+        "quarantine_reason": null,
+        "review_reason": null,
+        "is_semiconductor_relevant": true,
+        "collaboration_type": "unconfirmed",
+        "corporate_involvement": {
+          "status": "unverified",
+          "evidence_quote": null
+        },
+        "period": {
+          "start_year": 2024,
+          "end_year": 2024,
+          "status": "single_year_publication"
+        },
+        "funding": {
+          "status": "unverified",
+          "amount": null,
+          "amount_usd": null,
+          "currency": null,
+          "scope": "unspecified",
+          "evidence_text": null,
+          "evidence_quote": null,
+          "evidence_url": "https://doi.org/10.1080/00963402.2024.2339081",
+          "verified_at": "2026-10-12T03:18:51.921238Z"
+        },
+        "verified_at": "2026-10-12T03:18:51.921238Z",
+        "verifier": "SRC-DataIntegrity-Verifier-v2.0"
+      }
+    },
+    {
+      "id": "SEMI-2024-CENSUS-2079",
+      "title": "Production of molybdenum disilicide using a silicon-containing molten bath via the hot dipping method",
+      "topic": "Production of molybdenum disilicide using a silicon-containi...",
+      "category": "기타 / 검토 대기 (Pending Review)",
+      "company": null,
+      "company_city": null,
+      "company_country": null,
+      "company_lat": null,
+      "company_lng": null,
+      "university": "Research Institution",
+      "university_city": "Global",
+      "university_country": "Global",
+      "university_lat": 37.0,
+      "university_lng": 127.0,
+      "professor": "Prof. T Miki",
+      "institute_or_consortium": "해당 없음",
+      "funding_display": "미확인 (Unknown)",
+      "funding_source": null,
+      "funding_amount_usd": null,
+      "start_year": 2024,
+      "end_year": 2024,
+      "duration_years": 1,
+      "status": "completed",
+      "status_detail": "2024년 학술 논문 게재 완료 (다년도 협약기간 미확인)",
+      "evidence_type": "Peer-Reviewed Journal / Conference DOI (2024)",
+      "evidence_ref": "12th International Conference of Molten Slags, Fluxes and Salts (MOLTEN 2024) Proceedings (2024) | DOI: https://doi.org/10.62053/lghs3844",
+      "summary": "2024년 발표된 기타 / 검토 대기 (Pending Review) 분야 학술 연구 논문입니다.",
+      "verification": {
+        "status": "unverified_attributes",
+        "quarantine_reason": null,
+        "review_reason": null,
+        "is_semiconductor_relevant": true,
+        "collaboration_type": "unconfirmed",
+        "corporate_involvement": {
+          "status": "unverified",
+          "evidence_quote": null
+        },
+        "period": {
+          "start_year": 2024,
+          "end_year": 2024,
+          "status": "single_year_publication"
+        },
+        "funding": {
+          "status": "unverified",
+          "amount": null,
+          "amount_usd": null,
+          "currency": null,
+          "scope": "unspecified",
+          "evidence_text": null,
+          "evidence_quote": null,
+          "evidence_url": "https://doi.org/10.62053/lghs3844",
+          "verified_at": "2026-10-12T03:18:57.328157Z"
+        },
+        "verified_at": "2026-10-12T03:18:57.328157Z",
         "verifier": "SRC-DataIntegrity-Verifier-v2.0"
       }
     }
