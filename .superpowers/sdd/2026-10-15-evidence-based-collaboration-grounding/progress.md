@@ -9,8 +9,8 @@ Pre-flight: scan interfaces
 Pre-flight check: Clean, no interface conflicts.
 
 ## Task Status
-- Task 1: in_progress
-- Task 2: pending
-- Task 3: pending
-- Task 4: pending
-- Task 5: pending
+- Task 1: complete
+- Task 2: complete
+- Task 3: complete
+- Task 4: complete (node --check js/dataManager.js js/map.js js/network.js js/app.js && pytest tests/ -> 30/30 pass)
+- Task 5: in_progress

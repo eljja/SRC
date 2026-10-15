@@ -183,8 +183,8 @@
             <div class="stat-chip-label">조사 과제수</div>
           </div>
           <div class="stat-chip">
-            <div class="stat-chip-number" id="stat-active-count" style="color: #34d399;">0</div>
-            <div class="stat-chip-label">현재 진행중</div>
+            <div class="stat-chip-number" id="stat-collab-count" style="color: #c4b5fd;">0</div>
+            <div class="stat-chip-label">검증 산학협력</div>
           </div>
           <div class="stat-chip">
             <div class="stat-chip-number" id="stat-funding-total" style="color: #fbbf24;">$0M</div>
@@ -196,6 +196,19 @@
       <!-- Filter Sections -->
       <div class="filter-accordion">
         
+        <!-- Collaboration Tier Filter Pills -->
+        <div class="filter-group">
+          <div class="filter-title">
+            <label>연구 유형 (Research Tier)</label>
+            <span style="font-size: 10px; color: var(--text-muted);">산학협력 vs 학술연구</span>
+          </div>
+          <div class="tier-pill-group" role="radiogroup" aria-label="연구 유형 선택">
+            <button type="button" class="tier-pill active" data-tier="all" role="radio" aria-checked="true">전체</button>
+            <button type="button" class="tier-pill" data-tier="verified_collab" role="radio" aria-checked="false">🏢 검증 산학협력</button>
+            <button type="button" class="tier-pill" data-tier="academic_only" role="radio" aria-checked="false">🎓 학술 연구 문헌</button>
+          </div>
+        </div>
+
         <!-- Status Filter Pills -->
         <div class="filter-group">
           <div class="filter-title">

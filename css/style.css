@@ -340,6 +340,54 @@ header {
   border-color: var(--accent-blue);
 }
 
+/* Tier Filter Pill Radios */
+.tier-pill-group {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.tier-pill {
+  flex: 1;
+  text-align: center;
+  padding: 0.45rem 0.2rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+  background: rgba(10, 14, 23, 0.6);
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.tier-pill:hover {
+  background: rgba(59, 130, 246, 0.15);
+  color: #fff;
+}
+
+.tier-pill.active[data-tier="all"] {
+  background: var(--accent-indigo);
+  color: #fff;
+  border-color: var(--accent-indigo);
+}
+
+.tier-pill.active[data-tier="verified_collab"] {
+  background: rgba(167, 139, 250, 0.3);
+  color: #e9d5ff;
+  font-weight: 700;
+  border-color: #a78bfa;
+  box-shadow: 0 0 8px rgba(167, 139, 250, 0.3);
+}
+
+.tier-pill.active[data-tier="academic_only"] {
+  background: rgba(56, 189, 248, 0.25);
+  color: #bae6fd;
+  font-weight: 700;
+  border-color: #38bdf8;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.25);
+}
+
 /* Status Filter Pill Radios */
 .status-pill-group {
   display: flex;
@@ -375,6 +423,12 @@ header {
   background: var(--status-completed);
   color: #fff;
   border-color: var(--status-completed);
+}
+.status-pill.active[data-status="quarantined"] {
+  background: rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+  font-weight: 700;
+  border-color: #ef4444;
 }
 
 /* Sort By Group */
@@ -1107,6 +1161,18 @@ header {
   background: rgba(239, 68, 68, 0.2);
   color: #f87171;
   border: 1px solid rgba(239, 68, 68, 0.45);
+}
+
+.badge-collab-verified {
+  background: rgba(167, 139, 250, 0.22);
+  color: #c4b5fd;
+  border: 1px solid rgba(167, 139, 250, 0.45);
+}
+
+.badge-academic-only {
+  background: rgba(56, 189, 248, 0.18);
+  color: #7dd3fc;
+  border: 1px solid rgba(56, 189, 248, 0.35);
 }
 
 .badge-funding-none {

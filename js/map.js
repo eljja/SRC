@@ -269,8 +269,11 @@ class MapView {
       // Exclude quarantined records
       if (p.verification && p.verification.status === 'quarantined') return;
 
-      const hasConfirmedCorp = p.company && p.company !== '-' && p.company !== '미지정' &&
-        (!p.verification || !p.verification.corporate_involvement || p.verification.corporate_involvement.status === 'documented');
+      const hasConfirmedCorp = window.app && window.app.dataManager
+        ? window.app.dataManager.isConfirmedCorporateCollab(p)
+        : (p.company && p.company !== '-' && p.company !== '미지정' &&
+           (!p.verification || (p.verification.collaboration_type !== 'academic_only' &&
+            (p.verification.collaboration_type === 'co_authorship' || p.verification.collaboration_type === 'corporate_grant' || (p.verification.corporate_involvement && p.verification.corporate_involvement.status === 'documented')))));
 
       // University Node
       if (p.university && p.university_lat && p.university_lng) {

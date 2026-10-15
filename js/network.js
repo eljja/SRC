@@ -265,8 +265,11 @@ class NetworkView {
         const subName = window.app && window.app.dataManager ? window.app.dataManager.getSubtopic(p) : (p.topic || '기타 세부 연구');
         const subId = `sub_${subName}`;
 
-        const hasConfirmedCorp = p.company && p.company !== '-' && p.company !== '미지정' &&
-          (!p.verification || !p.verification.corporate_involvement || p.verification.corporate_involvement.status === 'documented');
+        const hasConfirmedCorp = window.app && window.app.dataManager
+          ? window.app.dataManager.isConfirmedCorporateCollab(p)
+          : (p.company && p.company !== '-' && p.company !== '미지정' &&
+             (!p.verification || (p.verification.collaboration_type !== 'academic_only' &&
+              (p.verification.collaboration_type === 'co_authorship' || p.verification.collaboration_type === 'corporate_grant' || (p.verification.corporate_involvement && p.verification.corporate_involvement.status === 'documented')))));
 
         // Subtopic node update
         const subNode = getNode(subId, subName, 'subtopic', {
@@ -322,8 +325,11 @@ class NetworkView {
         const catId = `cat_${cat}`;
         const catMeta = categoryInfo[cat] || { short: cat, color: '#f59e0b', icon: '🔬' };
         
-        const hasConfirmedCorp = p.company && p.company !== '-' && p.company !== '미지정' &&
-          (!p.verification || !p.verification.corporate_involvement || p.verification.corporate_involvement.status === 'documented');
+        const hasConfirmedCorp = window.app && window.app.dataManager
+          ? window.app.dataManager.isConfirmedCorporateCollab(p)
+          : (p.company && p.company !== '-' && p.company !== '미지정' &&
+             (!p.verification || (p.verification.collaboration_type !== 'academic_only' &&
+              (p.verification.collaboration_type === 'co_authorship' || p.verification.collaboration_type === 'corporate_grant' || (p.verification.corporate_involvement && p.verification.corporate_involvement.status === 'documented')))));
 
         const catNode = getNode(catId, catMeta.short, 'category', {
           fullLabel: cat,
