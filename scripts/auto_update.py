@@ -296,7 +296,7 @@ def create_census_project(pid_str=None, title="", venue="Academic Literature", d
             "quarantine_reason": quarantine_reason,
             "review_reason": quarantine_reason,
             "is_semiconductor_relevant": is_semi,
-            "collaboration_type": "co_authorship" if found_c else "unconfirmed",
+            "collaboration_type": "co_authorship" if found_c else ("academic_only" if is_semi else "unconfirmed"),
             "corporate_involvement": {
                 "status": collab_status,
                 "evidence_quote": kwargs.get('corporate_evidence_quote')
