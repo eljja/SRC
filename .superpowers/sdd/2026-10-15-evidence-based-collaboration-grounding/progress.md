@@ -13,4 +13,4 @@ Pre-flight check: Clean, no interface conflicts.
 - Task 2: complete
 - Task 3: complete
 - Task 4: complete (node --check js/dataManager.js js/map.js js/network.js js/app.js && pytest tests/ -> 30/30 pass)
-- Task 5: in_progress
+- Task 5: complete (remediate_grounding.py applied, 13746 projects, pytest 30/30 pass)

@@ -23,4 +23,6 @@ Thumbs.db
 # Temporary & logs
 *.log
 *.backup.json
+*.grounding_backup.json
+data/.cache_doi/
 
