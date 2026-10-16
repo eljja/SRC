@@ -14,3 +14,9 @@ Pre-flight check: Clean, no interface conflicts.
 - Task 3: complete
 - Task 4: complete (node --check js/dataManager.js js/map.js js/network.js js/app.js && pytest tests/ -> 30/30 pass)
 - Task 5: complete (remediate_grounding.py applied, 13746 projects, pytest 30/30 pass)
+
+## Final Review Fix Pass
+- Reviewer: Senior Code Reviewer (`b3b7e634-cd72-4849-a63f-c52aed2a8142`)
+- Final: fixed legacy Stanford shadowing in resolve_academic_institution — test_academic_institution_resolution_not_shadowed_by_legacy_stanford RED→GREEN, suite 31/31
+- Re-applied dataset remediation: false Stanford count dropped from 6,215 to 621, genuine universities resolved, empty affiliations set to 'Research Institution'
+- All tests passing: 31/31 GREEN. All JS files node --check clean.

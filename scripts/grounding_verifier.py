@@ -453,38 +453,59 @@ class GroundingVerifier:
         """
         Resolves the true academic institution from affiliations without defaulting to Stanford.
         """
-        combined = " ".join([aff for aff in affiliations if aff] + [raw_uni])
-        if not combined.strip():
+        valid_affs = [aff.strip() for aff in affiliations if aff and aff.strip()]
+        aff_text = " ".join(valid_affs)
+
+        # 1. Search affiliations alone against known curated universities
+        if aff_text:
+            for uni in KNOWN_UNIVERSITIES:
+                if uni["pattern"].search(aff_text):
+                    return {
+                        "name": uni["name"],
+                        "city": uni["city"],
+                        "country": uni["country"],
+                        "lat": uni["lat"],
+                        "lng": uni["lng"]
+                    }
+
+            # 2. If not in curated list, extract from first affiliation string rather than fake Stanford
+            parts = [p.strip() for p in valid_affs[0].split(",") if p.strip()]
+            display_name = parts[0] if parts else "Research Institution"
+            if len(parts) > 1 and ("university" in parts[1].lower() or "institute" in parts[1].lower()):
+                display_name = parts[1]
             return {
-                "name": "Research Institution",
+                "name": display_name,
+                "city": parts[-2] if len(parts) >= 2 else "Global",
+                "country": parts[-1] if len(parts) >= 1 else "Global",
+                "lat": 37.0,
+                "lng": 127.0
+            }
+
+        # 3. Affiliations empty: check raw_uni, but NEVER trust legacy default 'Stanford University'
+        if raw_uni and raw_uni.strip() and raw_uni.strip() != "Stanford University":
+            clean_raw = raw_uni.strip()
+            for uni in KNOWN_UNIVERSITIES:
+                if uni["pattern"].search(clean_raw):
+                    return {
+                        "name": uni["name"],
+                        "city": uni["city"],
+                        "country": uni["country"],
+                        "lat": uni["lat"],
+                        "lng": uni["lng"]
+                    }
+            return {
+                "name": clean_raw,
                 "city": "Global",
                 "country": "Global",
                 "lat": 37.0,
                 "lng": 127.0
             }
 
-        # Match known curated universities
-        for uni in KNOWN_UNIVERSITIES:
-            if uni["pattern"].search(combined):
-                return {
-                    "name": uni["name"],
-                    "city": uni["city"],
-                    "country": uni["country"],
-                    "lat": uni["lat"],
-                    "lng": uni["lng"]
-                }
-
-        # If not in curated list, extract the first realistic affiliation snippet rather than fake Stanford
-        first_aff = next((aff.strip() for aff in affiliations if aff and aff.strip()), raw_uni.strip())
-        parts = [p.strip() for p in first_aff.split(",") if p.strip()]
-        display_name = parts[0] if parts else "Research Institution"
-        if len(parts) > 1 and ("university" in parts[1].lower() or "institute" in parts[1].lower()):
-            display_name = parts[1]
-
+        # 4. Fallback when affiliations are empty and raw_uni is missing or untrusted legacy Stanford
         return {
-            "name": display_name,
-            "city": parts[-2] if len(parts) >= 2 else "Global",
-            "country": parts[-1] if len(parts) >= 1 else "Global",
+            "name": "Research Institution",
+            "city": "Global",
+            "country": "Global",
             "lat": 37.0,
             "lng": 127.0
         }

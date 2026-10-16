@@ -113,6 +113,19 @@ class TestGroundingVerifier:
         inst_delft = verifier.resolve_academic_institution(raw_aff)
         assert "Delft" in inst_delft["name"]
 
+    def test_academic_institution_resolution_not_shadowed_by_legacy_stanford(self, verifier):
+        """Legacy raw_uni='Stanford University' must NOT shadow real affiliations nor fabricate Stanford when empty."""
+        # Case A: Real university in affiliations (e.g., Oxford) with legacy raw_uni='Stanford University'
+        affs_oxford = ["Department of Physics, University of Oxford, Oxford, UK"]
+        inst_oxford = verifier.resolve_academic_institution(affs_oxford, raw_uni="Stanford University")
+        assert "Stanford" not in inst_oxford["name"], f"Real university was shadowed by legacy Stanford: {inst_oxford}"
+        assert "Oxford" in inst_oxford["name"]
+
+        # Case B: Empty affiliations with legacy raw_uni='Stanford University' -> must NOT return Stanford!
+        inst_empty = verifier.resolve_academic_institution([], raw_uni="Stanford University")
+        assert "Stanford" not in inst_empty["name"], f"Empty affiliation falsely defaulted to Stanford: {inst_empty}"
+        assert inst_empty["name"] == "Research Institution"
+
     def test_canonical_deduplication(self, verifier):
         """Deduplication merges duplicate DOIs and cleans dataset."""
         projects = [

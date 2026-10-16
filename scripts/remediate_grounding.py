@@ -172,15 +172,11 @@ class GroundingRemediator:
         uni_info = self.verifier.resolve_academic_institution(all_affs, p.get('university', ''))
 
         # Update institution
-        if p.get('university') == 'Stanford University' and uni_info['name'] != 'Stanford University':
-            reasons.append("corrected_default_stanford_university")
-            p['university'] = uni_info['name']
-            p['university_city'] = uni_info['city']
-            p['university_country'] = uni_info['country']
-            p['university_lat'] = uni_info['lat']
-            p['university_lng'] = uni_info['lng']
-        elif p.get('university') in ['Research Institution', 'Global'] and uni_info['name'] != 'Research Institution':
-            reasons.append("resolved_genuine_university")
+        if uni_info['name'] != p.get('university'):
+            if p.get('university') == 'Stanford University':
+                reasons.append("corrected_default_stanford_university")
+            else:
+                reasons.append("resolved_genuine_university")
             p['university'] = uni_info['name']
             p['university_city'] = uni_info['city']
             p['university_country'] = uni_info['country']
