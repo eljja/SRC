@@ -63,8 +63,55 @@ class App {
     // Bind UI Event Listeners
     this.bindEventListeners();
 
+    // Parse URL Query Parameters for SEO & Deep Linking (e.g. ?company=..., ?university=..., ?category=..., ?q=...)
+    this.parseUrlParams();
+
     // Initial Render
     this.updateAllViews();
+  }
+
+  parseUrlParams() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const company = params.get('company');
+      const university = params.get('university');
+      const category = params.get('category');
+      const q = params.get('q');
+      const view = params.get('view');
+      const tier = params.get('tier');
+
+      if (company) {
+        this.dataManager.setFilter('company', company);
+        const compSelect = document.getElementById('filter-company');
+        if (compSelect) compSelect.value = company;
+      }
+      if (university) {
+        this.dataManager.setFilter('university', university);
+        const uniSelect = document.getElementById('filter-university');
+        if (uniSelect) uniSelect.value = university;
+      }
+      if (category) {
+        this.dataManager.setFilter('category', category);
+        const catSelect = document.getElementById('filter-category');
+        if (catSelect) catSelect.value = category;
+      }
+      if (tier && ['verified_collab', 'academic_only', 'all'].includes(tier)) {
+        this.dataManager.setFilter('collaborationTier', tier);
+        document.querySelectorAll('.tier-pill').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.tier === tier);
+        });
+      }
+      if (q) {
+        this.dataManager.setFilter('searchQuery', q);
+        const searchInput = document.getElementById('global-search-input');
+        if (searchInput) searchInput.value = q;
+      }
+      if (view && ['map', 'network', 'table', 'analytics'].includes(view)) {
+        this.switchView(view);
+      }
+    } catch (e) {
+      console.warn('URL params parsing failed:', e);
+    }
   }
 
   populateDropdowns() {

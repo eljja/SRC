@@ -149,21 +149,20 @@
       <p style="color: #94a3b8; font-size: 0.95rem;">
         본 플랫폼은 삼성전자, SK하이닉스, TSMC, Intel, NVIDIA 등 글로벌 반도체 기업과 서울대, KAIST, MIT 등 국내외 대학·연구소 간의 13,746건 반도체 연구 문헌 및 2,013건 검증 산학협력 데이터를 인터랙티브 지도와 네트워크 그래프로 제공합니다.
       </p>
-      <h2 style="color: #34d399; font-size: 1.15rem; margin-top: 1.25rem;">주요 연구 분야</h2>
-      <ul style="color: #cbd5e1; padding-left: 1.2rem;">
-        <li>GAA, CFET, 2D 나노시트 차세대 로직 트랜지스터</li>
-        <li>HBM3e/HBM4 초고대역폭 메모리, PIM(Processing-in-Memory), CXL 메모리</li>
-        <li>Cu-Cu 하이브리드 본딩, CoWoS 2.5D 인터포저, UCIe 칩렛 첨단 패키징</li>
-        <li>High-NA EUV 리소그래피 노광 공정 및 계측</li>
-        <li>AI NPU 및 뉴로모픽 컴퓨팅 소자</li>
-        <li>GaN / SiC 전력 화합물 반도체</li>
-        <li>실리콘 포토닉스 광 인터커넥트</li>
-      </ul>
-      <p style="margin-top: 1rem;">
-        전체 대시보드 인터랙티브 시각화(세계 지도, 관계망 그래프, 랭킹)를 이용하시려면 브라우저의 JavaScript를 활성화해 주세요.
+      
+      <h2 style="color: #34d399; font-size: 1.15rem; margin-top: 1.25rem;">📚 기업·대학·기술별 정적 색인 디렉토리 (검색엔진 전용)</h2>
+      <p style="font-size: 0.9rem; color: #cbd5e1; margin-top: 0.5rem;">
+        자바스크립트가 비활성화된 환경에서도 다음 정적 랜딩 페이지를 통해 각 기관별 상세 프로젝트 및 DOI 학술 문헌을 바로 열람하실 수 있습니다:
       </p>
-      <p style="margin-top: 0.5rem;">
-        <a href="venture.html" style="color: #38bdf8; text-decoration: underline;">👉 글로벌 반도체 CVC 벤처 투자 지도 바로가기</a>
+      <ul style="color: #cbd5e1; padding-left: 1.2rem; margin-top: 0.5rem;">
+        <li><strong>주요 기업</strong>: <a href="hub/companies/samsung.html" style="color: #38bdf8;">삼성전자 (357건)</a>, <a href="hub/companies/sk-hynix.html" style="color: #38bdf8;">SK하이닉스 (182건)</a>, <a href="hub/companies/tsmc.html" style="color: #38bdf8;">TSMC (118건)</a>, <a href="hub/companies/intel.html" style="color: #38bdf8;">인텔 (139건)</a>, <a href="hub/companies/nvidia.html" style="color: #38bdf8;">엔비디아 (66건)</a>, <a href="hub/companies/asml.html" style="color: #38bdf8;">ASML (69건)</a></li>
+        <li><strong>주요 대학</strong>: <a href="hub/universities/snu.html" style="color: #34d399;">서울대학교 (846건)</a>, <a href="hub/universities/kaist.html" style="color: #34d399;">KAIST (189건)</a>, <a href="hub/universities/postech.html" style="color: #34d399;">POSTECH (101건)</a>, <a href="hub/universities/skku.html" style="color: #34d399;">성균관대 (130건)</a>, <a href="hub/universities/yonsei.html" style="color: #34d399;">연세대 (63건)</a>, <a href="hub/universities/korea.html" style="color: #34d399;">고려대 (73건)</a></li>
+        <li><strong>핵심 기술</strong>: <a href="hub/topics/hbm.html" style="color: #c084fc;">HBM / 차세대 메모리</a>, <a href="hub/topics/gaa.html" style="color: #c084fc;">3nm 이하 GAA 로직</a>, <a href="hub/topics/advanced-packaging.html" style="color: #c084fc;">3D 하이브리드 본딩 칩렛</a>, <a href="hub/topics/euv.html" style="color: #c084fc;">High-NA EUV 노광</a></li>
+      </ul>
+
+      <p style="margin-top: 1.25rem;">
+        <a href="hub/index.html" style="color: #38bdf8; font-weight: bold; text-decoration: underline;">👉 산학협력 정적 디렉토리 허브 전체보기</a> &nbsp;|&nbsp;
+        <a href="venture.html" style="color: #34d399; text-decoration: underline;">👉 글로벌 반도체 CVC 벤처 투자 지도 바로가기</a>
       </p>
     </div>
   </noscript>
@@ -218,6 +217,10 @@
 
     <!-- Actions -->
     <div class="header-actions">
+      <!-- Cross-Link to Static SEO Directory Hub -->
+      <a href="hub/index.html" class="header-action-btn" title="반도체 산학협력 전수 디렉토리" style="background: rgba(56, 189, 248, 0.25); border-color: rgba(56, 189, 248, 0.5); color: #7dd3fc;">
+        <span>📚 산학협력 디렉토리</span>
+      </a>
       <!-- Cross-Link to Venture CVC Observatory -->
       <a href="venture.html" class="header-action-btn" title="반도체 CVC 벤처 투자 대시보드로 이동" style="background: rgba(16, 185, 129, 0.25); border-color: rgba(16, 185, 129, 0.5); color: #6ee7b7;">
         <span>🚀 CVC 벤처 투자</span>
@@ -400,12 +403,57 @@
           서울대, KAIST, POSTECH, MIT, Stanford, UC Berkeley, 벨기에 IMEC, 프랑스 CEA-Leti 등과의 공식 연구 과제 및 DOI(Digital Object Identifier) 기반 학술 연구 문헌을 포괄합니다.
         </p>
 
+        <h3>기관 및 기술 도메인별 정적 색인 디렉토리 (SEO Hubs)</h3>
+        <p>
+          <strong>주요 반도체 기업별 산학협력 현황</strong>:
+          <a href="hub/companies/samsung.html">삼성전자 (357건)</a> |
+          <a href="hub/companies/sk-hynix.html">SK하이닉스 (182건)</a> |
+          <a href="hub/companies/tsmc.html">TSMC (118건)</a> |
+          <a href="hub/companies/intel.html">인텔 (139건)</a> |
+          <a href="hub/companies/nvidia.html">엔비디아 (66건)</a> |
+          <a href="hub/companies/asml.html">ASML (69건)</a> |
+          <a href="hub/companies/qualcomm.html">퀄컴 (123건)</a> |
+          <a href="hub/companies/applied-materials.html">어플라이드 머티어리얼즈</a> |
+          <a href="hub/companies/lam-research.html">램리서치</a> |
+          <a href="hub/companies/kla.html">KLA</a> |
+          <a href="hub/companies/micron.html">마이크론</a> |
+          <a href="hub/companies/tokyo-electron.html">도쿄일렉트론</a>
+        </p>
+        <p>
+          <strong>주요 대학별 연구 포트폴리오</strong>:
+          <a href="hub/universities/snu.html">서울대학교 (846건)</a> |
+          <a href="hub/universities/kaist.html">KAIST (189건)</a> |
+          <a href="hub/universities/postech.html">포항공과대학교 (101건)</a> |
+          <a href="hub/universities/skku.html">성균관대학교 (130건)</a> |
+          <a href="hub/universities/yonsei.html">연세대학교 (63건)</a> |
+          <a href="hub/universities/korea.html">고려대학교 (73건)</a> |
+          <a href="hub/universities/hanyang.html">한양대학교 (71건)</a> |
+          <a href="hub/universities/stanford.html">스탠퍼드 대학교 (621건)</a> |
+          <a href="hub/universities/mit.html">MIT (97건)</a> |
+          <a href="hub/universities/berkeley.html">UC 버클리 (128건)</a> |
+          <a href="hub/universities/imec.html">IMEC (107건)</a>
+        </p>
+        <p>
+          <strong>핵심 기술 도메인별 연구 네트워크</strong>:
+          <a href="hub/topics/hbm.html">HBM / 초고대역폭 메모리 & PIM (1,110건)</a> |
+          <a href="hub/topics/gaa.html">3nm 이하 GAA / CFET 차세대 트랜지스터 (1,609건)</a> |
+          <a href="hub/topics/advanced-packaging.html">3D 하이브리드 본딩 & 칩렛 첨단 패키징 (699건)</a> |
+          <a href="hub/topics/euv.html">High-NA EUV 노광 & 원자 단위 계측 (1,683건)</a> |
+          <a href="hub/topics/ai-chips.html">AI NPU 가속기 & 뉴로모픽 반도체 (6,317건)</a> |
+          <a href="hub/topics/power-semi.html">GaN / SiC 차세대 전력 반도체 (1,822건)</a> |
+          <a href="hub/topics/silicon-photonics.html">실리콘 포토닉스 & 광 인터커넥트 (496건)</a>
+        </p>
+        <p>
+          <a href="hub/index.html"><strong>전체 반도체 산학협력 정적 디렉토리 허브 바로가기 ➔</strong></a>
+        </p>
+
         <h3>제공 기능 및 뷰 안내</h3>
         <ul>
           <li><strong>세계 지도 (Map View)</strong>: 기업과 대학 간의 글로벌 산학협력 축선을 위도·경도 기반 2색 그라데이션 인터랙티브 지도로 시각화</li>
           <li><strong>관계망 그래프 (Network View)</strong>: 기업, 대학, 기술 카테고리 간의 다자간 연결 구조 및 핵심 허브 기관을 포스 시뮬레이션으로 분석</li>
           <li><strong>전체 목록 (Table View)</strong>: 13,746건의 연구 프로젝트, 참여 기업, 수행 대학, 교수(PI), 펀딩 규모, DOI 레퍼런스를 검색 및 필터링</li>
           <li><strong>통계·랭킹 (Analytics View)</strong>: 기업별 산학협력 순위, 대학별 수주 건수, 연도별 연구 동향, 권역별 분포 대시보드</li>
+          <li><strong><a href="hub/index.html">산학협력 전수 디렉토리</a></strong>: 검색엔진 및 연구자를 위한 31개 기관별/기술별 정적 분석 보고서</li>
           <li><strong><a href="venture.html">CVC 벤처 투자 지도</a></strong>: 글로벌 27개 반도체 대기업의 딥테크 스타트업 CVC 및 직접 투자 현황 연계 대시보드</li>
         </ul>
       </section>
