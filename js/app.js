@@ -192,6 +192,21 @@ class App {
       });
     }
 
+    // High-intent search quick tags
+    document.querySelectorAll('.quick-tag-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const query = btn.getAttribute('data-query');
+        if (query) {
+          clearTimeout(this._searchDebounceTimer);
+          searchInput.value = query;
+          if (clearSearchBtn) clearSearchBtn.classList.add('visible');
+          this.tableCurrentPage = 1;
+          this.dataManager.setFilter('searchQuery', query);
+          this.updateAllViews();
+        }
+      });
+    });
+
     // Filters
     document.getElementById('filter-company').addEventListener('change', (e) => {
       this.tableCurrentPage = 1;
