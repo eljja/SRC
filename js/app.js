@@ -311,9 +311,47 @@ class App {
         this.closeModal();
       }
     });
+
+    // Platform About & Guide Modal
+    const aboutModalOverlay = document.getElementById('about-guide-modal-overlay');
+    const btnOpenAbout = document.getElementById('btn-open-about');
+    const btnCloseAbout = document.getElementById('btn-close-about-guide');
+    const aboutCloseBtn = document.getElementById('about-modal-close-btn');
+
+    const openAboutModal = () => {
+      if (aboutModalOverlay) aboutModalOverlay.style.display = 'flex';
+    };
+    const closeAboutModal = () => {
+      if (aboutModalOverlay) aboutModalOverlay.style.display = 'none';
+    };
+
+    if (btnOpenAbout) btnOpenAbout.addEventListener('click', openAboutModal);
+    if (btnCloseAbout) btnCloseAbout.addEventListener('click', closeAboutModal);
+    if (aboutCloseBtn) aboutCloseBtn.addEventListener('click', closeAboutModal);
+    if (aboutModalOverlay) {
+      aboutModalOverlay.addEventListener('click', (e) => {
+        if (e.target.id === 'about-guide-modal-overlay') closeAboutModal();
+      });
+    }
+
     window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') this.closeModal();
+      if (e.key === 'Escape') {
+        this.closeModal();
+        closeAboutModal();
+      }
     });
+
+    // Sidebar Intro Q&A toggle
+    const toggleIntroBtn = document.getElementById('btn-toggle-intro-details');
+    const introDetailsContent = document.getElementById('intro-details-content');
+    if (toggleIntroBtn && introDetailsContent) {
+      toggleIntroBtn.addEventListener('click', () => {
+        const isHidden = introDetailsContent.style.display === 'none' || !introDetailsContent.style.display;
+        introDetailsContent.style.display = isHidden ? 'flex' : 'none';
+        toggleIntroBtn.textContent = isHidden ? '💡 핵심 Q&A ▴' : '💡 핵심 Q&A ▾';
+        toggleIntroBtn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+      });
+    }
 
     // Mobile sidebar drawer toggle
     const mobileMenuBtn = document.getElementById('btn-toggle-sidebar');

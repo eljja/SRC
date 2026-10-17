@@ -217,6 +217,10 @@
 
     <!-- Actions -->
     <div class="header-actions">
+      <!-- About & Guide Modal Button -->
+      <button class="header-action-btn" id="btn-open-about" title="플랫폼 소개 및 3대 핵심 가치" aria-label="이용 가이드" style="background: rgba(245, 158, 11, 0.2); border-color: rgba(245, 158, 11, 0.5); color: #fde68a;">
+        <span>💡 이용 가이드</span>
+      </button>
       <!-- Cross-Link to Static SEO Directory Hub -->
       <a href="hub/index.html" class="header-action-btn" title="반도체 산학협력 전수 디렉토리" style="background: rgba(56, 189, 248, 0.25); border-color: rgba(56, 189, 248, 0.5); color: #7dd3fc;">
         <span>📚 산학협력 디렉토리</span>
@@ -250,11 +254,28 @@
         
         <!-- Platform Value Proposition & Hook Copy -->
         <div class="sidebar-intro-card">
-          <span class="intro-badge">✨ 100% 공식 DOI 학술문헌 검증</span>
+          <div class="intro-header-row">
+            <span class="intro-badge">✨ 100% 공식 DOI 학술문헌 검증</span>
+            <button type="button" id="btn-toggle-intro-details" class="intro-toggle-btn" aria-expanded="false" aria-controls="intro-details-content">💡 핵심 Q&A ▾</button>
+          </div>
           <h2>글로벌 반도체 산학협력 지도</h2>
           <p>
             <strong>삼성전자·SK하이닉스·TSMC</strong> 등 27대 기업과 <strong>서울대·KAIST</strong> 등 100여 개 대학의 <strong>13,746건</strong> 차세대 R&D 과제 및 핵심 연구실 전수 분석
           </p>
+          <div id="intro-details-content" class="intro-details" style="display: none;">
+            <div class="intro-qna-item">
+              <span class="qna-q">Q. 삼성·SK하이닉스는 어느 대학과 연구하나요?</span>
+              <span class="qna-a">서울대(846건), KAIST(189건), 성균관대(130건), 포항공대(101건) 등 국내외 주요 대학과 차세대 연구를 수행 중입니다.</span>
+            </div>
+            <div class="intro-qna-item">
+              <span class="qna-q">Q. HBM & 3D 패키징 연구실을 찾으려면?</span>
+              <span class="qna-a">상단 검색창에 'HBM' 또는 '하이브리드 본딩'을 입력하거나 아래 추천 검색 태그를 클릭하세요.</span>
+            </div>
+            <div class="intro-qna-item">
+              <span class="qna-q">Q. 데이터 신뢰성은 어떻게 검증되었나요?</span>
+              <span class="qna-a">모든 과제는 IEEE, Nature, Science, IEDM 등 공식 DOI 및 공공 펀딩 레퍼런스에 기반합니다.</span>
+            </div>
+          </div>
         </div>
 
         <!-- Global Search Box -->
@@ -389,6 +410,25 @@
           </div>
         </div>
 
+        <!-- Fast Directory Links for Navigation & Crawlers -->
+        <div class="sidebar-directory-box">
+          <div class="dir-box-title">⚡ 주요 산학협력 거점 바로보기</div>
+          <div class="dir-box-links">
+            <a href="hub/companies/samsung.html">삼성전자</a>
+            <a href="hub/companies/sk-hynix.html">SK하이닉스</a>
+            <a href="hub/companies/tsmc.html">TSMC</a>
+            <a href="hub/companies/intel.html">인텔</a>
+            <a href="hub/companies/nvidia.html">엔비디아</a>
+            <a href="hub/universities/snu.html">서울대</a>
+            <a href="hub/universities/kaist.html">KAIST</a>
+            <a href="hub/universities/postech.html">POSTECH</a>
+            <a href="hub/topics/hbm.html">HBM</a>
+            <a href="hub/topics/gaa.html">3nm GAA</a>
+            <a href="hub/topics/advanced-packaging.html">3D패키징</a>
+          </div>
+          <a href="hub/index.html" class="dir-box-all">전체 31개 디렉토리 보기 ➔</a>
+        </div>
+
         <!-- Reset Button -->
         <button id="btn-reset-filters" type="button" class="header-action-btn" style="width: 100%; justify-content: center; margin-top: 0.5rem; background: rgba(55, 65, 81, 0.4);">
           <span>🔄 필터 초기화</span>
@@ -483,6 +523,11 @@
       
       <!-- 1. Map View Container -->
       <div id="map-view" class="view-container active" role="tabpanel" aria-labelledby="tab-map" aria-label="세계 지도">
+        <!-- Floating Strategic Headline for Google & Users -->
+        <div class="map-floating-headline" aria-hidden="true">
+          <span class="headline-pill">🗺️ 실시간 산학협력 축선 지도</span>
+          <span class="headline-text">글로벌 27개 반도체 대기업 ➔ 100여 개 대학 간 차세대 R&D 공동연구 회랑</span>
+        </div>
         <div id="map-container"></div>
         
         <!-- Map Floating Visual Control Toolbar -->
@@ -534,6 +579,11 @@
 
       <!-- 2. Network Graph View Container -->
       <div id="network-view" class="view-container" role="tabpanel" aria-labelledby="tab-network" aria-label="관계망 그래프">
+        <!-- Floating Strategic Headline for Google & Users -->
+        <div class="network-floating-headline" aria-hidden="true">
+          <span class="headline-pill">🕸️ 지식 전파 관계망 그래프</span>
+          <span class="headline-text">기업-대학-7대 기술 도메인(HBM, GAA, 칩렛 등) 간 다자간 연결망 & 핵심 허브</span>
+        </div>
         <div id="network-container"></div>
       </div>
 
@@ -696,6 +746,40 @@
         <div class="modal-full-field">
           <div class="field-label">연구 상세 내용 및 파급 효과</div>
           <div class="field-value" id="modal-summary" style="font-weight: normal; line-height: 1.6; color: #d1d5db;">-</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Platform About & Strategic Guide Modal Overlay -->
+  <div class="modal-overlay" id="about-guide-modal-overlay" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="about-modal-title">
+    <div class="modal-content" style="max-width: 680px;">
+      <div class="modal-header">
+        <div class="modal-title" id="about-modal-title">💡 플랫폼 안내: 글로벌 반도체 산학협력 센서스</div>
+        <button class="modal-close-btn" id="about-modal-close-btn" aria-label="안내창 닫기">&times;</button>
+      </div>
+      <div class="modal-body" style="line-height: 1.6; color: #e2e8f0; font-size: 0.85rem;">
+        <div style="background: rgba(56, 189, 248, 0.1); border-left: 3px solid #38bdf8; padding: 0.75rem 1rem; border-radius: 4px; margin-bottom: 1rem;">
+          <strong style="color: #38bdf8;">반도체 R&D 연구실과 대기업 산학협력 과제 13,746건 전수 추적</strong><br>
+          삼성전자, SK하이닉스, TSMC, 인텔 등 27대 글로벌 반도체 기업과 서울대, KAIST 등 100여 개 연구 대학이 수행하는 산학협력 프로젝트 및 학술 문헌을 100% DOI 기반으로 시각화·제공합니다.
+        </div>
+
+        <h4 style="color: #f3f4f6; margin: 1rem 0 0.4rem 0; font-size: 0.95rem;">🎯 3대 핵심 활용 가치</h4>
+        <ul style="padding-left: 1.2rem; margin: 0 0 1rem 0;">
+          <li><strong>대기업별 산학협력 대학 찾기</strong>: 삼성전자, SK하이닉스, TSMC가 어떤 대학·교수와 공동 R&D를 진행 중인지 한눈에 확인</li>
+          <li><strong>핵심 기술 도메인별 연구실 탐색</strong>: HBM3e/HBM4, 3nm GAA, 3D 하이브리드 본딩, EUV, SiC/GaN 전력반도체 분야 선도 연구진 검색</li>
+          <li><strong>100% DOI 기반 검증 신뢰도</strong>: 가공·추측 데이터가 아닌 IEEE, Nature, Science, IEDM 등 공인 학술 문헌 및 공공 펀딩 실적 기반</li>
+        </ul>
+
+        <h4 style="color: #f3f4f6; margin: 1rem 0 0.4rem 0; font-size: 0.95rem;">🔍 효과적인 검색 팁</h4>
+        <p style="margin: 0 0 0.5rem 0;">
+          1. <strong>복합 검색 지원</strong>: <code style="color: #38bdf8; background: rgba(15,23,42,0.8); padding: 2px 6px; border-radius: 4px;">삼성전자 HBM</code>, <code style="color: #38bdf8; background: rgba(15,23,42,0.8); padding: 2px 6px; border-radius: 4px;">서울대 GAA</code>처럼 띄어쓰기로 기업·대학·기술을 조합해 검색하세요.<br>
+          2. <strong>추천 검색 태그</strong>: 사이드바 상단의 인기 검색어(#삼성전자 HBM, #SK하이닉스 산학, #KAIST 등)를 원클릭하여 즉시 필터링하세요.<br>
+          3. <strong>정적 디렉토리 허브</strong>: 구글 검색엔진 최적화된 <a href="hub/index.html" style="color: #38bdf8; text-decoration: underline;">31개 기관별·분야별 보고서</a>를 통해 더 빠른 열람이 가능합니다.
+        </p>
+
+        <div style="text-align: right; margin-top: 1.2rem;">
+          <button type="button" id="btn-close-about-guide" class="header-action-btn" style="padding: 0.4rem 1.2rem; background: var(--accent-blue); color: #fff; font-weight: 600;">확인 및 둘러보기</button>
         </div>
       </div>
     </div>

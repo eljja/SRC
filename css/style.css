@@ -2176,3 +2176,137 @@ input:focus-visible {
   transform: translateY(-1px);
 }
 
+/* Intro card Q&A details */
+.intro-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+
+.intro-toggle-btn {
+  background: transparent;
+  border: none;
+  color: var(--accent-cyan);
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.intro-details {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed rgba(56, 189, 248, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.intro-qna-item {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.73rem;
+  line-height: 1.35;
+}
+
+.qna-q {
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+.qna-a {
+  color: #94a3b8;
+}
+
+/* Sidebar directory box */
+.sidebar-directory-box {
+  background: rgba(17, 24, 39, 0.7);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.dir-box-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #f3f4f6;
+  margin-bottom: 0.45rem;
+}
+
+.dir-box-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-bottom: 0.5rem;
+}
+
+.dir-box-links a {
+  background: rgba(31, 41, 55, 0.8);
+  border: 1px solid rgba(75, 85, 99, 0.5);
+  color: #93c5fd;
+  text-decoration: none;
+  font-size: 0.7rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+}
+
+.dir-box-links a:hover {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: #3b82f6;
+  color: #fff;
+}
+
+.dir-box-all {
+  display: block;
+  font-size: 0.72rem;
+  color: #38bdf8;
+  text-decoration: none;
+  text-align: right;
+  font-weight: 600;
+}
+
+.dir-box-all:hover {
+  text-decoration: underline;
+}
+
+/* Floating headlines for Map and Network */
+.map-floating-headline, .network-floating-headline {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+.headline-pill {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #38bdf8;
+  white-space: nowrap;
+}
+
+.headline-text {
+  font-size: 0.78rem;
+  color: #e2e8f0;
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .map-floating-headline, .network-floating-headline {
+    display: none;
+  }
+}
+
+
