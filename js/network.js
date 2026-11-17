@@ -1,31 +1,47 @@
 /**
- * NetworkView Module (v7.4.0)
- * Renders an interactive D3.js Force-Directed Graph connecting
+ * NetworkView Module (v8.0.0 — WebGL2 + Pre-computed ForceAtlas2/Louvain Engine)
+ * Renders an interactive WebGL2 GPU-instanced Knowledge Graph connecting
  * Technology Domains, Granular Sub-topics, Companies, and Universities.
  * Supports:
  * - 🌐 1차: 7대 기술 도메인 총괄망 (Global 7-Domain Overview Mode)
  * - 🔬 2차: 세부 주제별 심층망 (Deep-Dive Sub-Topic & Gap Analysis Mode)
  * - 🏛️ 산학 기관 협력망 (Institution Collaboration Mode)
- * - Interactive Focus with Focus vs Gap Analysis HUD
- * - Core Hub LOD Filtering and Pre-warmed Instant Layout
+ * - Pre-computed Louvain communities + ForceAtlas2 coordinates (0ms instant layout)
+ * - Off-main-thread Web Worker Barnes-Hut physics for smooth interactive dragging/reheating
+ * - Interactive Focus HUD with Gap Analysis & Direct Project Modal Links
  */
 class NetworkView {
   constructor(containerId, onProjectSelect) {
     this.containerId = containerId;
     this.onProjectSelect = onProjectSelect;
-    this.svg = null;
-    this.zoom = null;
-    this.g = null;
-    this.simulation = null;
+    this.renderer = null;
     this.isInitialized = false;
     this.selectedNodeId = null;
     this.nodes = [];
     this.links = [];
     this.adjacency = new Map();
-    this.lodMode = 'core'; // 'core' or 'all'
-    this.graphMode = 'subtopic'; // 'topic' (1차 총괄망), 'subtopic' (2차 세부 심층망), 'institution' (기관망)
+    this.lodMode = 'all'; // 'all' (full WebGL universe) or 'core'
+    this.graphMode = 'topic'; // 'topic' (1차 총괄망), 'subtopic' (2차 세부 심층망), 'institution' (기관망)
     this.selectedSubtopicCategory = 'Advanced Logic & Transistors (GAA/CFET/2D)';
     this.lastProjects = [];
+    this.layoutData = null;
+    this._layoutPromise = null;
+  }
+
+  _loadLayoutData() {
+    if (this.layoutData) return Promise.resolve(this.layoutData);
+    if (this._layoutPromise) return this._layoutPromise;
+    this._layoutPromise = fetch('data/graph_layout_src.json')
+      .then(res => (res.ok ? res.json() : null))
+      .then(json => {
+        this.layoutData = json;
+        return json;
+      })
+      .catch(err => {
+        console.warn('Precomputed SRC layout fetch failed, using live Worker layout:', err);
+        return null;
+      });
+    return this._layoutPromise;
   }
 
   init() {
@@ -33,16 +49,18 @@ class NetworkView {
     const container = document.getElementById(this.containerId);
     if (!container) return;
 
+    this._loadLayoutData();
+
     container.innerHTML = `
-      <svg id="network-svg"></svg>
+      <div id="network-stage" style="width: 100%; height: 100%;"></div>
+
       <div class="network-controls">
         <div class="network-mode-group">
-          <button class="network-btn ${this.graphMode === 'subtopic' ? 'active' : ''}" id="btn-net-mode-subtopic" title="1개 기술 분야 선택 시 세부 기술 주제별 집중도 및 공백(Gap) 심층 분석">🔬 2차: 세부 주제별 심층망</button>
           <button class="network-btn ${this.graphMode === 'topic' ? 'active' : ''}" id="btn-net-mode-topic" title="7대 기술 도메인 중심 글로벌 기업 관심도 및 대학 연구 집중도 총괄망">🌐 1차: 7대 도메인 총괄망</button>
+          <button class="network-btn ${this.graphMode === 'subtopic' ? 'active' : ''}" id="btn-net-mode-subtopic" title="1개 기술 분야 선택 시 세부 기술 주제별 집중도 및 공백(Gap) 심층 분석">🔬 2차: 세부 주제별 심층망</button>
           <button class="network-btn ${this.graphMode === 'institution' ? 'active' : ''}" id="btn-net-mode-inst" title="기업-대학-연구소 간의 직접 산학 협력망">🏛️ 산학 기관망</button>
         </div>
-        
-        <!-- Domain selector for Sub-topic deep-dive mode -->
+
         <div class="subtopic-selector-container" id="subtopic-selector-container" style="${this.graphMode === 'subtopic' ? 'display: flex;' : 'display: none;'}">
           <span class="subtopic-selector-label">🎯 분석 분야:</span>
           <select id="select-subtopic-category" class="subtopic-select" aria-label="세부 분석 기술 도메인 선택">
@@ -57,13 +75,22 @@ class NetworkView {
         </div>
 
         <div class="network-btn-separator"></div>
-        <button class="network-btn" id="btn-network-lod" title="핵심 거점망 / 전체 연결망 토글">${this.lodMode === 'core' ? '⚡ 핵심 거점망' : '🌐 전체 연결망'}</button>
-        <button class="network-btn" id="btn-net-fit" title="화면 맞춤">🎯 화면 맞춤</button>
-        <button class="network-btn" id="btn-net-reset" title="시뮬레이션 재정렬">🔄 재정렬</button>
-        <button class="network-btn" id="btn-net-zoomin" title="확대">➕</button>
-        <button class="network-btn" id="btn-net-zoomout" title="축소">➖</button>
+        <input type="text" id="input-net-search" class="kg-search-input" placeholder="🔍 기관/주제 노드 찾기..." aria-label="그래프 내 노드 검색" />
+        <button class="network-btn active" id="btn-net-color" title="Louvain 군집 색상 vs 기관 유형 색상 전환">🎨 군집 색상</button>
+        <button class="network-btn" id="btn-net-labels" title="줌 연동 자동 라벨 vs 항상 표시 전환">🏷️ 라벨 자동</button>
+        <button class="network-btn" id="btn-network-lod" title="전체 연결망 / 핵심 거점망 토글">${this.lodMode === 'core' ? '⚡ 핵심 거점망' : '🌐 전체 연결망'}</button>
         <button class="network-btn" id="btn-net-clear" title="선택 해제" style="display: none;">✨ 강조 해제</button>
       </div>
+
+      <!-- ALDB-style Bottom-Right Vertical Utility Stack -->
+      <div class="kg-bottom-controls" aria-label="그래프 제어 도구">
+        <button class="kg-icon-btn" id="btn-net-zoomin" title="확대 (Zoom In)">+</button>
+        <button class="kg-icon-btn" id="btn-net-zoomout" title="축소 (Zoom Out)">−</button>
+        <button class="kg-icon-btn" id="btn-net-fit" title="화면 맞춤 (Fit)">⤢</button>
+        <button class="kg-icon-btn" id="btn-net-reset" title="물리 시뮬레이션 재정렬">↻</button>
+        <button class="kg-icon-btn" id="btn-net-legend" title="Louvain 협력 군집 범례 토글">≡</button>
+      </div>
+
       <div class="network-hud" id="network-hud">
         <div class="network-hud-title">
           <span id="hud-name">-</span>
@@ -74,7 +101,19 @@ class NetworkView {
       </div>
     `;
 
-    // Bind Network Controls
+    const stageEl = document.getElementById('network-stage');
+    this.renderer = new KGCanvasRenderer(stageEl, {
+      onNodeClick: (node) => this.handleNodeClick(node),
+      onClearSelection: () => this.clearFocus(),
+      onNodeDblClick: (node) => {
+        const filterType = node.type === 'university' ? 'university' : (node.type === 'company' ? 'company' : 'category');
+        if (window.app && window.app.filterByAnalyticsItem) {
+          window.app.filterByAnalyticsItem(filterType, node.category || node.fullLabel || node.rawName || node.label);
+        }
+      }
+    });
+
+    // Mode switchers
     document.getElementById('btn-net-mode-subtopic').addEventListener('click', () => {
       this.graphMode = 'subtopic';
       this.updateModeButtons();
@@ -102,41 +141,60 @@ class NetworkView {
       });
     }
 
+    // In-graph instant node search
+    const netSearch = document.getElementById('input-net-search');
+    if (netSearch) {
+      netSearch.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          const hit = this.renderer.focusNodeByQuery(netSearch.value);
+          if (hit) {
+            this.handleNodeClick(hit, true);
+          }
+        }
+      });
+    }
+
+    // Color mode toggle
+    const colorBtn = document.getElementById('btn-net-color');
+    if (colorBtn) {
+      colorBtn.addEventListener('click', () => {
+        const next = this.renderer.colorMode === 'community' ? 'type' : 'community';
+        this.renderer.setColorMode(next);
+        colorBtn.textContent = next === 'community' ? '🎨 군집 색상' : '🏷️ 기관 유형';
+        colorBtn.classList.toggle('active', next === 'community');
+      });
+    }
+
+    // Label mode toggle
+    const labelBtn = document.getElementById('btn-net-labels');
+    if (labelBtn) {
+      labelBtn.addEventListener('click', () => {
+        const next = this.renderer.labelMode === 'auto' ? 'always' : 'auto';
+        this.renderer.setLabelMode(next);
+        labelBtn.textContent = next === 'auto' ? '🏷️ 라벨 자동' : '🏷️ 라벨 항상';
+        labelBtn.classList.toggle('active', next === 'always');
+      });
+    }
+
+    // LOD toggle
     document.getElementById('btn-network-lod').addEventListener('click', (e) => {
       this.lodMode = this.lodMode === 'core' ? 'all' : 'core';
       e.target.textContent = this.lodMode === 'core' ? '⚡ 핵심 거점망' : '🌐 전체 연결망';
       if (this.lastProjects) this.render(this.lastProjects);
     });
 
-    document.getElementById('btn-net-zoomin').addEventListener('click', () => {
-      if (this.svg && this.zoom) {
-        this.svg.transition().duration(300).call(this.zoom.scaleBy, 1.3);
-      }
+    // Bottom-right controls
+    document.getElementById('btn-net-zoomin').addEventListener('click', () => this.renderer.zoomBy(1.35));
+    document.getElementById('btn-net-zoomout').addEventListener('click', () => this.renderer.zoomBy(0.74));
+    document.getElementById('btn-net-fit').addEventListener('click', () => this.renderer.resetZoomFit());
+    document.getElementById('btn-net-reset').addEventListener('click', () => this.renderer.reheat());
+    document.getElementById('btn-net-legend').addEventListener('click', (e) => {
+      const open = this.renderer.toggleLegend();
+      e.target.classList.toggle('active', open);
     });
 
-    document.getElementById('btn-net-zoomout').addEventListener('click', () => {
-      if (this.svg && this.zoom) {
-        this.svg.transition().duration(300).call(this.zoom.scaleBy, 0.7);
-      }
-    });
-
-    document.getElementById('btn-net-fit').addEventListener('click', () => {
-      this.resetZoomFit();
-    });
-
-    document.getElementById('btn-net-reset').addEventListener('click', () => {
-      if (this.simulation) {
-        this.simulation.alpha(0.6).restart();
-      }
-    });
-
-    document.getElementById('btn-net-clear').addEventListener('click', () => {
-      this.clearFocus();
-    });
-
-    document.getElementById('hud-close-btn').addEventListener('click', () => {
-      this.clearFocus();
-    });
+    document.getElementById('btn-net-clear').addEventListener('click', () => this.clearFocus());
+    document.getElementById('hud-close-btn').addEventListener('click', () => this.clearFocus());
 
     this.isInitialized = true;
   }
@@ -153,35 +211,30 @@ class NetworkView {
     if (selContainer) selContainer.style.display = this.graphMode === 'subtopic' ? 'flex' : 'none';
   }
 
-  render(projects) {
+  async render(projects) {
     this.lastProjects = projects;
-
-    // Stop previous simulation to prevent CPU/memory leak
-    if (this.simulation) {
-      this.simulation.stop();
-      this.simulation.on('tick', null);
-      this.simulation = null;
-    }
-
     this.init();
     this.updateModeButtons();
 
-    const container = document.getElementById(this.containerId);
-    const width = container.clientWidth || 900;
-    const height = container.clientHeight || 600;
+    if (!this.layoutData) {
+      await this._loadLayoutData();
+    }
 
-    const svg = d3.select('#network-svg')
-      .attr('viewBox', [0, 0, width, height]);
-
-    svg.selectAll('*').remove();
     this.selectedNodeId = null;
     this.hideHud();
+    const clearBtn = document.getElementById('btn-net-clear');
+    if (clearBtn) clearBtn.style.display = 'none';
 
-    if (!projects || projects.length === 0) return;
+    if (!projects || projects.length === 0) {
+      this.renderer.setData({ nodes: [], links: [] });
+      return;
+    }
 
-    // Filter out quarantined records
     projects = projects.filter(p => !p.verification || p.verification.status !== 'quarantined');
-    if (projects.length === 0) return;
+    if (projects.length === 0) {
+      this.renderer.setData({ nodes: [], links: [] });
+      return;
+    }
 
     const categoryInfo = {
       'AI & Neuromorphic Computing': { short: 'AI & NPU 뉴로모픽', color: '#3b82f6', icon: '🧠' },
@@ -232,27 +285,24 @@ class NetworkView {
           target: targetId,
           weight: 1,
           hasActive: project.status === 'active',
-          linkType: linkType,
+          linkType,
           projects: [project]
         });
       }
       addNeighbor(sourceId, targetId);
     };
 
-    if (this.graphMode === 'subtopic') {
-      // ===== Mode 2: 2차 세부 주제별 심층망 (Deep-Dive Sub-Topic Mode) =====
-      const targetCat = this.selectedSubtopicCategory || 'Advanced Logic & Transistors (GAA/CFET/2D)';
-      const catMeta = categoryInfo[targetCat] || { short: targetCat, color: '#10b981', icon: '⚡' };
-      
-      const catProjects = projects.filter(p => p.category === targetCat);
-      const activeProjects = catProjects;
+    let layoutModeKey = this.graphMode;
 
+    if (this.graphMode === 'subtopic') {
+      const targetCat = this.selectedSubtopicCategory || 'Advanced Logic & Transistors (GAA/CFET/2D)';
+      layoutModeKey = `subtopic:${targetCat}`;
+      const catMeta = categoryInfo[targetCat] || { short: targetCat, color: '#10b981', icon: '⚡' };
+      const activeProjects = projects.filter(p => p.category === targetCat);
       const subrules = (window.app && window.app.dataManager ? window.app.dataManager.getSubtopicRules()[targetCat] : []) || [];
-      
-      // 1. Initialize Sub-topic Hub Nodes
+
       subrules.forEach(rule => {
-        const subId = `sub_${rule.name}`;
-        getNode(subId, rule.name, 'subtopic', {
+        getNode(`sub_${rule.name}`, rule.name, 'subtopic', {
           fullLabel: rule.name,
           category: targetCat,
           color: catMeta.color,
@@ -260,18 +310,15 @@ class NetworkView {
         });
       });
 
-      // 2. Map Projects to Subtopics, Companies, and Universities
       activeProjects.forEach(p => {
         const subName = window.app && window.app.dataManager ? window.app.dataManager.getSubtopic(p) : (p.topic || '기타 세부 연구');
         const subId = `sub_${subName}`;
-
-        const hasConfirmedCorp = window.app && window.app.dataManager
+        const hasConfirmedCorp = (window.app && window.app.dataManager && typeof window.app.dataManager.isConfirmedCorporateCollab === 'function')
           ? window.app.dataManager.isConfirmedCorporateCollab(p)
           : (p.company && p.company !== '-' && p.company !== '미지정' &&
              (!p.verification || (p.verification.collaboration_type !== 'academic_only' &&
               (p.verification.collaboration_type === 'co_authorship' || p.verification.collaboration_type === 'corporate_grant' || (p.verification.corporate_involvement && p.verification.corporate_involvement.status === 'documented')))));
 
-        // Subtopic node update
         const subNode = getNode(subId, subName, 'subtopic', {
           fullLabel: subName,
           category: targetCat,
@@ -283,7 +330,6 @@ class NetworkView {
         if (hasConfirmedCorp) subNode.compBreakdown[p.company] = (subNode.compBreakdown[p.company] || 0) + 1;
         if (p.university) subNode.uniBreakdown[p.university] = (subNode.uniBreakdown[p.university] || 0) + 1;
 
-        // Company node (only if confirmed)
         if (hasConfirmedCorp) {
           const compId = `comp_${p.company}`;
           const compNode = getNode(compId, p.company, 'company', { rawName: p.company, targetCategory: targetCat });
@@ -294,7 +340,6 @@ class NetworkView {
           addLink(compId, subId, p, 'company-subtopic');
         }
 
-        // University node
         if (p.university) {
           const uniId = `uni_${p.university}`;
           const uniNode = getNode(uniId, p.university, 'university', {
@@ -314,18 +359,14 @@ class NetworkView {
       this.nodes = Array.from(nodeMap.values());
       if (this.lodMode === 'core') {
         this.nodes = this.nodes.filter(n => n.type === 'subtopic' || n.val >= 2);
-      } else if (this.nodes.length > 500) {
-        this.nodes = this.nodes.sort((a, b) => b.val - a.val).slice(0, 500);
       }
 
     } else if (this.graphMode === 'topic') {
-      // ===== Mode 1: 1차 7대 기술 도메인 총괄망 =====
       projects.forEach(p => {
         const cat = p.category || '기타';
         const catId = `cat_${cat}`;
         const catMeta = categoryInfo[cat] || { short: cat, color: '#f59e0b', icon: '🔬' };
-        
-        const hasConfirmedCorp = window.app && window.app.dataManager
+        const hasConfirmedCorp = (window.app && window.app.dataManager && typeof window.app.dataManager.isConfirmedCorporateCollab === 'function')
           ? window.app.dataManager.isConfirmedCorporateCollab(p)
           : (p.company && p.company !== '-' && p.company !== '미지정' &&
              (!p.verification || (p.verification.collaboration_type !== 'academic_only' &&
@@ -369,15 +410,15 @@ class NetworkView {
       this.nodes = Array.from(nodeMap.values());
       if (this.lodMode === 'core') {
         this.nodes = this.nodes.filter(n => n.type === 'category' || n.val >= 3);
-      } else if (this.nodes.length > 500) {
-        this.nodes = this.nodes.sort((a, b) => b.val - a.val).slice(0, 500);
       }
 
     } else {
-      // ===== Mode 3: 산학 기관망 =====
+      // Institution mode
       projects.forEach(p => {
-        const hasConfirmedCorp = p.company && p.company !== '-' && p.company !== '미지정' &&
-          (!p.verification || !p.verification.corporate_involvement || p.verification.corporate_involvement.status === 'documented');
+        const hasConfirmedCorp = (window.app && window.app.dataManager && typeof window.app.dataManager.isConfirmedCorporateCollab === 'function')
+          ? window.app.dataManager.isConfirmedCorporateCollab(p)
+          : (p.company && p.company !== '-' && p.company !== '미지정' &&
+             (!p.verification || !p.verification.corporate_involvement || p.verification.corporate_involvement.status === 'documented'));
 
         let compId = null;
         if (hasConfirmedCorp) {
@@ -396,7 +437,8 @@ class NetworkView {
         }
 
         const catId = `cat_${p.category || '기타'}`;
-        const catNode = getNode(catId, p.category || '기타', 'category', { rawName: p.category });
+        const catMeta = categoryInfo[p.category] || { short: p.category || '기타', color: '#f59e0b' };
+        const catNode = getNode(catId, catMeta.short || (p.category || '기타'), 'category', { rawName: p.category, color: catMeta.color });
         catNode.val += 1;
         catNode.projects.push(p);
 
@@ -417,222 +459,39 @@ class NetworkView {
       this.nodes = Array.from(nodeMap.values());
       if (this.lodMode === 'core') {
         this.nodes = this.nodes.filter(n => n.val >= 2);
-      } else if (this.nodes.length > 500) {
-        this.nodes = this.nodes.sort((a, b) => b.val - a.val).slice(0, 500);
       }
     }
 
     const nodeIds = new Set(this.nodes.map(n => n.id));
     this.links = Array.from(linkMap.values()).filter(l => nodeIds.has(l.source) && nodeIds.has(l.target));
 
-    // Color definitions
-    const colorScale = {
-      company: '#a78bfa',     // Purple
-      university: '#38bdf8',  // Cyan/Blue
-      institute: '#34d399',   // Emerald
-      category: '#f59e0b',    // Amber for Category
-      subtopic: '#10b981'     // Emerald/Green for Subtopic
+    const typeColorMap = {
+      company: '#a78bfa',
+      university: '#38bdf8',
+      institute: '#34d399',
+      category: '#f59e0b',
+      subtopic: '#10b981'
     };
 
-    // Zoom container
-    const g = svg.append('g').attr('class', 'network-main-group');
-    this.g = g;
-    this.svg = svg;
-
-    this.zoom = d3.zoom()
-      .scaleExtent([0.15, 6])
-      .on('zoom', (event) => {
-        g.attr('transform', event.transform);
-        const z = event.transform.k;
-        g.selectAll('.node-label')
-          .style('display', d => (d.type === 'category' || d.type === 'subtopic' || d.val >= 8 || z > 1.6) ? 'block' : 'none');
-      });
-
-    svg.call(this.zoom);
-
-    svg.on('click', (event) => {
-      if (event.target.tagName === 'svg' || event.target.classList.contains('network-main-group')) {
-        this.clearFocus();
-      }
+    const layoutModeData = this.layoutData && this.layoutData.modes ? this.layoutData.modes[layoutModeKey] : null;
+    this.renderer.setData({
+      nodes: this.nodes,
+      links: this.links,
+      layoutModeData,
+      typeColorMap
     });
-
-    // Arrange Initial Positions
-    const centerRadius = Math.min(width, height) * 0.35;
-    const hubNodes = this.nodes.filter(n => n.type === 'category' || n.type === 'subtopic');
-    hubNodes.forEach((cn, i) => {
-      const angle = (i / Math.max(1, hubNodes.length)) * 2 * Math.PI - Math.PI / 2;
-      cn.x = width / 2 + centerRadius * Math.cos(angle);
-      cn.y = height / 2 + centerRadius * Math.sin(angle);
-    });
-
-    const nonHubNodes = this.nodes.filter(n => n.type !== 'category' && n.type !== 'subtopic');
-    nonHubNodes.forEach((n, i) => {
-      const angle = (i / Math.max(1, nonHubNodes.length)) * 2 * Math.PI;
-      const r = centerRadius * (0.25 + 0.85 * Math.random());
-      n.x = width / 2 + r * Math.cos(angle);
-      n.y = height / 2 + r * Math.sin(angle);
-    });
-
-    // D3 Force Simulation
-    this.simulation = d3.forceSimulation(this.nodes)
-      .alphaDecay(0.045)
-      .velocityDecay(0.4)
-      .force('link', d3.forceLink(this.links).id(d => d.id).distance(d => {
-        if (this.graphMode === 'subtopic') {
-          return d.linkType === 'company-subtopic' ? 60 : 75;
-        }
-        if (this.graphMode === 'topic') {
-          return d.linkType === 'company-topic' ? 65 : 80;
-        }
-        return 50 + Math.max(10, 80 - d.weight * 2);
-      }))
-      .force('charge', d3.forceManyBody().strength(d => (d.type === 'category' || d.type === 'subtopic') ? -320 : -140))
-      .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide().radius(d => {
-        if (d.type === 'category' || d.type === 'subtopic') return 30;
-        return 10 + Math.min(d.val * 0.6, 20);
-      }));
-
-    // Pre-calculate simulation synchronously
-    this.simulation.stop();
-    for (let i = 0; i < 150; ++i) {
-      this.simulation.tick();
-    }
-
-    // Render Links
-    const link = g.append('g')
-      .attr('class', 'links-group')
-      .selectAll('line')
-      .data(this.links)
-      .join('line')
-      .attr('class', 'network-link')
-      .attr('stroke', d => {
-        if (d.hasActive) return '#06b6d4';
-        if (d.linkType === 'company-topic' || d.linkType === 'company-subtopic') return '#a78bfa';
-        if (d.linkType === 'uni-topic' || d.linkType === 'uni-subtopic') return '#38bdf8';
-        return '#4b5563';
-      })
-      .attr('stroke-opacity', d => (d.linkType === 'company-topic' || d.linkType === 'company-subtopic') ? 0.75 : 0.45)
-      .attr('stroke-width', d => Math.min(6, Math.max(1.2, 1 + Math.sqrt(d.weight) * 0.9)))
-      .attr('stroke-dasharray', d => d.hasActive ? '4,4' : null)
-      .attr('x1', d => d.source.x)
-      .attr('y1', d => d.source.y)
-      .attr('x2', d => d.target.x)
-      .attr('y2', d => d.target.y);
-
-    // Render Nodes Group
-    const node = g.append('g')
-      .attr('class', 'nodes-group')
-      .selectAll('g')
-      .data(this.nodes)
-      .join('g')
-      .attr('class', 'network-node')
-      .attr('id', d => `node_${d.id.replace(/[^a-zA-Z0-9_-]/g, '_')}`)
-      .attr('transform', d => `translate(${d.x},${d.y})`)
-      .call(d3.drag()
-        .on('start', (event, d) => {
-          if (!event.active) this.simulation.alphaTarget(0.3).restart();
-          d.fx = d.x;
-          d.fy = d.y;
-        })
-        .on('drag', (event, d) => {
-          d.fx = event.x;
-          d.fy = event.y;
-        })
-        .on('end', (event, d) => {
-          if (!event.active) this.simulation.alphaTarget(0);
-          d.fx = null;
-          d.fy = null;
-        }));
-
-    // Node Circles
-    node.append('circle')
-      .attr('r', d => {
-        if (d.type === 'category' || d.type === 'subtopic') return 22;
-        return Math.min(20, 7 + Math.sqrt(d.val) * 1.8);
-      })
-      .attr('fill', d => d.color || colorScale[d.type] || '#9ca3af')
-      .attr('stroke', d => (d.type === 'category' || d.type === 'subtopic') ? '#fef08a' : '#0f172a')
-      .attr('stroke-width', d => (d.type === 'category' || d.type === 'subtopic') ? 3 : 2)
-      .style('filter', d => (d.type === 'category' || d.type === 'subtopic') ? 'drop-shadow(0 0 8px rgba(16, 185, 129, 0.7))' : null);
-
-    // Node Category/Subtopic Center Icons
-    node.filter(d => d.type === 'category' || d.type === 'subtopic').append('text')
-      .attr('text-anchor', 'middle')
-      .attr('dominant-baseline', 'central')
-      .attr('font-size', '13px')
-      .attr('pointer-events', 'none')
-      .text(d => d.icon || '🔬');
-
-    // Node Labels
-    node.append('text')
-      .attr('class', 'node-label')
-      .text(d => d.label.length > 24 ? d.label.slice(0, 22) + '…' : d.label)
-      .attr('x', d => ((d.type === 'category' || d.type === 'subtopic') ? 26 : Math.min(20, 7 + Math.sqrt(d.val) * 1.8) + 4))
-      .attr('y', 4)
-      .attr('fill', d => (d.type === 'category' || d.type === 'subtopic') ? '#fef08a' : '#f1f5f9')
-      .attr('font-size', d => (d.type === 'category' || d.type === 'subtopic') ? '11.5px' : '10px')
-      .attr('font-weight', d => (d.type === 'category' || d.type === 'subtopic') ? '800' : '600')
-      .attr('font-family', 'sans-serif')
-      .style('display', d => (d.type === 'category' || d.type === 'subtopic' || d.val >= 8) ? 'block' : 'none')
-      .style('paint-order', 'stroke fill')
-      .style('stroke', '#060910')
-      .style('stroke-width', '3px')
-      .style('stroke-linejoin', 'round')
-      .attr('pointer-events', 'none');
-
-    // Single Click
-    node.on('click', (event, d) => {
-      event.stopPropagation();
-      this.handleNodeClick(d);
-    });
-
-    // Double Click
-    node.on('dblclick', (event, d) => {
-      event.stopPropagation();
-      const filterType = d.type === 'university' ? 'university' : (d.type === 'company' ? 'company' : 'category');
-      if (window.app && window.app.filterByAnalyticsItem) {
-        window.app.filterByAnalyticsItem(filterType, d.category || d.fullLabel || d.rawName || d.label);
-      }
-    });
-
-    // Tick Handler
-    this.simulation.on('tick', () => {
-      link
-        .attr('x1', d => d.source.x)
-        .attr('y1', d => d.source.y)
-        .attr('x2', d => d.target.x)
-        .attr('y2', d => d.target.y);
-
-      node
-        .attr('transform', d => `translate(${d.x},${d.y})`);
-    });
-
-    this.simulation.alpha(0.05).restart();
   }
 
-  handleNodeClick(d) {
-    if (this.selectedNodeId === d.id) {
+  handleNodeClick(d, fromSearch = false) {
+    if (!fromSearch && this.selectedNodeId === d.id) {
       this.clearFocus();
       return;
     }
 
     this.selectedNodeId = d.id;
     const neighbors = this.adjacency.get(d.id) || new Set();
-    const connectedSet = new Set(neighbors);
-    connectedSet.add(d.id);
-
     const clearBtn = document.getElementById('btn-net-clear');
     if (clearBtn) clearBtn.style.display = 'flex';
-
-    d3.selectAll('.network-node')
-      .classed('node-dimmed', n => !connectedSet.has(n.id))
-      .classed('node-selected', n => n.id === d.id)
-      .classed('node-neighbor', n => n.id !== d.id && connectedSet.has(n.id));
-
-    d3.selectAll('.network-link')
-      .classed('link-dimmed', l => !(l.source.id === d.id || l.target.id === d.id))
-      .classed('link-highlighted', l => (l.source.id === d.id || l.target.id === d.id));
 
     this.showHud(d, neighbors);
   }
@@ -641,20 +500,11 @@ class NetworkView {
     this.selectedNodeId = null;
     const clearBtn = document.getElementById('btn-net-clear');
     if (clearBtn) clearBtn.style.display = 'none';
-
-    d3.selectAll('.network-node')
-      .classed('node-dimmed', false)
-      .classed('node-selected', false)
-      .classed('node-neighbor', false);
-
-    d3.selectAll('.network-link')
-      .classed('link-dimmed', false)
-      .classed('link-highlighted', false);
-
+    if (this.renderer) this.renderer.clearSelection();
     this.hideHud();
   }
 
-  showHud(node, neighbors) {
+  showHud(node) {
     const hud = document.getElementById('network-hud');
     if (!hud) return;
 
@@ -675,7 +525,6 @@ class NetworkView {
       <span style="color: #60a5fa; font-weight: 700;">${typeLabels[node.type] || '노드'}</span> | 총 <strong>${node.val || 1}건</strong> 과제 연계
     `;
 
-    // 1. Sub-topic Node HUD (세부 기술 분야 클릭 시: 집중 기업 TOP + Gap 공백 기업 분석)
     if (node.type === 'subtopic') {
       const topComps = Object.entries(node.compBreakdown || {}).sort((a, b) => b[1] - a[1]).slice(0, 6);
       const maxCompVal = Math.max(...topComps.map(c => c[1]), 1);
@@ -696,7 +545,6 @@ class NetworkView {
         `;
       });
 
-      // Gap Analysis: Companies in this domain with 0 projects in this subtopic
       const activeCompSet = new Set(Object.keys(node.compBreakdown || {}));
       const domainComps = this.nodes.filter(n => n.type === 'company').map(n => n.label);
       const gapComps = domainComps.filter(c => !activeCompSet.has(c)).slice(0, 8);
@@ -724,7 +572,6 @@ class NetworkView {
       dynamicContent.innerHTML = compHtml + gapHtml + uniTagsHtml;
 
     } else if (node.type === 'company') {
-      // 2. Company Node HUD in Subtopic or Topic Mode
       if (this.graphMode === 'subtopic') {
         const subrules = (window.app && window.app.dataManager ? window.app.dataManager.getSubtopicRules()[this.selectedSubtopicCategory] : []) || [];
         const compSubMap = node.subtopicBreakdown || {};
@@ -757,7 +604,6 @@ class NetworkView {
         dynamicContent.innerHTML = subHtml + uniTagsHtml;
 
       } else {
-        // Topic Mode Company HUD
         const topTopics = Object.entries(node.topicBreakdown || {}).sort((a, b) => b[1] - a[1]);
         const maxTopicVal = Math.max(...topTopics.map(t => t[1]), 1);
 
@@ -791,7 +637,6 @@ class NetworkView {
       }
 
     } else if (node.type === 'category') {
-      // 3. Category Mode Node HUD
       const topComps = Object.entries(node.compBreakdown || {}).sort((a, b) => b[1] - a[1]).slice(0, 6);
       const maxCompVal = Math.max(...topComps.map(c => c[1]), 1);
 
@@ -824,7 +669,6 @@ class NetworkView {
       dynamicContent.innerHTML = compHtml + uniTagsHtml;
 
     } else {
-      // 4. University Node HUD
       const subMap = node.subtopicBreakdown || node.topicBreakdown || {};
       const topSubs = Object.entries(subMap).sort((a, b) => b[1] - a[1]).slice(0, 5);
       let subHtml = `
@@ -852,7 +696,6 @@ class NetworkView {
       dynamicContent.innerHTML = subHtml + compTagsHtml;
     }
 
-    // Featured representative projects
     if (node.projects && node.projects.length > 0) {
       const projContainer = document.createElement('div');
       projContainer.style.marginTop = '8px';
@@ -902,9 +745,7 @@ class NetworkView {
   }
 
   resetZoomFit() {
-    if (this.svg && this.zoom) {
-      this.svg.transition().duration(500).call(this.zoom.transform, d3.zoomIdentity);
-    }
+    if (this.renderer) this.renderer.resetZoomFit();
   }
 }
 
