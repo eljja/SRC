@@ -258,8 +258,11 @@ def clean_text(text):
     # Remove control chars or garbled sequences
     return re.sub(r'[\x00-\x1f\x7f-\x9f]', '', str(text)).strip()
 
-def render_html_page(title, description, keywords, breadcrumbs, content_html, schema_json_str):
+def render_html_page(title, description, keywords, breadcrumbs, content_html, schema_json_str, depth=2, total_projects=14241):
     canonical_url = f"{BASE_URL}/{breadcrumbs[-1]['path']}"
+    css_href = "hub.css" if depth == 1 else "../hub.css"
+    root_prefix = "../" if depth == 1 else "../../"
+    hub_href = "index.html" if depth == 1 else "../index.html"
     
     return f"""<!DOCTYPE html>
 <html lang="ko">
@@ -299,7 +302,7 @@ def render_html_page(title, description, keywords, breadcrumbs, content_html, sc
   <meta name="twitter:description" content="{description}" />
   <meta name="twitter:image" content="{BASE_URL}/favicon.svg" />
   
-  <link rel="stylesheet" href="../hub.css">
+  <link rel="stylesheet" href="{css_href}">
   
   <!-- Structured Data (JSON-LD) -->
   <script type="application/ld+json">
@@ -310,16 +313,16 @@ def render_html_page(title, description, keywords, breadcrumbs, content_html, sc
   <!-- Header Navigation -->
   <header class="hub-header">
     <div class="hub-container header-inner">
-      <a href="../../index.html" class="brand-link">
+      <a href="{root_prefix}index.html" class="brand-link">
         <svg class="brand-icon" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 0 0 2.25-2.25V5.25a2.25 2.25 0 0 0-2.25-2.25H6.75A2.25 2.25 0 0 0 4.5 5.25v13.5A2.25 2.25 0 0 0 6.75 21Z" />
         </svg>
         <span>SRC Semi-Observatory</span>
       </a>
       <nav class="hub-nav">
-        <a href="../../index.html" class="nav-item">🗺️ 메인 대시보드</a>
-        <a href="../index.html" class="nav-item active">📚 산학협력 디렉토리</a>
-        <a href="../../venture.html" class="nav-item">🚀 CVC 벤처투자 지도</a>
+        <a href="{root_prefix}index.html" class="nav-item">🗺️ 메인 대시보드</a>
+        <a href="{hub_href}" class="nav-item active">📚 산학협력 디렉토리</a>
+        <a href="{root_prefix}venture.html" class="nav-item">🚀 CVC 벤처투자 지도</a>
       </nav>
     </div>
   </header>
@@ -329,8 +332,8 @@ def render_html_page(title, description, keywords, breadcrumbs, content_html, sc
     <div class="hub-container">
       <nav aria-label="Breadcrumb">
         <ol class="breadcrumb-list">
-          <li><a href="../../index.html">홈</a></li>
-          <li><span class="sep">&gt;</span><a href="../index.html">산학협력 디렉토리</a></li>
+          <li><a href="{root_prefix}index.html">홈</a></li>
+          <li><span class="sep">&gt;</span><a href="{hub_href}">산학협력 디렉토리</a></li>
           {"".join([f'<li><span class="sep">&gt;</span><span>{b["name"]}</span></li>' for b in breadcrumbs[2:]])}
         </ol>
       </nav>
@@ -347,12 +350,12 @@ def render_html_page(title, description, keywords, breadcrumbs, content_html, sc
     <div class="hub-container">
       <p class="footer-desc">
         글로벌 반도체 산학협력 및 차세대 R&D 네트워크 센서스 (SRC Semi-Observatory).<br>
-        Crossref, OpenAlex, Europe PMC 학술 DOI 검증 기반 공식 문헌 13,746건 제공.
+        Crossref, OpenAlex, Europe PMC 학술 DOI 검증 기반 공식 문헌 {total_projects:,}건 제공.
       </p>
       <div class="footer-links">
-        <a href="../../index.html">인터랙티브 지도·그래프 대시보드</a>
-        <a href="../index.html">전체 기관·주제 디렉토리</a>
-        <a href="../../venture.html">글로벌 반도체 벤처투자 지도</a>
+        <a href="{root_prefix}index.html">인터랙티브 지도·그래프 대시보드</a>
+        <a href="{hub_href}">전체 기관·주제 디렉토리</a>
+        <a href="{root_prefix}venture.html">글로벌 반도체 벤처투자 지도</a>
         <a href="https://github.com/eljja/SRC" target="_blank" rel="noopener">GitHub 저장소</a>
       </div>
     </div>
@@ -1021,9 +1024,9 @@ def generate_topic_pages(data):
 
     return generated
 
-def generate_hub_index(comp_pages, uni_pages, topic_pages):
+def generate_hub_index(comp_pages, uni_pages, topic_pages, total_projects=14241, verified_collabs=2410):
     title = "글로벌 반도체 산학협력 및 차세대 R&D 디렉토리 허브"
-    desc = "글로벌 주요 반도체 기업(삼성전자, SK하이닉스, TSMC, Intel, NVIDIA 등), 유수 대학(서울대, KAIST, MIT 등), 핵심 기술 분야(HBM, GAA, 3D 패키징, EUV)별 13,746건 연구 과제 전수 색인 디렉토리."
+    desc = f"글로벌 주요 반도체 기업(삼성전자, SK하이닉스, TSMC, Intel, NVIDIA 등), 유수 대학(서울대, KAIST, MIT 등), 핵심 기술 분야(HBM, GAA, 3D 패키징, EUV)별 {total_projects:,}건 연구 과제 전수 색인 디렉토리."
     
     comp_cards = "".join([
         f"""
@@ -1071,7 +1074,7 @@ def generate_hub_index(comp_pages, uni_pages, topic_pages):
     <div class="hub-page-header">
       <h1 class="hub-title">📚 글로벌 반도체 산학협력 전수 디렉토리</h1>
       <p class="hub-intro">
-        본 디렉토리는 전 세계 13,746건의 반도체 연구 문헌 및 2,013건의 공식 검증 산학협력 데이터를 기업별, 대학별, 기술 도메인별로 분류하여 검색엔진에 최적화된 정적 웹페이지로 제공합니다.
+        본 디렉토리는 전 세계 {total_projects:,}건의 반도체 연구 문헌 및 {verified_collabs:,}건의 공식 검증 산학협력 데이터를 기업별, 대학별, 기술 도메인별로 분류하여 검색엔진에 최적화된 정적 웹페이지로 제공합니다.
       </p>
     </div>
 
@@ -1147,7 +1150,9 @@ def generate_hub_index(comp_pages, uni_pages, topic_pages):
         keywords=["반도체 산학협력 디렉토리", "반도체 연구 과제 목록", "삼성전자 산학협력", "SK하이닉스 산학협력", "TSMC 연구", "서울대 반도체", "KAIST 반도체", "HBM", "GAA"],
         breadcrumbs=breadcrumbs,
         content_html=content_html,
-        schema_json_str=json.dumps(schema_json, ensure_ascii=False, indent=2)
+        schema_json_str=json.dumps(schema_json, ensure_ascii=False, indent=2),
+        depth=1,
+        total_projects=total_projects
     )
 
     with open("hub/index.html", "w", encoding="utf-8") as f:
@@ -1760,6 +1765,14 @@ def update_sitemap(all_pages):
 def main():
     print("Loading collaborations dataset...")
     data = load_data()
+    projects = data.get("projects", [])
+    total_projects = len(projects)
+    verified_collabs = sum(
+        1 for p in projects
+        if (p.get("verification") or {}).get("status") != "quarantined"
+        and (p.get("verification") or {}).get("collaboration_type") in ("corporate_grant", "co_authorship")
+    )
+
     print("Generating hub CSS...")
     generate_hub_css()
     
@@ -1776,7 +1789,7 @@ def main():
     print(f"  Generated {len(topic_pages)} topic pages.")
 
     print("Generating Master Hub Directory Index...")
-    generate_hub_index(comp_pages, uni_pages, topic_pages)
+    generate_hub_index(comp_pages, uni_pages, topic_pages, total_projects=total_projects, verified_collabs=verified_collabs)
 
     print("Updating sitemap.xml...")
     all_pages = comp_pages + uni_pages + topic_pages
