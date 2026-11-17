@@ -25,4 +25,7 @@ Thumbs.db
 *.backup.json
 *.grounding_backup.json
 data/.cache_doi/
+data/.cache_llm/
+.env
+.env.*
 

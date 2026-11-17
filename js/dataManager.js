@@ -227,6 +227,16 @@ class DataManager {
     return Array.from(set).sort();
   }
 
+  _canonicalProjectKey(p) {
+    const ev = (p.evidence_ref || '').toLowerCase();
+    const doiMatch = ev.match(/10\.\d{4,9}\/[^\s|]+/);
+    if (doiMatch) {
+      return 'doi:' + doiMatch[0].replace(/[.,;)]+$/, '');
+    }
+    const title = (p.title || p.topic || p.id || '').toLowerCase().trim().replace(/\s+/g, ' ');
+    return 'title:' + title;
+  }
+
   getSummaryStats() {
     const list = this.filteredProjects;
     const total = list.length;
@@ -235,14 +245,26 @@ class DataManager {
     const verifiedCollabCount = list.filter(p => this.isConfirmedCorporateCollab(p)).length;
     const academicOnlyCount = list.filter(p => this.isAcademicOnly(p)).length;
     const quarantinedCount = this.rawProjects.filter(p => p.verification && p.verification.status === 'quarantined').length;
-    
-    // Only count funding when verified/documented with an explicit dollar amount
+
+    // Deduplicate non-quarantined filtered records by DOI / normalized title so counts never inflate funding
+    const seenKeys = new Set();
+    let uniqueValidCount = 0;
     let verifiedFundingUsd = 0;
     let verifiedFundingCount = 0;
+    let estimatedFundingUsd = 0;
+    let estimatedFundingKrwEok = 0;
+    let koreaBenchmarkCount = 0;
+    let globalBenchmarkCount = 0;
     let noneStatedFundingCount = 0;
     let unverifiedFundingCount = 0;
 
     list.forEach(p => {
+      if (p.verification && p.verification.status === 'quarantined') return;
+      const key = this._canonicalProjectKey(p);
+      if (seenKeys.has(key)) return;
+      seenKeys.add(key);
+      uniqueValidCount++;
+
       const fundStatus = (p.verification && p.verification.funding && p.verification.funding.status) || p.funding_status;
       if (fundStatus === 'documented' && typeof p.funding_amount_usd === 'number' && p.funding_amount_usd > 0) {
         verifiedFundingUsd += p.funding_amount_usd;
@@ -251,19 +273,41 @@ class DataManager {
         noneStatedFundingCount++;
       } else {
         unverifiedFundingCount++;
+        const isKorea = p.university_country === 'South Korea' ||
+          /서울대|KAIST|포항공대|POSTECH|성균관|연세대|고려대|한양대|UNIST|GIST|DGIST|Korea University|Seoul National/i.test(p.university || '');
+        if (isKorea) {
+          // Benchmark: 1억원 KRW (~$66,667 at 1,500 KRW/USD) per unique study/PI
+          koreaBenchmarkCount++;
+          estimatedFundingKrwEok += 1.0;
+          estimatedFundingUsd += 66667;
+        } else {
+          // Benchmark: $100,000 USD (~1.5억원 KRW) per unique study/PI
+          globalBenchmarkCount++;
+          estimatedFundingKrwEok += 1.5;
+          estimatedFundingUsd += 100000;
+        }
       }
     });
 
-    const unverifiedRate = total > 0 ? ((unverifiedFundingCount / total) * 100).toFixed(1) : '0.0';
-    let totalFundingFormatted;
-    if (verifiedFundingCount === 0) {
-      totalFundingFormatted = total > 0 ? `검증 금액 없음 (${unverifiedRate}% 미확인)` : '$0M';
-    } else {
-      totalFundingFormatted = `$${(verifiedFundingUsd / 1000000).toFixed(1)}M (${unverifiedRate}% 미확인)`;
-    }
+    const totalUsd = verifiedFundingUsd + estimatedFundingUsd;
+    const verifiedKrwEok = (verifiedFundingUsd * 1500) / 100000000;
+    const totalKrwEok = verifiedKrwEok + estimatedFundingKrwEok;
+
+    let usdStr = '$0M';
+    if (totalUsd >= 1e9) usdStr = `$${(totalUsd / 1e9).toFixed(2)}B`;
+    else if (totalUsd >= 1e6) usdStr = `$${(totalUsd / 1e6).toFixed(1)}M`;
+    else if (totalUsd > 0) usdStr = `$${Math.round(totalUsd / 1000)}K`;
+
+    let krwStr = '';
+    if (totalKrwEok >= 10000) krwStr = `약 ${(totalKrwEok / 10000).toFixed(2)}조원`;
+    else if (totalKrwEok >= 1) krwStr = `약 ${Math.round(totalKrwEok).toLocaleString()}억원`;
+
+    const totalFundingFormatted = totalUsd > 0 ? `${usdStr} (${krwStr})` : '$0M';
+    const unverifiedRate = uniqueValidCount > 0 ? ((unverifiedFundingCount / uniqueValidCount) * 100).toFixed(1) : '0.0';
 
     return {
       total,
+      uniqueValidCount,
       active,
       completed,
       verifiedCollabCount,
@@ -272,8 +316,13 @@ class DataManager {
       verifiedFundingCount,
       noneStatedFundingCount,
       unverifiedFundingCount,
+      koreaBenchmarkCount,
+      globalBenchmarkCount,
       unverifiedRate,
-      totalFundingUsd: verifiedFundingUsd,
+      totalFundingUsd: totalUsd,
+      verifiedFundingUsd,
+      estimatedFundingUsd,
+      totalKrwEok,
       totalFundingFormatted
     };
   }

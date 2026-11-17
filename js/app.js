@@ -461,7 +461,10 @@ class App {
     if (totalCountEl) totalCountEl.textContent = stats.total.toLocaleString();
     if (activeCountEl) activeCountEl.textContent = stats.active.toLocaleString();
     if (collabCountEl) collabCountEl.textContent = (stats.verifiedCollabCount || 0).toLocaleString();
-    if (fundingTotalEl) fundingTotalEl.textContent = stats.totalFundingFormatted;
+    if (fundingTotalEl) {
+      fundingTotalEl.textContent = stats.totalFundingFormatted;
+      fundingTotalEl.title = `중복 제거 고유 ${stats.uniqueValidCount.toLocaleString()}건 기준 | 한국 ${stats.koreaBenchmarkCount.toLocaleString()}건(×1억) + 해외 ${stats.globalBenchmarkCount.toLocaleString()}건(×$100K/1.5억) + 공식 공시 ${stats.verifiedFundingCount.toLocaleString()}건`;
+    }
 
     if (this.currentView === 'map') {
       this.mapView.render(this.dataManager.filteredProjects);
