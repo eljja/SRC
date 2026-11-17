@@ -60,6 +60,29 @@ class DataManager {
     this.applyFilters();
   }
 
+  isConfirmedCorporateCollab(p) {
+    if (!p) return false;
+    if (p.verification && p.verification.status === 'quarantined') return false;
+    if (!p.company || p.company === '-' || p.company === '미지정') return false;
+
+    if (p.verification) {
+      const ctype = p.verification.collaboration_type;
+      if (ctype === 'co_authorship' || ctype === 'corporate_grant') return true;
+      if (ctype === 'academic_only') return false;
+      const corpStatus = p.verification.corporate_involvement && p.verification.corporate_involvement.status;
+      if (corpStatus === 'verified' || corpStatus === 'documented') return true;
+      return false;
+    }
+    return p.corporate_involvement_status === 'documented';
+  }
+
+  isAcademicOnly(p) {
+    if (!p) return false;
+    if (p.verification && p.verification.status === 'quarantined') return false;
+    if (p.verification && p.verification.collaboration_type === 'academic_only') return true;
+    return !this.isConfirmedCorporateCollab(p);
+  }
+
   resetFilters() {
     this.filters = {
       searchQuery: '',
@@ -69,6 +92,7 @@ class DataManager {
       institute: 'all',
       category: 'all',
       status: 'all',
+      collaborationTier: 'all',
       sortBy: 'start_year_desc'
     };
     this._analyticsCache.clear();
@@ -82,11 +106,19 @@ class DataManager {
   applyFilters() {
     let result = this.rawProjects;
 
-    // Default: exclude quarantined records unless specifically selected
-    if (this.filters.status !== 'quarantined') {
+    // Default: exclude quarantined records unless specifically selected in status or collaborationTier
+    const wantQuarantined = this.filters.status === 'quarantined' || this.filters.collaborationTier === 'quarantined';
+    if (!wantQuarantined) {
       result = result.filter(p => !p.verification || p.verification.status !== 'quarantined');
     } else {
       result = result.filter(p => p.verification && p.verification.status === 'quarantined');
+    }
+
+    // Collaboration tier filter (verified_collab | academic_only)
+    if (this.filters.collaborationTier === 'verified_collab') {
+      result = result.filter(p => this.isConfirmedCorporateCollab(p));
+    } else if (this.filters.collaborationTier === 'academic_only') {
+      result = result.filter(p => this.isAcademicOnly(p));
     }
 
     // Search query filter with pre-computed search string (0.5ms execution across 10,000+ items)
@@ -200,6 +232,9 @@ class DataManager {
     const total = list.length;
     const active = list.filter(p => p.status === 'active').length;
     const completed = list.filter(p => p.status === 'completed').length;
+    const verifiedCollabCount = list.filter(p => this.isConfirmedCorporateCollab(p)).length;
+    const academicOnlyCount = list.filter(p => this.isAcademicOnly(p)).length;
+    const quarantinedCount = this.rawProjects.filter(p => p.verification && p.verification.status === 'quarantined').length;
     
     // Only count funding when verified/documented with an explicit dollar amount
     let verifiedFundingUsd = 0;
@@ -231,6 +266,9 @@ class DataManager {
       total,
       active,
       completed,
+      verifiedCollabCount,
+      academicOnlyCount,
+      quarantinedCount,
       verifiedFundingCount,
       noneStatedFundingCount,
       unverifiedFundingCount,
@@ -260,9 +298,8 @@ class DataManager {
     const projectsToCount = this.filteredProjects;
 
     projectsToCount.forEach(p => {
-      // Only count company if corporate involvement is confirmed or valid
-      const corpStatus = p.verification && p.verification.corporate_involvement && p.verification.corporate_involvement.status;
-      if (p.company && p.company !== '-' && p.company !== '미지정' && corpStatus !== 'none') {
+      // Only count company if confirmed corporate collaboration
+      if (this.isConfirmedCorporateCollab(p)) {
         p.company.split('/').forEach(c => {
           const item = c.trim();
           if (item) companyCount[item] = (companyCount[item] || 0) + 1;
@@ -366,8 +403,7 @@ class DataManager {
     const categories = this.categories;
 
     projects.forEach(p => {
-      const corpStatus = p.verification && p.verification.corporate_involvement && p.verification.corporate_involvement.status;
-      if (!p.company || p.company === '-' || p.company === '미지정' || corpStatus === 'none') return;
+      if (!this.isConfirmedCorporateCollab(p)) return;
       const comp = p.company;
       const cat = p.category || '기타';
       if (!compMap[comp]) {

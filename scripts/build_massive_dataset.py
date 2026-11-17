@@ -518,10 +518,6 @@ def convert_work_to_project(comp_label, w, pid):
             elif matched_c and aname:
                 co_pis.append(f"{aname} ({matched_c['name']})")
 
-    # Match corporate fallback from query label
-    if not corporate_inst:
-        corporate_inst = match_company(comp_label)
-
     if not academic_inst and authorships:
         inst_list = authorships[0].get('institutions', [])
         if inst_list:
@@ -536,7 +532,8 @@ def convert_work_to_project(comp_label, w, pid):
         prof_name = "연구책임자 (Lead Author)"
 
     cat = infer_category(title)
-    collab_type = "co_authorship" if corporate_inst else "unconfirmed"
+    # Do NOT fallback to query label - corporate involvement must be verified from author affiliations or funders
+    collab_type = "co_authorship" if corporate_inst else "academic_only"
     company_name = corporate_inst['name'] if corporate_inst else None
     now_iso = datetime.datetime.now().isoformat() + "Z"
 
@@ -568,8 +565,11 @@ def convert_work_to_project(comp_label, w, pid):
         "status_detail": f"{year}년 학술 논문 게재 완료",
         "phases": None,
         "evidence_type": "Verified Paper / DOI",
-        "evidence_ref": f"{venue} | DOI: {doi}",
-        "summary": f"{academic_inst['name']} {prof_name} 연구팀의 {cat} 분야 학술 연구 과제. {venue} 발표.",
+        "summary": (
+            f"{academic_inst['name']} {prof_name} 연구팀과 {company_name} 간의 산학 협력 연구 과제. {venue} 발표."
+            if company_name
+            else f"{academic_inst['name']} {prof_name} 연구팀의 {cat} 분야 학술 연구 과제. {venue} 발표."
+        ),
         "verification": {
             "status": "verified" if corporate_inst else "unverified_attributes",
             "review_reason": None,

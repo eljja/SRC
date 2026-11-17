@@ -63,8 +63,55 @@ class App {
     // Bind UI Event Listeners
     this.bindEventListeners();
 
+    // Parse URL Query Parameters for SEO & Deep Linking (e.g. ?company=..., ?university=..., ?category=..., ?q=...)
+    this.parseUrlParams();
+
     // Initial Render
     this.updateAllViews();
+  }
+
+  parseUrlParams() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const company = params.get('company');
+      const university = params.get('university');
+      const category = params.get('category');
+      const q = params.get('q');
+      const view = params.get('view');
+      const tier = params.get('tier');
+
+      if (company) {
+        this.dataManager.setFilter('company', company);
+        const compSelect = document.getElementById('filter-company');
+        if (compSelect) compSelect.value = company;
+      }
+      if (university) {
+        this.dataManager.setFilter('university', university);
+        const uniSelect = document.getElementById('filter-university');
+        if (uniSelect) uniSelect.value = university;
+      }
+      if (category) {
+        this.dataManager.setFilter('category', category);
+        const catSelect = document.getElementById('filter-category');
+        if (catSelect) catSelect.value = category;
+      }
+      if (tier && ['verified_collab', 'academic_only', 'all'].includes(tier)) {
+        this.dataManager.setFilter('collaborationTier', tier);
+        document.querySelectorAll('.tier-pill').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.tier === tier);
+        });
+      }
+      if (q) {
+        this.dataManager.setFilter('searchQuery', q);
+        const searchInput = document.getElementById('global-search-input');
+        if (searchInput) searchInput.value = q;
+      }
+      if (view && ['map', 'network', 'table', 'analytics'].includes(view)) {
+        this.switchView(view);
+      }
+    } catch (e) {
+      console.warn('URL params parsing failed:', e);
+    }
   }
 
   populateDropdowns() {
@@ -145,6 +192,21 @@ class App {
       });
     }
 
+    // High-intent search quick tags
+    document.querySelectorAll('.quick-tag-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const query = btn.getAttribute('data-query');
+        if (query) {
+          clearTimeout(this._searchDebounceTimer);
+          searchInput.value = query;
+          if (clearSearchBtn) clearSearchBtn.classList.add('visible');
+          this.tableCurrentPage = 1;
+          this.dataManager.setFilter('searchQuery', query);
+          this.updateAllViews();
+        }
+      });
+    });
+
     // Filters
     document.getElementById('filter-company').addEventListener('change', (e) => {
       this.tableCurrentPage = 1;
@@ -173,6 +235,18 @@ class App {
         this.networkView.selectedSubtopicCategory = e.target.value;
       }
       this.updateAllViews();
+    });
+
+    // Research Tier Pills (산학협력 vs 학술연구)
+    const tierPills = document.querySelectorAll('.tier-pill');
+    tierPills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        tierPills.forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        this.tableCurrentPage = 1;
+        this.dataManager.setFilter('collaborationTier', pill.getAttribute('data-tier'));
+        this.updateAllViews();
+      });
     });
 
     // Status Pills
@@ -211,6 +285,9 @@ class App {
       document.getElementById('filter-professor').value = 'all';
       document.getElementById('filter-institute').value = 'all';
       document.getElementById('filter-category').value = 'all';
+      tierPills.forEach(p => p.classList.remove('active'));
+      const defaultTierPill = document.querySelector('.tier-pill[data-tier="all"]');
+      if (defaultTierPill) defaultTierPill.classList.add('active');
       statusPills.forEach(p => p.classList.remove('active'));
       document.querySelector('.status-pill[data-status="all"]').classList.add('active');
       this.updateAllViews();
@@ -234,9 +311,47 @@ class App {
         this.closeModal();
       }
     });
+
+    // Platform About & Guide Modal
+    const aboutModalOverlay = document.getElementById('about-guide-modal-overlay');
+    const btnOpenAbout = document.getElementById('btn-open-about');
+    const btnCloseAbout = document.getElementById('btn-close-about-guide');
+    const aboutCloseBtn = document.getElementById('about-modal-close-btn');
+
+    const openAboutModal = () => {
+      if (aboutModalOverlay) aboutModalOverlay.style.display = 'flex';
+    };
+    const closeAboutModal = () => {
+      if (aboutModalOverlay) aboutModalOverlay.style.display = 'none';
+    };
+
+    if (btnOpenAbout) btnOpenAbout.addEventListener('click', openAboutModal);
+    if (btnCloseAbout) btnCloseAbout.addEventListener('click', closeAboutModal);
+    if (aboutCloseBtn) aboutCloseBtn.addEventListener('click', closeAboutModal);
+    if (aboutModalOverlay) {
+      aboutModalOverlay.addEventListener('click', (e) => {
+        if (e.target.id === 'about-guide-modal-overlay') closeAboutModal();
+      });
+    }
+
     window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') this.closeModal();
+      if (e.key === 'Escape') {
+        this.closeModal();
+        closeAboutModal();
+      }
     });
+
+    // Sidebar Intro Q&A toggle
+    const toggleIntroBtn = document.getElementById('btn-toggle-intro-details');
+    const introDetailsContent = document.getElementById('intro-details-content');
+    if (toggleIntroBtn && introDetailsContent) {
+      toggleIntroBtn.addEventListener('click', () => {
+        const isHidden = introDetailsContent.style.display === 'none' || !introDetailsContent.style.display;
+        introDetailsContent.style.display = isHidden ? 'flex' : 'none';
+        toggleIntroBtn.textContent = isHidden ? '💡 핵심 Q&A ▴' : '💡 핵심 Q&A ▾';
+        toggleIntroBtn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+      });
+    }
 
     // Mobile sidebar drawer toggle
     const mobileMenuBtn = document.getElementById('btn-toggle-sidebar');
@@ -341,9 +456,11 @@ class App {
     const stats = this.dataManager.getSummaryStats();
     const totalCountEl = document.getElementById('stat-total-count');
     const activeCountEl = document.getElementById('stat-active-count');
+    const collabCountEl = document.getElementById('stat-collab-count');
     const fundingTotalEl = document.getElementById('stat-funding-total');
     if (totalCountEl) totalCountEl.textContent = stats.total.toLocaleString();
     if (activeCountEl) activeCountEl.textContent = stats.active.toLocaleString();
+    if (collabCountEl) collabCountEl.textContent = (stats.verifiedCollabCount || 0).toLocaleString();
     if (fundingTotalEl) fundingTotalEl.textContent = stats.totalFundingFormatted;
 
     if (this.currentView === 'map') {
@@ -393,14 +510,18 @@ class App {
         fundingBadge = '<span class="badge-status badge-funding-unverified" style="color: #9ca3af;">미확인 (Unknown)</span>';
       }
 
-      const corpStatus = (p.verification && p.verification.corporate_involvement && p.verification.corporate_involvement.status);
+      const isConfirmedCorp = this.dataManager.isConfirmedCorporateCollab(p);
       let companyHtml;
-      if (!p.company || p.company === '-' || p.company === '미지정' || corpStatus === 'none') {
-        companyHtml = '<span style="color: #6b7280;">미지정 (학술연구)</span>';
-      } else if (corpStatus === 'unverified') {
-        companyHtml = `<span class="table-company-text">${p.company}</span> <span class="badge-status badge-uncertain" style="font-size: 9px; padding: 1px 4px;" title="저자 소속 기반 (공식 지원 미확인)">소속기반</span>`;
+      if (isConfirmedCorp) {
+        const ctype = p.verification && p.verification.collaboration_type;
+        const ctypeBadge = ctype === 'corporate_grant'
+          ? '<span class="badge-status badge-collab-verified" style="font-size: 9px; padding: 1px 4px; margin-left: 4px;" title="기업 연구비 직접 지원 검증">지원금</span>'
+          : '<span class="badge-status badge-collab-verified" style="font-size: 9px; padding: 1px 4px; margin-left: 4px;" title="기업 연구원 공동 저술 검증">공동저자</span>';
+        companyHtml = `<span class="table-company-text">${p.company}</span>${ctypeBadge}`;
+      } else if (p.verification && p.verification.status === 'quarantined') {
+        companyHtml = '<span style="color: #f87171;">검토대기 (격리)</span>';
       } else {
-        companyHtml = `<span class="table-company-text">${p.company}</span>`;
+        companyHtml = '<span style="color: #6b7280;">- <span class="badge-status badge-academic-only" style="font-size: 9px; padding: 1px 4px; margin-left: 2px;">학술연구</span></span>';
       }
 
       let periodHtml;
@@ -415,10 +536,12 @@ class App {
       let statusBadge;
       if (p.verification && p.verification.status === 'quarantined') {
         statusBadge = '<span class="badge-status badge-quarantined">검토대기</span>';
-      } else if (p.status === 'active') {
-        statusBadge = '<span class="badge-status badge-active">진행중</span>';
+      } else if (isConfirmedCorp) {
+        statusBadge = p.status === 'active'
+          ? '<span class="badge-status badge-active">진행중</span>'
+          : '<span class="badge-status badge-completed">완료</span>';
       } else {
-        statusBadge = '<span class="badge-status badge-completed">완료</span>';
+        statusBadge = '<span class="badge-status badge-academic-only">학술문헌</span>';
       }
 
       return `
@@ -853,6 +976,11 @@ class App {
       }
     }
 
+    // Reset tier pills to 'all'
+    document.querySelectorAll('.tier-pill').forEach(p => p.classList.remove('active'));
+    const allTierPill = document.querySelector('.tier-pill[data-tier="all"]');
+    if (allTierPill) allTierPill.classList.add('active');
+
     // Reset status pills to 'all'
     document.querySelectorAll('.status-pill').forEach(p => p.classList.remove('active'));
     const allPill = document.querySelector('.status-pill[data-status="all"]');
@@ -873,12 +1001,16 @@ class App {
     document.getElementById('modal-title').textContent = project.title || '과제 상세';
     document.getElementById('modal-topic').textContent = project.topic || '-';
 
-    const corpStatus = (project.verification && project.verification.corporate_involvement && project.verification.corporate_involvement.status);
-    let compDisplay = project.company || '미지정 (독립 학술연구)';
-    if (corpStatus === 'unverified') {
-      compDisplay += ' (저자 소속 기반 / 공식 산학지원 미확인)';
-    } else if (corpStatus === 'none') {
-      compDisplay = '해당 없음 (독립 학술연구)';
+    const isConfirmedCorp = this.dataManager.isConfirmedCorporateCollab(project);
+    let compDisplay = '';
+    if (isConfirmedCorp) {
+      const ctype = project.verification && project.verification.collaboration_type;
+      const ctypeKo = ctype === 'corporate_grant' ? '기업 연구비 직접 지원 (Corporate Grant)' : '기업 연구원 공동 저술 (Co-authorship)';
+      compDisplay = `${project.company} [검증 산학협력: ${ctypeKo}]`;
+    } else if (project.verification && project.verification.status === 'quarantined') {
+      compDisplay = `해당 없음 (검토대기 격리: ${project.verification.quarantine_reason || '분야 불일치'})`;
+    } else {
+      compDisplay = '해당 없음 (독립 학술연구 - 기업 개입 없음)';
     }
     document.getElementById('modal-company').textContent = compDisplay;
 
