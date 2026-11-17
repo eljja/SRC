@@ -224,7 +224,8 @@ class VentureNetworkView {
       nodes: this.nodes,
       links: this.links,
       layoutModeData,
-      typeColorMap
+      typeColorMap,
+      nodeScale: 2.0
     });
   }
 

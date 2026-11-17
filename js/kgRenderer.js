@@ -68,6 +68,7 @@ class KGCanvasRenderer {
 
     // Visual & Interaction states
     this.cam = { x: 0, y: 0, scale: 1.0 };
+    this.nodeScale = 1.0;
     this.colorMode = 'community'; // 'community' | 'type'
     this.labelMode = 'auto';      // 'auto' | 'always'
     this.selectedIdx = -1;
@@ -392,7 +393,7 @@ class KGCanvasRenderer {
     this.requestDraw();
   }
 
-  setData({ nodes, links, layoutModeData = null, typeColorMap = null }) {
+  setData({ nodes, links, layoutModeData = null, typeColorMap = null, nodeScale = 1.0 }) {
     if (this.openAnimId) {
       cancelAnimationFrame(this.openAnimId);
       this.openAnimId = null;
@@ -402,6 +403,7 @@ class KGCanvasRenderer {
     this.links = links || [];
     this._sortedIndices = null;
     this.typeColorMap = typeColorMap || {};
+    this.nodeScale = typeof nodeScale === 'number' && nodeScale > 0 ? nodeScale : 1.0;
     this.selectedIdx = -1;
     this.hoveredIdx = -1;
     this.neighborSet.clear();
@@ -634,12 +636,14 @@ class KGCanvasRenderer {
     }
 
     const densityMul = N > 1500 ? 0.56 : (N > 600 ? 0.74 : 1.0);
+    const nScale = this.nodeScale || 1.0;
     for (let i = 0; i < N; i++) {
       const n = this.nodes[i];
       const isHub = n.type === 'category' || n.type === 'subtopic' || n.type === 'sector';
-      const baseR = isHub
+      const rawR = isHub
         ? (N > 1500 ? 9.5 : 12.0)
         : Math.min(12.5, (2.2 + Math.sqrt(n.val || 1) * 1.15) * densityMul);
+      const baseR = rawR * nScale;
       const [r, g, b] = kgHexToRgb(this._getNodeColorHex(n));
 
       const isSelected = i === activeIdx;
