@@ -253,6 +253,33 @@ class VentureApp {
       });
     }
 
+    // High-intent quick search tags (Unified with SRC)
+    document.querySelectorAll('.quick-tag-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const query = btn.getAttribute('data-query');
+        if (query && searchInput) {
+          clearTimeout(this._searchDebounceTimer);
+          searchInput.value = query;
+          if (clearSearchBtn) clearSearchBtn.classList.add('visible');
+          this.tableCurrentPage = 1;
+          this.dataManager.setFilter('searchQuery', query);
+          this.updateAllViews();
+        }
+      });
+    });
+
+    // Sidebar Intro Q&A toggle (Unified with SRC)
+    const toggleIntroBtn = document.getElementById('btn-toggle-intro-details');
+    const introDetailsContent = document.getElementById('intro-details-content');
+    if (toggleIntroBtn && introDetailsContent) {
+      toggleIntroBtn.addEventListener('click', () => {
+        const isHidden = introDetailsContent.style.display === 'none' || !introDetailsContent.style.display;
+        introDetailsContent.style.display = isHidden ? 'flex' : 'none';
+        toggleIntroBtn.textContent = isHidden ? '💡 핵심 Q&A ▴' : '💡 핵심 Q&A ▾';
+        toggleIntroBtn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+      });
+    }
+
     // Filter Dropdowns
     const bindFilter = (elementId, filterKey) => {
       const el = document.getElementById(elementId);
@@ -338,8 +365,55 @@ class VentureApp {
         if (e.target.id === 'project-detail-modal-overlay') this.closeModal();
       });
     }
+    // About & Guide Modal (Unified with SRC)
+    const aboutModalOverlay = document.getElementById('about-guide-modal-overlay');
+    const btnOpenAbout = document.getElementById('btn-open-about');
+    const btnCloseAbout = document.getElementById('btn-close-about-guide');
+    const aboutCloseBtn = document.getElementById('about-modal-close-btn');
+    const openAboutModal = () => { if (aboutModalOverlay) aboutModalOverlay.style.display = 'flex'; };
+    const closeAboutModal = () => { if (aboutModalOverlay) aboutModalOverlay.style.display = 'none'; };
+    if (btnOpenAbout) btnOpenAbout.addEventListener('click', openAboutModal);
+    if (btnCloseAbout) btnCloseAbout.addEventListener('click', closeAboutModal);
+    if (aboutCloseBtn) aboutCloseBtn.addEventListener('click', closeAboutModal);
+    if (aboutModalOverlay) {
+      aboutModalOverlay.addEventListener('click', (e) => {
+        if (e.target.id === 'about-guide-modal-overlay') closeAboutModal();
+      });
+    }
+
+    // Header Tools Dropdown Menu (Unified with SRC)
+    const toolsDropdown = document.getElementById('header-tools-dropdown');
+    const toolsBtn = document.getElementById('btn-header-tools');
+    const closeToolsMenu = () => {
+      if (toolsDropdown) toolsDropdown.classList.remove('open');
+      if (toolsBtn) toolsBtn.setAttribute('aria-expanded', 'false');
+    };
+    if (toolsBtn && toolsDropdown) {
+      toolsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = toolsDropdown.classList.toggle('open');
+        toolsBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      });
+      document.addEventListener('click', (e) => {
+        if (!toolsDropdown.contains(e.target)) closeToolsMenu();
+      });
+      toolsDropdown.querySelectorAll('.header-dropdown-item').forEach(item => {
+        item.addEventListener('click', closeToolsMenu);
+      });
+    }
+
     window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') this.closeModal();
+      if (e.key === 'Escape') {
+        this.closeModal();
+        closeAboutModal();
+        closeToolsMenu();
+      } else if (e.key === '/' && !['INPUT', 'TEXTAREA', 'SELECT'].includes((document.activeElement && document.activeElement.tagName) || '')) {
+        e.preventDefault();
+        if (searchInput) {
+          searchInput.focus();
+          searchInput.select();
+        }
+      }
     });
 
     // Mobile sidebar toggle
@@ -359,10 +433,14 @@ class VentureApp {
       }
     }
 
-    // Export Data JSON
+    // Export Data JSON & CSV
     const exportBtn = document.getElementById('btn-export-json');
     if (exportBtn) {
       exportBtn.addEventListener('click', () => this.exportDataJson());
+    }
+    const exportCsvBtn = document.getElementById('btn-export-csv');
+    if (exportCsvBtn) {
+      exportCsvBtn.addEventListener('click', () => this.exportDataCsv());
     }
 
     // Top-N toggle buttons
@@ -440,6 +518,22 @@ class VentureApp {
     if (countEl) countEl.textContent = stats.total.toLocaleString();
     if (activeEl) activeEl.textContent = stats.active.toLocaleString();
     if (fundingEl) fundingEl.textContent = stats.totalFundingFormatted;
+
+    // Update inline reset button active filter badge (Unified with SRC)
+    const resetBtn = document.getElementById('btn-reset-filters');
+    if (resetBtn && this.dataManager && this.dataManager.filters) {
+      const f = this.dataManager.filters;
+      let activeCount = 0;
+      if (f.searchQuery && f.searchQuery.trim()) activeCount++;
+      if (f.company && f.company !== 'all') activeCount++;
+      if (f.startup && f.startup !== 'all') activeCount++;
+      if (f.sector && f.sector !== 'all') activeCount++;
+      if (f.round && f.round !== 'all') activeCount++;
+      if (f.year && f.year !== 'all') activeCount++;
+      if (f.status && f.status !== 'all') activeCount++;
+      resetBtn.textContent = activeCount > 0 ? `🔄 초기화 (${activeCount})` : '🔄 초기화';
+      resetBtn.classList.toggle('has-active', activeCount > 0);
+    }
 
     const mappedData = this.dataManager.filteredInvestments.map(inv => this._mapVentureToProject(inv));
 
@@ -1026,6 +1120,31 @@ class VentureApp {
       URL.revokeObjectURL(url);
     } catch (err) {
       console.error('Failed to export venture JSON:', err);
+    }
+  }
+
+  exportDataCsv() {
+    try {
+      const headers = ['ID', 'Investor', 'CVC Arm', 'Startup', 'Sector', 'Round', 'Amount USD', 'Amount Display', 'Year', 'Country', 'Status', 'Source URL'];
+      const esc = (v) => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`;
+      const rows = (this.dataManager.filteredInvestments || []).map(inv => [
+        inv.id, inv.investor_company, inv.cvc_arm, inv.startup_name, inv.sector,
+        inv.investment_round, inv.investment_amount_usd || 0, inv.investment_amount_display || 'Undisclosed',
+        inv.investment_year, inv.startup_hq_country, inv.status || 'active', inv.source_url || ''
+      ].map(esc).join(','));
+      const csv = '\uFEFF' + [headers.map(esc).join(','), ...rows].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const dateStr = this.tracker ? this.tracker.formatDate(new Date()) : new Date().toISOString().split('T')[0];
+      const a = document.createElement('a');
+      a.setAttribute('href', url);
+      a.setAttribute('download', `semiconductor_cvc_venture_investments_${dateStr}.csv`);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Failed to export venture CSV:', err);
     }
   }
 }

@@ -58,19 +58,15 @@ class Tracker {
 
     const freshness = this.calculateFreshness();
 
-    const projectCount = this.metadata && this.metadata.total_projects ? this.metadata.total_projects.toLocaleString() + '건' : '';
+    const recordCount = this.metadata && this.metadata.total_projects
+      ? `${this.metadata.total_projects.toLocaleString()}건 학술·산학 R&D`
+      : (this.metadata && this.metadata.total_investments ? `${this.metadata.total_investments.toLocaleString()}건 CVC 벤처 투자` : '');
 
     container.innerHTML = `
-      <div class="freshness-tracker-badge" title="${freshness.recommendation} • ${projectCount} 전수 조사 (Crossref/Europe PMC 검증)">
+      <div class="freshness-tracker-badge" title="${freshness.statusText} · ${freshness.recommendation} (DB: ${freshness.lastUpdatedStr} / 접속: ${freshness.clientDateStr}${recordCount ? ' / ' + recordCount : ''})">
         <span class="freshness-indicator ${freshness.status}"></span>
         <div class="meta-date-info">
           <span>DB <strong>${freshness.lastUpdatedStr}</strong></span>
-          <span class="meta-date-detail" style="opacity: 0.4;">|</span>
-          <span class="meta-date-detail">접속 <strong>${freshness.clientDateStr}</strong></span>
-          <span style="opacity: 0.4;">|</span>
-          <span style="color: ${freshness.status === 'fresh' ? '#34d399' : (freshness.status === 'moderate' ? '#fbbf24' : '#f43f5e')}">
-            ${freshness.statusText}
-          </span>
         </div>
       </div>
     `;

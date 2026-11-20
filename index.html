@@ -137,7 +137,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   
   <!-- Custom App Styles -->
-  <link rel="stylesheet" href="css/style.css?v=8.0.0">
+  <link rel="stylesheet" href="css/style.css?v=8.1.0">
   
   <!-- D3.js v7 & Leaflet.js -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -192,14 +192,14 @@
         <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 0 0 2.25-2.25V5.25a2.25 2.25 0 0 0-2.25-2.25H6.75A2.25 2.25 0 0 0 4.5 5.25v13.5A2.25 2.25 0 0 0 6.75 21Z" />
         </svg>
-        <span>SRC Semi-Observatory</span>
+        <span>SRC Observatory</span>
       </div>
+      <!-- Unified Platform Switcher -->
+      <nav class="platform-switcher" aria-label="플랫폼 전환">
+        <a href="index.html" class="platform-pill active-src" aria-current="page">🎓 산학 R&D</a>
+        <a href="venture.html" class="platform-pill">🚀 CVC 벤처</a>
+      </nav>
       <h1 class="sr-only">글로벌 반도체 산학협력 및 차세대 R&D 네트워크 센서스</h1>
-    </div>
-
-    <!-- Freshness Tracker & Live Date Badge -->
-    <div class="header-meta-section" id="header-freshness-badge-container">
-      <!-- Injected by js/tracker.js -->
     </div>
 
     <!-- View Switch Tabs -->
@@ -218,30 +218,25 @@
       </button>
     </div>
 
-    <!-- Actions -->
+    <!-- Compact Right Actions -->
     <div class="header-actions">
-      <!-- About & Guide Modal Button -->
-      <button class="header-action-btn" id="btn-open-about" title="플랫폼 소개 및 3대 핵심 가치" aria-label="이용 가이드" style="background: rgba(245, 158, 11, 0.2); border-color: rgba(245, 158, 11, 0.5); color: #fde68a;">
-        <span>💡 이용 가이드</span>
+      <div class="header-meta-section" id="header-freshness-badge-container"></div>
+      <button class="header-action-btn" id="btn-open-about" title="플랫폼 소개 및 활용 가이드" aria-label="이용 가이드" style="background: rgba(245, 158, 11, 0.16); border-color: rgba(245, 158, 11, 0.45); color: #fde68a;">
+        <span>💡 가이드</span>
       </button>
-      <!-- Cross-Link to Static SEO Directory Hub -->
-      <a href="hub/index.html" class="header-action-btn" title="반도체 산학협력 전수 디렉토리" style="background: rgba(56, 189, 248, 0.25); border-color: rgba(56, 189, 248, 0.5); color: #7dd3fc;">
-        <span>📚 산학협력 디렉토리</span>
-      </a>
-      <!-- Cross-Link to Venture CVC Observatory -->
-      <a href="venture.html" class="header-action-btn" title="반도체 CVC 벤처 투자 대시보드로 이동" style="background: rgba(16, 185, 129, 0.25); border-color: rgba(16, 185, 129, 0.5); color: #6ee7b7;">
-        <span>🚀 CVC 벤처 투자</span>
-      </a>
+      <div class="header-dropdown" id="header-tools-dropdown">
+        <button type="button" class="header-action-btn" id="btn-header-tools" aria-expanded="false" aria-haspopup="menu" title="데이터 내보내기 및 디렉토리 메뉴">
+          <span>📥 메뉴 ▾</span>
+        </button>
+        <div class="header-dropdown-menu" role="menu">
+          <button type="button" class="header-dropdown-item" id="btn-export-json" role="menuitem">📥 JSON 데이터 다운로드</button>
+          <button type="button" class="header-dropdown-item" id="btn-export-csv" role="menuitem">📊 CSV 표 다운로드</button>
+          <div class="header-dropdown-divider"></div>
+          <a href="hub/index.html" class="header-dropdown-item" role="menuitem">📚 산학협력 정적 디렉토리</a>
+          <a href="https://github.com/eljja/SRC" target="_blank" rel="noopener noreferrer" class="header-dropdown-item" role="menuitem">📂 GitHub 저장소 ↗</a>
+        </div>
+      </div>
       <button class="mobile-menu-btn" id="btn-toggle-sidebar" aria-label="필터 메뉴 열기">☰</button>
-      <button class="header-action-btn" id="btn-export-json" title="현재 데이터셋 JSON 다운로드" aria-label="데이터셋 JSON 다운로드">
-        <span>📥 JSON</span>
-      </button>
-      <button class="header-action-btn" id="btn-export-csv" title="현재 데이터셋 CSV 다운로드 (검증 상태 포함)" aria-label="데이터셋 CSV 다운로드">
-        <span>📊 CSV</span>
-      </button>
-      <a href="https://github.com/eljja/SRC" target="_blank" rel="noopener noreferrer" class="header-action-btn" title="GitHub 저장소 바로가기" aria-label="GitHub 저장소 바로가기">
-        <span>📂 GitHub</span>
-      </a>
     </div>
   </header>
 
@@ -258,25 +253,25 @@
         <!-- Platform Value Proposition & Hook Copy -->
         <div class="sidebar-intro-card">
           <div class="intro-header-row">
-            <span class="intro-badge">✨ 100% 공식 DOI 학술문헌 검증</span>
+            <span class="intro-badge">✨ DOI · Claude Sonnet 정밀 검증</span>
             <button type="button" id="btn-toggle-intro-details" class="intro-toggle-btn" aria-expanded="false" aria-controls="intro-details-content">💡 핵심 Q&A ▾</button>
           </div>
           <h2>글로벌 반도체 산학협력 지도</h2>
           <p>
-            <strong>삼성전자·SK하이닉스·TSMC</strong> 등 27대 기업과 <strong>서울대·KAIST</strong> 등 100여 개 대학의 <strong>13,746건</strong> 차세대 R&D 과제 및 핵심 연구실 전수 분석
+            <strong>삼성전자·SK하이닉스·TSMC</strong> 등 27대 기업과 글로벌 대학의 <strong>14,200+건</strong> 차세대 R&D 과제 및 핵심 연구실 전수 분석
           </p>
           <div id="intro-details-content" class="intro-details" style="display: none;">
             <div class="intro-qna-item">
               <span class="qna-q">Q. 삼성·SK하이닉스는 어느 대학과 연구하나요?</span>
-              <span class="qna-a">서울대(846건), KAIST(189건), 성균관대(130건), 포항공대(101건) 등 국내외 주요 대학과 차세대 연구를 수행 중입니다.</span>
+              <span class="qna-a">서울대, KAIST, 성균관대, 포항공대 등 국내외 주요 대학과 차세대 공저 및 연구비 지원 과제를 수행 중입니다.</span>
             </div>
             <div class="intro-qna-item">
-              <span class="qna-q">Q. HBM & 3D 패키징 연구실을 찾으려면?</span>
-              <span class="qna-a">상단 검색창에 'HBM' 또는 '하이브리드 본딩'을 입력하거나 아래 추천 검색 태그를 클릭하세요.</span>
+              <span class="qna-q">Q. 펀딩 규모는 어떻게 산정되나요?</span>
+              <span class="qna-a">중복 DOI 제거 후 공식 공시 금액 외 미확인 과제는 한국 1억원 / 미국·해외 $100K(1.5억) 기준으로 추산합니다.</span>
             </div>
             <div class="intro-qna-item">
               <span class="qna-q">Q. 데이터 신뢰성은 어떻게 검증되었나요?</span>
-              <span class="qna-a">모든 과제는 IEEE, Nature, Science, IEDM 등 공식 DOI 및 공공 펀딩 레퍼런스에 기반합니다.</span>
+              <span class="qna-a">OpenAlex 공저·Funder 메타데이터, 공식 DOI, Claude Sonnet 정밀 분류 파이프라인을 거쳐 검증됩니다.</span>
             </div>
           </div>
         </div>
@@ -287,6 +282,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
           </svg>
           <input type="text" id="global-search-input" placeholder="예: 삼성전자 HBM, 서울대 과제, TSMC 패키징..." aria-label="글로벌 연구 과제 및 기관 검색">
+          <span class="search-kbd-hint" aria-hidden="true">/</span>
           <button id="btn-clear-search" class="search-clear-btn" type="button" aria-label="검색어 지우기">&times;</button>
         </div>
 
@@ -322,6 +318,10 @@
 
       <!-- Filter Sections -->
       <div class="filter-accordion">
+        <div class="filter-bar-header">
+          <span class="filter-bar-title">🎛️ 상세 필터</span>
+          <button id="btn-reset-filters" type="button" class="filter-reset-inline" title="모든 검색어 및 필터 초기화">🔄 초기화</button>
+        </div>
         
         <!-- Collaboration Tier Filter Pills -->
         <div class="filter-group">
@@ -431,11 +431,6 @@
           </div>
           <a href="hub/index.html" class="dir-box-all">전체 31개 디렉토리 보기 ➔</a>
         </div>
-
-        <!-- Reset Button -->
-        <button id="btn-reset-filters" type="button" class="header-action-btn" style="width: 100%; justify-content: center; margin-top: 0.5rem; background: rgba(55, 65, 81, 0.4);">
-          <span>🔄 필터 초기화</span>
-        </button>
 
       </div>
     </aside>
@@ -554,28 +549,33 @@
           </div>
         </div>
 
-        <!-- Map Legend -->
+        <!-- Collapsible Map Legend -->
         <div class="map-legend">
-          <div style="font-weight: 700; color: #fff; margin-bottom: 2px;">산학협력 컬러 범례</div>
-          <div class="legend-item">
-            <div class="legend-dot" style="background: #3b82f6; box-shadow: 0 0 6px #3b82f6;"></div>
-            <span>글로벌 기업 (삼성, TSMC, Intel, NVIDIA 등)</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-dot" style="background: #10b981; box-shadow: 0 0 6px #10b981;"></div>
-            <span>한국 대학군 (서울대, KAIST, 포항공대 등)</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-dot" style="background: #f59e0b; box-shadow: 0 0 6px #f59e0b;"></div>
-            <span>미국 명문대군 (MIT, Stanford, Berkeley 등)</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-dot" style="background: #818cf8; box-shadow: 0 0 6px #818cf8;"></div>
-            <span>유럽 연구기관 (IMEC, Leuven, CEA-Leti 등)</span>
-          </div>
-          <div class="legend-item">
-            <div style="width: 18px; height: 3px; background: linear-gradient(90deg, #3b82f6, #10b981); border-radius: 2px;"></div>
-            <span>기업 ➔ 대학 2색 그라데이션 회랑</span>
+          <button type="button" class="map-legend-toggle" aria-expanded="true">
+            <span>산학협력 컬러 범례</span>
+            <span class="legend-chevron">▾</span>
+          </button>
+          <div class="map-legend-body">
+            <div class="legend-item">
+              <div class="legend-dot" style="background: #3b82f6; box-shadow: 0 0 6px #3b82f6;"></div>
+              <span>글로벌 기업 (삼성, TSMC, Intel, NVIDIA 등)</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background: #10b981; box-shadow: 0 0 6px #10b981;"></div>
+              <span>한국 대학군 (서울대, KAIST, 포항공대 등)</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background: #f59e0b; box-shadow: 0 0 6px #f59e0b;"></div>
+              <span>미국 명문대군 (MIT, Stanford, Berkeley 등)</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background: #818cf8; box-shadow: 0 0 6px #818cf8;"></div>
+              <span>유럽 연구기관 (IMEC, Leuven, CEA-Leti 등)</span>
+            </div>
+            <div class="legend-item">
+              <div style="width: 18px; height: 3px; background: linear-gradient(90deg, #3b82f6, #10b981); border-radius: 2px;"></div>
+              <span>기업 ➔ 대학 2색 그라데이션 회랑</span>
+            </div>
           </div>
         </div>
       </div>
@@ -596,7 +596,7 @@
           <div>
             <div class="table-title">글로벌 반도체 산학연 R&D 디렉토리</div>
             <div style="font-size: 0.78rem; color: #94a3b8; margin-top: 2px;">
-              삼성전자·SK하이닉스·TSMC 등 27대 대기업과 서울대·KAIST 등 유수 대학의 13,746건 검증 연구 과제
+              삼성전자·SK하이닉스·TSMC 등 27대 대기업과 서울대·KAIST 등 유수 대학의 14,241건 검증 연구 과제
             </div>
           </div>
           <div id="table-count-summary" style="font-size: 0.82rem; color: var(--text-secondary);">총 0개 과제</div>
@@ -789,12 +789,12 @@
   </div>
 
   <!-- App Scripts -->
-  <script src="js/dataManager.js?v=8.0.2"></script>
-  <script src="js/tracker.js?v=8.0.0"></script>
-  <script src="js/map.js?v=8.0.0"></script>
-  <script src="js/kgRenderer.js?v=8.0.1"></script>
-  <script src="js/network.js?v=8.0.0"></script>
-  <script src="js/app.js?v=8.0.2"></script>
+  <script src="js/dataManager.js?v=8.1.0"></script>
+  <script src="js/tracker.js?v=8.1.0"></script>
+  <script src="js/map.js?v=8.1.0"></script>
+  <script src="js/kgRenderer.js?v=8.1.0"></script>
+  <script src="js/network.js?v=8.1.0"></script>
+  <script src="js/app.js?v=8.1.0"></script>
 
 </body>
 </html>

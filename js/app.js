@@ -334,10 +334,38 @@ class App {
       });
     }
 
+    // Header Tools Dropdown Menu
+    const toolsDropdown = document.getElementById('header-tools-dropdown');
+    const toolsBtn = document.getElementById('btn-header-tools');
+    const closeToolsMenu = () => {
+      if (toolsDropdown) toolsDropdown.classList.remove('open');
+      if (toolsBtn) toolsBtn.setAttribute('aria-expanded', 'false');
+    };
+    if (toolsBtn && toolsDropdown) {
+      toolsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = toolsDropdown.classList.toggle('open');
+        toolsBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      });
+      document.addEventListener('click', (e) => {
+        if (!toolsDropdown.contains(e.target)) closeToolsMenu();
+      });
+      toolsDropdown.querySelectorAll('.header-dropdown-item').forEach(item => {
+        item.addEventListener('click', closeToolsMenu);
+      });
+    }
+
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         this.closeModal();
         closeAboutModal();
+        closeToolsMenu();
+      } else if (e.key === '/' && !['INPUT', 'TEXTAREA', 'SELECT'].includes((document.activeElement && document.activeElement.tagName) || '')) {
+        e.preventDefault();
+        if (searchInput) {
+          searchInput.focus();
+          searchInput.select();
+        }
       }
     });
 
@@ -464,6 +492,23 @@ class App {
     if (fundingTotalEl) {
       fundingTotalEl.textContent = stats.totalFundingFormatted;
       fundingTotalEl.title = `중복 제거 고유 ${stats.uniqueValidCount.toLocaleString()}건 기준 | 한국 ${stats.koreaBenchmarkCount.toLocaleString()}건(×1억) + 해외 ${stats.globalBenchmarkCount.toLocaleString()}건(×$100K/1.5억) + 공식 공시 ${stats.verifiedFundingCount.toLocaleString()}건`;
+    }
+
+    // Update inline reset button active filter badge
+    const resetBtn = document.getElementById('btn-reset-filters');
+    if (resetBtn && this.dataManager && this.dataManager.filters) {
+      const f = this.dataManager.filters;
+      let activeCount = 0;
+      if (f.searchQuery && f.searchQuery.trim()) activeCount++;
+      if (f.company && f.company !== 'all') activeCount++;
+      if (f.university && f.university !== 'all') activeCount++;
+      if (f.professor && f.professor !== 'all') activeCount++;
+      if (f.institute && f.institute !== 'all') activeCount++;
+      if (f.category && f.category !== 'all') activeCount++;
+      if (f.status && f.status !== 'all') activeCount++;
+      if (f.collaborationTier && f.collaborationTier !== 'all') activeCount++;
+      resetBtn.textContent = activeCount > 0 ? `🔄 초기화 (${activeCount})` : '🔄 초기화';
+      resetBtn.classList.toggle('has-active', activeCount > 0);
     }
 
     if (this.currentView === 'map') {

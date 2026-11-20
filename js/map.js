@@ -83,6 +83,9 @@ class MapCanvasOverlay extends L.Layer {
     this._animPhase = 0;
     this._animRaf = null;
     this._lastAnimTs = 0;
+    this._zooming = false;
+    this._drawnZoom = null;
+    this._drawnTopLeftLatLng = null;
     this._projectedNodes = [];
     this._projectedArcs = [];
   }
@@ -92,12 +95,15 @@ class MapCanvasOverlay extends L.Layer {
     this._canvas = L.DomUtil.create('canvas', 'leaflet-zoom-animated map-network-canvas');
     this._canvas.style.pointerEvents = 'none';
     this._canvas.style.position = 'absolute';
+    this._canvas.style.transformOrigin = '0 0';
     this._ctx = this._canvas.getContext('2d');
 
     map.getPanes().overlayPane.appendChild(this._canvas);
 
-    map.on('moveend zoomend viewreset resize', this._reset, this);
-    map.on('move', this._reset, this);
+    map.on('zoomstart', this._onZoomStart, this);
+    map.on('zoomend', this._onZoomEnd, this);
+    map.on('move', this._onMove, this);
+    map.on('moveend viewreset resize', this._onMoveEnd, this);
     if (map.options.zoomAnimation && L.Browser.any3d) {
       map.on('zoomanim', this._animateZoom, this);
     }
@@ -112,16 +118,38 @@ class MapCanvasOverlay extends L.Layer {
     if (this._canvas && this._canvas.parentNode) {
       this._canvas.parentNode.removeChild(this._canvas);
     }
-    map.off('moveend zoomend viewreset resize', this._reset, this);
-    map.off('move', this._reset, this);
+    map.off('zoomstart', this._onZoomStart, this);
+    map.off('zoomend', this._onZoomEnd, this);
+    map.off('move', this._onMove, this);
+    map.off('moveend viewreset resize', this._onMoveEnd, this);
     map.off('zoomanim', this._animateZoom, this);
+  }
+
+  _onZoomStart() {
+    this._zooming = true;
+  }
+
+  _onZoomEnd() {
+    this._zooming = false;
+    this._reset();
+  }
+
+  _onMove() {
+    if (this._zooming) return;
+    this._reset();
+  }
+
+  _onMoveEnd() {
+    this._zooming = false;
+    this._reset();
   }
 
   _animateZoom(e) {
     const map = this._map;
-    if (!map || !this._canvas) return;
-    const scale = map.getZoomScale(e.zoom);
-    const offset = map._latLngBoundsToNewLayerBounds(map.getBounds(), e.zoom, e.center).min;
+    if (!map || !this._canvas || !this._drawnTopLeftLatLng || this._drawnZoom === null) return;
+    this._zooming = true;
+    const scale = map.getZoomScale(e.zoom, this._drawnZoom);
+    const offset = map._latLngToNewLayerPoint(this._drawnTopLeftLatLng, e.zoom, e.center);
     L.DomUtil.setTransform(this._canvas, offset, scale);
   }
 
@@ -129,7 +157,7 @@ class MapCanvasOverlay extends L.Layer {
     if (this._animRaf) return;
     const tick = (ts) => {
       this._animRaf = requestAnimationFrame(tick);
-      if (document.hidden) return;
+      if (document.hidden || this._zooming) return;
       const mapEl = document.getElementById(this.mapView.containerId);
       if (!mapEl || mapEl.offsetParent === null) return; // pause when tab inactive
       if (ts - this._lastAnimTs < 33) return; // ~30fps smooth pulse
@@ -148,13 +176,15 @@ class MapCanvasOverlay extends L.Layer {
   }
 
   _reset() {
-    if (!this._map || !this._canvas) return;
+    if (!this._map || !this._canvas || this._zooming) return;
     const size = this._map.getSize();
     if (size.x <= 0 || size.y <= 0) return;
 
     this._dpr = Math.min(window.devicePixelRatio || 1, 2);
+    this._drawnZoom = this._map.getZoom();
+    this._drawnTopLeftLatLng = this._map.containerPointToLatLng([0, 0]);
     const topLeft = this._map.containerPointToLayerPoint([0, 0]);
-    L.DomUtil.setPosition(this._canvas, topLeft);
+    L.DomUtil.setTransform(this._canvas, topLeft, 1);
 
     const bw = Math.round(size.x * this._dpr);
     const bh = Math.round(size.y * this._dpr);
@@ -499,6 +529,10 @@ class MapView {
       zoom: this.defaultZoom,
       minZoom: 1.5,
       maxZoom: 16,
+      zoomSnap: 0.5,
+      zoomDelta: 0.5,
+      wheelDebounceTime: 40,
+      wheelPxPerZoomLevel: 80,
       worldCopyJump: true,
       preferCanvas: true,
       zoomControl: false,
@@ -691,6 +725,19 @@ class MapView {
         if (this.canvasLayer) this.canvasLayer.draw();
       });
     });
+
+    // Collapsible Map Legend Toggle
+    const legendToggle = document.querySelector('.map-legend-toggle');
+    const mapLegend = document.querySelector('.map-legend');
+    if (legendToggle && mapLegend) {
+      legendToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const collapsed = mapLegend.classList.toggle('collapsed');
+        legendToggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+        const chevron = legendToggle.querySelector('.legend-chevron');
+        if (chevron) chevron.textContent = collapsed ? '▴' : '▾';
+      });
+    }
   }
 
   render(projects) {
