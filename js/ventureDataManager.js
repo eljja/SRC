@@ -95,13 +95,23 @@ class VentureDataManager {
   applyFilters() {
     let result = this.rawInvestments;
 
-    // Search query filter (tokenized across pre-computed search string)
+    // Search query filter with bilingual & compound-token support
     if (this.filters.searchQuery) {
-      const terms = this.filters.searchQuery.toLowerCase().split(/\s+/).filter(t => t.length > 0);
-      result = result.filter(inv => {
-        const text = inv._searchStr || '';
-        return terms.every(term => text.includes(term));
-      });
+      const normalizer = (typeof SearchNormalizer !== 'undefined')
+        ? SearchNormalizer
+        : (typeof window !== 'undefined' ? window.SearchNormalizer : null);
+      if (normalizer && typeof normalizer.parseSearchQuery === 'function') {
+        const parsed = normalizer.parseSearchQuery(this.filters.searchQuery);
+        if (parsed.groups.length > 0) {
+          result = result.filter(inv => normalizer.matchesParsedQuery(inv._searchStr || '', parsed));
+        }
+      } else {
+        const terms = this.filters.searchQuery.toLowerCase().split(/\s+/).filter(t => t.length > 0);
+        result = result.filter(inv => {
+          const text = inv._searchStr || '';
+          return terms.every(term => text.includes(term));
+        });
+      }
     }
 
     // Investor company filter

@@ -18,6 +18,7 @@ class DataManager {
       status: 'all',
       sortBy: 'start_year_desc'
     };
+    this._analyticsCache = new Map();
   }
 
   async loadData() {
@@ -121,13 +122,26 @@ class DataManager {
       result = result.filter(p => this.isAcademicOnly(p));
     }
 
-    // Search query filter with pre-computed search string (0.5ms execution across 10,000+ items)
+    // Search query filter with bilingual & compound-token support (1-2ms across 14,000+ items)
     if (this.filters.searchQuery) {
-      const terms = this.filters.searchQuery.toLowerCase().split(/\s+/).filter(t => t.length > 0);
-      result = result.filter(p => {
-        const text = p._searchStr || '';
-        return terms.every(term => text.includes(term));
-      });
+      const normalizer = (typeof SearchNormalizer !== 'undefined')
+        ? SearchNormalizer
+        : (typeof window !== 'undefined' ? window.SearchNormalizer : null);
+      if (normalizer && typeof normalizer.parseSearchQuery === 'function') {
+        const parsed = normalizer.parseSearchQuery(this.filters.searchQuery);
+        if (parsed.requireCorporateCollab && this.filters.collaborationTier !== 'academic_only') {
+          result = result.filter(p => this.isConfirmedCorporateCollab(p));
+        }
+        if (parsed.groups.length > 0) {
+          result = result.filter(p => normalizer.matchesParsedQuery(p._searchStr || '', parsed));
+        }
+      } else {
+        const terms = this.filters.searchQuery.toLowerCase().split(/\s+/).filter(t => t.length > 0);
+        result = result.filter(p => {
+          const text = p._searchStr || '';
+          return terms.every(term => text.includes(term));
+        });
+      }
     }
 
     // Company filter
